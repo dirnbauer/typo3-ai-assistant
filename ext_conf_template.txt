@@ -1,0 +1,14 @@
+# cat=basic/llm; type=string; label=nr-llm configuration: identifier of the nr-llm LLM configuration the chat runs under (provider, model, system prompt, budget). The chat is unavailable while it cannot be resolved.
+llmConfiguration = backend-assistant
+
+# cat=basic/security; type=boolean; label=Allow writes without a per-turn approval: when enabled, a conversation whose "auto-approve" switch is on skips the approval card for permitted write tools. Off means every write stops and asks.
+allowWrites = 0
+
+# cat=basic/security; type=int+; label=Turns per hour and user: how many turns one backend user may start per hour across all conversations. 0 disables the limit.
+maxTurnsPerHour = 60
+
+# cat=basic/files; type=string; label=Attachment storage: FAL combined identifier of the folder chat attachments are stored below, per backend user and conversation.
+attachmentStorage = 1:/shadcn_ui/
+
+# cat=basic/ui; type=boolean; label=Toolbar panel: offer the floating chat panel through a toolbar button in the backend.
+panelEnabled = 1
