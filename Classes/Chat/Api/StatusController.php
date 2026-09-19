@@ -19,6 +19,7 @@ use Webconsulting\ShadcnUi\Chat\Tool\McpCatalogTool;
 use Webconsulting\ShadcnUi\Chat\Tool\ToolEffectLookup;
 use Webconsulting\ShadcnUi\Chat\Turn\ChatConfigurationResolver;
 use Webconsulting\ShadcnUi\Chat\Turn\ChatContextFactory;
+use Webconsulting\ShadcnUi\Chat\Turn\TurnRunner;
 use Webconsulting\ShadcnUi\Configuration\ExtensionSettings;
 
 /**
@@ -84,6 +85,7 @@ final readonly class StatusController extends AbstractApiController
                 'budget' => ['allowed' => $budget->allowed, 'reason' => $budget->reason],
                 'limits' => [
                     'maxMessageLength' => TurnController::MAX_MESSAGE_LENGTH,
+                    'maxIterations' => TurnRunner::MAX_ITERATIONS,
                     'turnsPerHour' => $this->rateLimiter->limit(),
                     'turnsRemaining' => $this->rateLimiter->remaining($uid),
                     'activeConversations' => $this->conversations->countActiveByBeUser($uid),

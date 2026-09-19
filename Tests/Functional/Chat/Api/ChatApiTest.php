@@ -12,6 +12,7 @@ use Webconsulting\ShadcnUi\Chat\Api\StatusController;
 use Webconsulting\ShadcnUi\Chat\Api\TurnController;
 use Webconsulting\ShadcnUi\Chat\Domain\ConversationRepository;
 use Webconsulting\ShadcnUi\Chat\Domain\ConversationStatus;
+use Webconsulting\ShadcnUi\Chat\Turn\TurnRunner;
 use Webconsulting\ShadcnUi\Testing\ScriptedProvider;
 use Webconsulting\ShadcnUi\Tests\Functional\AbstractChatTestCase;
 
@@ -48,6 +49,25 @@ final class ChatApiTest extends AbstractChatTestCase
         self::assertContains('ask_user', array_column($status['tools'], 'name'));
         self::assertSame(['House style', 'Never delete'], array_column($status['instructions'], 'title'));
         self::assertSame('my_ext/dashboard', $status['context']['appName']);
+    }
+
+    /**
+     * The status payload is the one place where the PHP and the TypeScript
+     * describe the same object, and the frontend reads every key below by name.
+     */
+    #[Test]
+    public function statusCarriesExactlyTheLimitsAndFeatureFlagsTheClientReads(): void
+    {
+        $status = $this->decode($this->get(StatusController::class)->status($this->request()));
+
+        self::assertSame(
+            ['maxMessageLength', 'maxIterations', 'turnsPerHour', 'turnsRemaining', 'activeConversations'],
+            array_keys($status['limits']),
+        );
+        self::assertSame(TurnController::MAX_MESSAGE_LENGTH, $status['limits']['maxMessageLength']);
+        self::assertSame(TurnRunner::MAX_ITERATIONS, $status['limits']['maxIterations']);
+        self::assertSame(['sse', 'approvals', 'input', 'attachments', 'writes'], array_keys($status['features']));
+        self::assertFalse($status['features']['writes'], 'allowWrites defaults to off.');
     }
 
     #[Test]

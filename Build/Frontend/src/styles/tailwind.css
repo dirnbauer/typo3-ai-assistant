@@ -1,0 +1,381 @@
+@import 'tailwindcss' source(none);
+@import 'tw-animate-css';
+@import 'sonner/dist/styles.css';
+
+/*
+ * The scan set is pinned: automatic detection would walk PHP and Fluid full of
+ * words that look like utilities, and CI asserts this bundle byte for byte.
+ */
+@source '../**/*.{ts,tsx}';
+@source '../../demo/**/*.{ts,tsx}';
+
+/*
+ * The shell's stylesheet, adopted into a shadow root.
+ *
+ * Nothing here reaches the backend and nothing the backend ships reaches in —
+ * except custom properties, which are inherited across the boundary. So every
+ * shadcn token is defined here and pointed at the backend's own `--typo3-*`
+ * property, with a `light-dark()` fallback for a test environment or a renamed
+ * property. `light-dark()` resolves against the element's `color-scheme`,
+ * which lib/theme.ts mirrors onto the host.
+ */
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+:host {
+  color-scheme: light dark;
+
+  /* --- surfaces --------------------------------------------------------- */
+  --background: var(--typo3-surface-container-low, light-dark(#f7f7f8, #16181c));
+  --foreground: var(--typo3-text-color-base, light-dark(#1a1a1a, #e8e9ea));
+
+  --card: var(--typo3-surface-container-lowest, light-dark(#ffffff, #101216));
+  --card-foreground: var(--foreground);
+
+  --popover: var(--typo3-surface-container-lowest, light-dark(#ffffff, #101216));
+  --popover-foreground: var(--foreground);
+
+  --muted: var(--typo3-surface-container-base, light-dark(#eeeef0, #1d2026));
+  --muted-foreground: color-mix(in srgb, var(--foreground), transparent 38%);
+
+  --accent: var(--typo3-surface-container-high, light-dark(#e4e5e8, #23262d));
+  --accent-foreground: var(--foreground);
+
+  --secondary: var(--typo3-surface-container-high, light-dark(#e4e5e8, #23262d));
+  --secondary-foreground: var(--foreground);
+
+  /* --- action colours --------------------------------------------------- */
+  --primary: var(--typo3-state-primary-bg, light-dark(#0a7bd1, #1f8ad9));
+  --primary-foreground: var(--typo3-state-primary-color, #ffffff);
+
+  --destructive: var(--typo3-surface-danger, light-dark(#c83c3c, #a52f2f));
+  --destructive-foreground: var(--typo3-surface-danger-text, #ffffff);
+
+  --warning: var(--typo3-surface-warning, light-dark(#e8a33d, #7a5518));
+  --warning-foreground: var(--typo3-surface-warning-text, light-dark(#3a2a08, #ffffff));
+
+  --success: var(--typo3-surface-success, light-dark(#3a8f4f, #2c6d3c));
+  --success-foreground: var(--typo3-surface-success-text, #ffffff);
+
+  --info: var(--typo3-surface-info, light-dark(#2f7fc1, #275f8d));
+  --info-foreground: var(--typo3-surface-info-text, #ffffff);
+
+  /* --- lines and focus -------------------------------------------------- */
+  --border: color-mix(in srgb, var(--foreground), transparent 86%);
+  --border-strong: color-mix(in srgb, var(--foreground), transparent 74%);
+  --input: color-mix(in srgb, var(--foreground), transparent 80%);
+  --ring: var(--typo3-state-primary-focus-border-color, light-dark(#0967ae, #56b1f0));
+
+  --radius: 0.5rem;
+
+  /* --- type ------------------------------------------------------------- */
+  --font-ui: var(--typo3-font-family-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif);
+  --font-code: var(--typo3-font-family-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace);
+
+  /* The backend sets 12px, right for a table of records and wrong for a
+     paragraph of model prose. Chrome stays at the backend's size; the reading
+     column gets 13.5px. */
+  --text-chrome: 0.75rem;
+  --text-read: 0.84375rem;
+
+  /* Above the backend's scaffold, below its modals. */
+  --z-panel: 40;
+
+  /* The rail's and panel's bounds; the components read them, the shell sets them. */
+  --rail-min: 320px;
+  --rail-max: 480px;
+
+  display: block;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-ui);
+  --font-mono: var(--font-code);
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+}
+
+@layer base {
+  /* Preflight normalises `html` and `body`, neither of which exists inside a
+     shadow root — so the equivalent is said about the one element that does. */
+  .sui-root {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: var(--font-ui);
+    font-size: var(--text-chrome);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-size-adjust: 100%;
+  }
+
+  .sui-root *:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
+    border-radius: 2px;
+  }
+
+  .sui-root ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .sui-root ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--foreground), transparent 80%);
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+  }
+  .sui-root ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--foreground), transparent 60%);
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  .sui-root ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* The signature: a live run says so by moving. Switched off under
+   prefers-reduced-motion, where the row and its text remain. */
+@utility shimmer {
+  --shimmer-spread: calc(3ch + 40px);
+  --shimmer-base: var(--muted-foreground);
+  --shimmer-highlight: var(--foreground);
+
+  background-image: linear-gradient(
+    100deg,
+    var(--shimmer-base) calc(50% - var(--shimmer-spread)),
+    var(--shimmer-highlight) 50%,
+    var(--shimmer-base) calc(50% + var(--shimmer-spread))
+  );
+  background-repeat: no-repeat;
+  background-size: calc(200% + var(--shimmer-spread) * 2) 100%;
+  background-position: 100% 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: sui-shimmer 2.4s linear infinite;
+}
+
+@keyframes sui-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* A scroll container that fades where there is more to see. */
+@utility scroll-fade-b {
+  --sui-fade: 2.5rem;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - var(--sui-fade)), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - var(--sui-fade)), transparent 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+@utility scroll-fade-x {
+  --sui-fade: 1.5rem;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--sui-fade), #000 calc(100% - var(--sui-fade)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--sui-fade), #000 calc(100% - var(--sui-fade)), transparent 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+@utility scrollbar-gutter-stable {
+  scrollbar-gutter: stable;
+}
+
+/* A new row arriving in the thread, rather than appearing. */
+@utility sui-enter {
+  animation: sui-enter 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes sui-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+ * The effect spine: every tool card carries a rule down its leading edge,
+ * coloured by what the call will DO. The one ornament that encodes something
+ * the reader needs — the consequence class the approval gate acts on.
+ */
+@utility effect-spine {
+  box-shadow: inset 2px 0 0 0 var(--spine, var(--border-strong));
+}
+
+@utility effect-read_only {
+  --spine: color-mix(in srgb, var(--foreground), transparent 65%);
+}
+
+@utility effect-idempotent_write {
+  --spine: var(--warning);
+}
+
+@utility effect-non_idempotent_write {
+  --spine: var(--destructive);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer {
+    animation: none;
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+    color: var(--muted-foreground);
+  }
+
+  .sui-root,
+  .sui-root *,
+  .sui-root *::before,
+  .sui-root *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Markdown prose: a reading column, not a document. */
+@layer components {
+  .sui-prose {
+    font-size: var(--text-read);
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+  .sui-prose > * + * {
+    margin-top: 0.6em;
+  }
+  .sui-prose h1,
+  .sui-prose h2,
+  .sui-prose h3,
+  .sui-prose h4 {
+    font-weight: 600;
+    line-height: 1.3;
+    margin-top: 1.1em;
+  }
+  .sui-prose h1 {
+    font-size: 1.3em;
+  }
+  .sui-prose h2 {
+    font-size: 1.16em;
+  }
+  .sui-prose h3 {
+    font-size: 1.06em;
+  }
+  .sui-prose h4 {
+    font-size: 1em;
+  }
+  .sui-prose ul,
+  .sui-prose ol {
+    padding-inline-start: 1.35em;
+  }
+  .sui-prose ul {
+    list-style: disc;
+  }
+  .sui-prose ol {
+    list-style: decimal;
+  }
+  .sui-prose li + li {
+    margin-top: 0.25em;
+  }
+  .sui-prose a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .sui-prose code {
+    font-family: var(--font-code);
+    font-size: 0.92em;
+    background: var(--muted);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+  .sui-prose pre {
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.7em 0.8em;
+    overflow-x: auto;
+  }
+  .sui-prose pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.9em;
+  }
+  .sui-prose blockquote {
+    border-inline-start: 2px solid var(--border-strong);
+    padding-inline-start: 0.8em;
+    color: var(--muted-foreground);
+  }
+  .sui-prose table {
+    display: block;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 0.95em;
+  }
+  .sui-prose th,
+  .sui-prose td {
+    border: 1px solid var(--border);
+    padding: 0.3em 0.5em;
+    text-align: start;
+  }
+  .sui-prose th {
+    background: var(--muted);
+    font-weight: 600;
+  }
+  .sui-prose hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+}

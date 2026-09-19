@@ -43,7 +43,8 @@ use Webconsulting\ShadcnUi\Configuration\ExtensionSettings;
  */
 final readonly class TurnRunner
 {
-    private const MAX_ITERATIONS = 8;
+    /** How many LLM rounds one turn may take. Reported by the status route so the rail can say so. */
+    public const MAX_ITERATIONS = 8;
 
     /** Auto-approval is a convenience, not a loop: a turn may skip this many pauses, then it asks. */
     private const MAX_AUTO_APPROVALS = 5;
