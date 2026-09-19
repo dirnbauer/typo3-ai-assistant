@@ -19,7 +19,7 @@ Requirements
     *   -   netresearch/nr-llm
         -   0.35, with one working configuration
     *   -   hn/typo3-mcp-server
-        -   0.7 (the `dirnbauer/typo3-mcp-server` fork)
+        -   0.8 (the `dirnbauer/typo3-mcp-server` fork)
 
 Install
 =======

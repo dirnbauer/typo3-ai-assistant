@@ -6,6 +6,17 @@ Changelog
 
 The full history is in :file:`CHANGELOG.md`.
 
+1.0.1
+=====
+
+Support for `hn/typo3-mcp-server` 0.8, which is now required.
+
+*   0.8 hands every tool out as an `AbstractTool`, wrapping anything that is
+    not native in a `CompatibleToolAdapter`. Reflecting what the registry
+    returns therefore found no `#[AdminOnly]` attribute on exactly the
+    third-party tools it restricts, and offered them to every editor. The
+    classifier now asks the tool instead.
+
 1.0.0
 =====
 

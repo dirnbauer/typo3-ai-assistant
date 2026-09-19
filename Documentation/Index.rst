@@ -14,7 +14,7 @@ shadcn/ui for the TYPO3 backend
     webconsulting/typo3-shadcn-ui
 
 :Version:
-    1.0.0
+    1.0.1
 
 :Language:
     en

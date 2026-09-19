@@ -1,6 +1,6 @@
 {
   "name": "webconsulting-typo3-shadcn-ui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "description": "The shadcn/ui runtime for TYPO3 backend modules and the AI chat built on it",

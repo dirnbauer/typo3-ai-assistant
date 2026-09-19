@@ -5,6 +5,24 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-09-19
+
+### Changed
+
+- `hn/typo3-mcp-server` is now required as `^0.8`. 0.8 hands every tool out as
+  an `AbstractTool` and moved the `#[AdminOnly]` / `#[DevSiteOnly]` verdicts
+  onto the tool itself, which is the API this release uses.
+
+### Fixed
+
+- **An admin-only third-party MCP tool was offered to every backend user under
+  mcp_server 0.8.** The registry wraps a non-native tool in a
+  `CompatibleToolAdapter`, whose own class carries no attributes, so
+  `ToolEffectClassifier::requiresAdmin()` found nothing when it reflected what
+  the registry returned. It now asks the tool through `isAdminOnly()`, which
+  the adapter answers from the class it wraps. A unit test drives the real
+  registry so the wrapping is part of what is proven.
+
 ## [1.0.0] - 2026-09-19
 
 The first release.
@@ -55,4 +73,5 @@ The first release.
 - `shadcn-ui:chat:cleanup`: releases conversations a dead request left claimed,
   applies retention, and removes orphaned rows and files.
 
+[1.0.1]: https://github.com/dirnbauer/typo3-shadcn-ui/releases/tag/v1.0.1
 [1.0.0]: https://github.com/dirnbauer/typo3-shadcn-ui/releases/tag/v1.0.0

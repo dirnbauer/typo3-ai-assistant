@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Tool;
 
 use Hn\McpServer\MCP\Tool\Attribute\AdminOnly;
+use Hn\McpServer\MCP\Tool\CompatibleToolAdapter;
+use Hn\McpServer\MCP\ToolRegistry;
 use Hn\McpServer\Service\CapabilityManifestService;
 use Netresearch\NrLlm\Domain\Enum\ToolDataClass;
 use Netresearch\NrLlm\Domain\Enum\ToolEffect;
@@ -92,13 +94,30 @@ final class ToolEffectClassifierTest extends TestCase
         self::assertSame(ToolEffect::READ_ONLY, $classifier->classify('Odd', ['annotations' => ['readOnlyHint' => true]]));
     }
 
+    /**
+     * Through the REAL registry, because that is what the provider passes and
+     * because mcp_server wraps a non-native tool in a CompatibleToolAdapter:
+     * a classifier that reflected what the registry returned would find no
+     * attribute on exactly the third-party tools it is meant to restrict.
+     */
     #[Test]
-    public function theAdminOnlyAttributeMakesAToolAdminOnly(): void
+    public function theAdminOnlyAttributeMakesAToolAdminOnlyEvenWhenTheRegistryWrappedIt(): void
     {
-        $classifier = new ToolEffectClassifier($this->manifestFor(['Whatever' => ['database:read']]));
+        $classifier = new ToolEffectClassifier($this->manifestFor(['AdminOnlyFixture' => ['database:read'], 'OrdinaryFixture' => ['database:read']]));
+        $registry = new ToolRegistry([new AdminOnlyFixtureTool(), new OrdinaryFixtureTool()]);
 
-        self::assertTrue($classifier->requiresAdmin('Whatever', new AdminOnlyFixtureTool()));
-        self::assertFalse($classifier->requiresAdmin('Whatever', new OrdinaryFixtureTool()));
+        self::assertInstanceOf(CompatibleToolAdapter::class, $registry->getTool('AdminOnlyFixture'));
+        self::assertTrue($classifier->requiresAdmin('AdminOnlyFixture', $registry->getTool('AdminOnlyFixture')));
+        self::assertFalse($classifier->requiresAdmin('OrdinaryFixture', $registry->getTool('OrdinaryFixture')));
+    }
+
+    #[Test]
+    public function aToolNobodyHandedOverIsJudgedByItsSubsystemsAlone(): void
+    {
+        $classifier = new ToolEffectClassifier($this->manifestFor(['Shell' => ['cli:safe'], 'Reader' => ['database:read']]));
+
+        self::assertTrue($classifier->requiresAdmin('Shell'));
+        self::assertFalse($classifier->requiresAdmin('Reader'));
     }
 
     #[Test]
@@ -164,6 +183,34 @@ final class ToolEffectClassifierTest extends TestCase
 }
 
 #[AdminOnly]
-final class AdminOnlyFixtureTool {}
+final class AdminOnlyFixtureTool
+{
+    public function getName(): string
+    {
+        return 'AdminOnlyFixture';
+    }
 
-final class OrdinaryFixtureTool {}
+    /**
+     * @param array<string, mixed> $params
+     */
+    public function execute(array $params): string
+    {
+        return 'ok';
+    }
+}
+
+final class OrdinaryFixtureTool
+{
+    public function getName(): string
+    {
+        return 'OrdinaryFixture';
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     */
+    public function execute(array $params): string
+    {
+        return 'ok';
+    }
+}

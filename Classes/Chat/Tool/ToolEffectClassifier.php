@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Webconsulting\ShadcnUi\Chat\Tool;
 
-use Hn\McpServer\MCP\Tool\Attribute\AdminOnly;
+use Hn\McpServer\MCP\Tool\AbstractTool;
 use Hn\McpServer\Service\CapabilityManifestService;
 use Netresearch\NrLlm\Domain\Enum\ToolDataClass;
 use Netresearch\NrLlm\Domain\Enum\ToolEffect;
-use ReflectionClass;
 
 /**
  * Decides what an MCP tool DOES to the installation, from two sources the MCP
@@ -109,12 +108,20 @@ final readonly class ToolEffectClassifier
     }
 
     /**
-     * Whether the tool may only be offered to an administrator: the MCP server's
-     * own `#[AdminOnly]` attribute, or a subsystem no editor should reach.
+     * Whether the tool may only be offered to an administrator: the MCP
+     * server's own `#[AdminOnly]` verdict, or a subsystem no editor should
+     * reach.
+     *
+     * The tool is ASKED rather than reflected. Since mcp_server 0.8 the
+     * registry hands out an {@see AbstractTool}, and a tool that is not native
+     * arrives wrapped in a CompatibleToolAdapter — whose own class carries no
+     * attributes. Reflecting what the registry returns would therefore find
+     * nothing on exactly the third-party tools the attribute exists to
+     * restrict, and offer them to every editor.
      */
-    public function requiresAdmin(string $mcpToolName, ?object $toolInstance = null): bool
+    public function requiresAdmin(string $mcpToolName, ?AbstractTool $tool = null): bool
     {
-        if ($toolInstance !== null && (new ReflectionClass($toolInstance))->getAttributes(AdminOnly::class) !== []) {
+        if ($tool?->isAdminOnly() === true) {
             return true;
         }
 
