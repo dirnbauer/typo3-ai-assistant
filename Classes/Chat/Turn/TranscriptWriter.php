@@ -64,15 +64,17 @@ final readonly class TranscriptWriter
     /**
      * Turn the recorded steps into message rows.
      *
-     * @param list<RunStep>                         $steps
-     * @param list<array{id: string, name: string}> $resumedCalls calls requested in an EARLIER
-     *                                                            segment of the same run
+     * @param list<RunStep>        $steps
+     * @param array<string, mixed> $resumedCard the approval or input card a resumed run
+     *                                          was waiting on, naming the calls its
+     *                                          earlier segment requested
      *
      * @return list<Message>
      */
-    public function persistSteps(Conversation $conversation, array $steps, string $runUuid, array $resumedCalls = []): array
+    public function persistSteps(Conversation $conversation, array $steps, string $runUuid, array $resumedCard = []): array
     {
-        $openCalls = $resumedCalls;
+        $openCalls = new OpenCalls();
+        $openCalls->pushCard($resumedCard);
         $persisted = [];
 
         foreach ($steps as $step) {
@@ -91,31 +93,6 @@ final readonly class TranscriptWriter
         }
 
         return $persisted;
-    }
-
-    /**
-     * The calls named by a stored approval card, in the shape the recorder and
-     * the writer correlate against.
-     *
-     * @param array<string, mixed> $pending
-     *
-     * @return list<array{id: string, name: string}>
-     */
-    public static function resumedCalls(array $pending): array
-    {
-        $calls = [];
-        foreach (is_array($pending['calls'] ?? null) ? $pending['calls'] : [] as $call) {
-            if (!is_array($call)) {
-                continue;
-            }
-            $name = is_string($call['name'] ?? null) ? $call['name'] : '';
-            $id = is_string($call['callId'] ?? null) ? $call['callId'] : '';
-            if ($name !== '' && $id !== '') {
-                $calls[] = ['id' => $id, 'name' => $name];
-            }
-        }
-
-        return $calls;
     }
 
     /**
@@ -153,17 +130,14 @@ final readonly class TranscriptWriter
         );
     }
 
-    /**
-     * @param list<array{id: string, name: string}> $openCalls
-     */
-    private function assistantRow(Conversation $conversation, RunStep $step, string $runUuid, array &$openCalls): ?Message
+    private function assistantRow(Conversation $conversation, RunStep $step, string $runUuid, OpenCalls $openCalls): ?Message
     {
         $wireCalls = [];
         foreach (StepRecorder::requestedCalls($step) as $call) {
             if ($call['id'] === '') {
                 continue;
             }
-            $openCalls[] = ['id' => $call['id'], 'name' => $call['name']];
+            $openCalls->push($call['id'], $call['name']);
             $wireCalls[] = ToolCall::function($call['id'], $call['name'], $call['arguments'])->toArray();
         }
 
@@ -185,20 +159,9 @@ final readonly class TranscriptWriter
         );
     }
 
-    /**
-     * @param list<array{id: string, name: string}> $openCalls
-     */
-    private function toolRow(Conversation $conversation, RunStep $step, string $runUuid, array &$openCalls): ?Message
+    private function toolRow(Conversation $conversation, RunStep $step, string $runUuid, OpenCalls $openCalls): ?Message
     {
-        $callId = '';
-        foreach ($openCalls as $index => $call) {
-            if ($call['name'] === ($step->toolName ?? '')) {
-                $callId = $call['id'];
-                unset($openCalls[$index]);
-                $openCalls = array_values($openCalls);
-                break;
-            }
-        }
+        $callId = $openCalls->take($step->toolName ?? '');
         if ($callId === '') {
             // A tool message with no call to answer is rejected by every
             // provider; dropping it keeps the transcript replayable. The full

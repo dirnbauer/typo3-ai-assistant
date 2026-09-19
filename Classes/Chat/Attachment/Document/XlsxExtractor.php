@@ -4,18 +4,21 @@ declare(strict_types=1);
 
 namespace Webconsulting\ShadcnUi\Chat\Attachment\Document;
 
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Throwable;
 use Webconsulting\ShadcnUi\Chat\Attachment\AttachmentRejectedException;
 
 /**
- * Spreadsheets, when phpoffice/phpspreadsheet is installed (a suggested, not
- * required, dependency). The library is reached by name so the class loads —
- * and reports itself unavailable — without it.
+ * Spreadsheets, when phpoffice/phpspreadsheet is installed — a suggested, not
+ * required, dependency.
+ *
+ * {@see DocumentExtractorRegistry} drops an extractor that reports itself
+ * unavailable before anything can reach it, so the library is only ever named
+ * below the `isAvailable()` gate and may be used directly.
  */
 final class XlsxExtractor implements DocumentExtractorInterface
 {
-    private const IO_FACTORY = 'PhpOffice\PhpSpreadsheet\IOFactory';
-
     public function mimeTypes(): array
     {
         return ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
@@ -33,7 +36,7 @@ final class XlsxExtractor implements DocumentExtractorInterface
 
     public function isAvailable(): bool
     {
-        return class_exists(self::IO_FACTORY);
+        return class_exists(IOFactory::class);
     }
 
     public function validate(string $path): void
@@ -43,9 +46,8 @@ final class XlsxExtractor implements DocumentExtractorInterface
 
     public function extract(string $path): string
     {
-        $spreadsheet = $this->load($path, 1795000431);
         $lines = [];
-        foreach ($spreadsheet->getWorksheetIterator() as $worksheet) {
+        foreach ($this->load($path, 1795000431)->getWorksheetIterator() as $worksheet) {
             $lines[] = $worksheet->getTitle();
             foreach ($worksheet->toArray(null, true, true, false) as $row) {
                 $cells = array_values(array_filter(
@@ -61,25 +63,10 @@ final class XlsxExtractor implements DocumentExtractorInterface
         return trim(implode("\n", $lines));
     }
 
-    /**
-     * @return \PhpOffice\PhpSpreadsheet\Spreadsheet
-     */
-    private function load(string $path, int $code): object
+    private function load(string $path, int $code): Spreadsheet
     {
         try {
-            $load = [self::IO_FACTORY, 'load'];
-            if (!is_callable($load)) {
-                throw new AttachmentRejectedException('phpoffice/phpspreadsheet is not installed.', $code);
-            }
-            $spreadsheet = $load($path);
-            if (!is_object($spreadsheet) || !method_exists($spreadsheet, 'getWorksheetIterator')) {
-                throw new AttachmentRejectedException('The spreadsheet could not be opened.', $code);
-            }
-
-            /** @var \PhpOffice\PhpSpreadsheet\Spreadsheet $spreadsheet */
-            return $spreadsheet;
-        } catch (AttachmentRejectedException $exception) {
-            throw $exception;
+            return IOFactory::load($path);
         } catch (Throwable $exception) {
             throw new AttachmentRejectedException('XLSX could not be read: ' . $exception->getMessage(), $code, $exception);
         }

@@ -62,7 +62,9 @@ final readonly class BackendUserContext
 
     public function workspaceId(): int
     {
-        return $this->user()?->workspace ?? 0;
+        $user = $this->user();
+
+        return $user === null ? 0 : $user->workspace;
     }
 
     /**

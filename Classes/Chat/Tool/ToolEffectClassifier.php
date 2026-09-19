@@ -26,9 +26,13 @@ use ReflectionClass;
  */
 final readonly class ToolEffectClassifier
 {
-    /** Subsystems whose write nature is not in their name (`:write` is caught by suffix). */
-    private const WRITE_SUBSYSTEMS = ['cli:safe', 'extension:install', 'project:write', 'scheduler:task', 'site:write', 'cache:write', 'x402:payments'];
-
+    /**
+     * The ONLY subsystems that read. Everything else — a `:write` suffix, a
+     * named write, `network:*`, a subsystem added after this release — writes,
+     * so a new capability is dangerous until someone says otherwise here.
+     *
+     * @var list<string>
+     */
     private const READ_SUBSYSTEMS = ['database:read', 'database:schema', 'file:read', 'log:read', 'workspace:read', 'typoscript:provider', 'site:middleware', 'render:frontend'];
 
     /** Subsystems whose reach is the whole installation or the host. */

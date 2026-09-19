@@ -6,24 +6,39 @@ namespace Webconsulting\ShadcnUi\Chat\Turn;
 
 use Netresearch\NrLlm\Domain\Enum\AgentRunOutcome;
 use Netresearch\NrLlm\Service\Agent\AgentRunResult;
+use UnhandledMatchError;
 use Webconsulting\ShadcnUi\Chat\Domain\ConversationStatus;
 use Webconsulting\ShadcnUi\Chat\ErrorMessageSanitizer;
 
 /**
  * The ONE place that names {@see AgentRunOutcome} cases.
  *
- * nr-llm says outcomes may be added in a minor release and consumers must keep
- * a default arm. The default settles the conversation as FAILED with a
- * sanitized reason — the safe direction for an outcome this version has never
- * heard of, since an idle conversation would invite the user to send another
- * message on top of it.
+ * Every case this version knows is spelled out, so the compiler and the static
+ * analyser both notice when nr-llm adds one. An outcome added in a later minor
+ * release lands in the catch below rather than in a silent default arm.
  */
 final readonly class RunOutcomeMapper
 {
     public function map(AgentRunResult $result): TurnOutcome
     {
-        $raw = $result->outcome->value;
+        try {
+            return self::outcomeOf($result);
+        } catch (UnhandledMatchError) {
+            // nr-llm may add outcomes in a minor release. FAILED is the safe
+            // direction for one this version has never heard of: an idle
+            // conversation would invite the user to send another message on
+            // top of a turn nobody can account for.
+            return new TurnOutcome(
+                ConversationStatus::Failed,
+                true,
+                'failed',
+                self::reason($result, sprintf('The run ended with an outcome this version does not handle (%s).', $result->outcome->value)),
+            );
+        }
+    }
 
+    private static function outcomeOf(AgentRunResult $result): TurnOutcome
+    {
         return match ($result->outcome) {
             AgentRunOutcome::COMPLETED => new TurnOutcome(ConversationStatus::Idle, true, 'completed'),
             AgentRunOutcome::AWAITING_APPROVAL => new TurnOutcome(ConversationStatus::AwaitingApproval, false, 'awaiting_approval'),
@@ -54,12 +69,6 @@ final readonly class RunOutcomeMapper
                 self::reason($result, 'The approval for this run could not be recorded, so it was stopped.'),
             ),
             AgentRunOutcome::FAILED => new TurnOutcome(ConversationStatus::Failed, true, 'failed', self::reason($result, 'The turn failed.')),
-            default => new TurnOutcome(
-                ConversationStatus::Failed,
-                true,
-                'failed',
-                self::reason($result, sprintf('The run ended with an outcome this version does not handle (%s).', $raw)),
-            ),
         };
     }
 

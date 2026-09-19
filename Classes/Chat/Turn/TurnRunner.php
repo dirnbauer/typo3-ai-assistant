@@ -130,7 +130,7 @@ final readonly class TurnRunner
             $runUuid,
             fn(Closure $onStep): AgentRunResult => $this->runtime->approve($this->backendUser->actor(), $runUuid, $decision, $onStep),
             $emit,
-            TranscriptWriter::resumedCalls($conversation->pendingApproval),
+            $conversation->pendingApproval,
             fn() => $this->conversations->settle($conversation->uid, $conversation->beUser, ConversationStatus::AwaitingApproval, $runUuid, pendingApproval: $conversation->pendingApproval),
         );
     }
@@ -153,7 +153,7 @@ final readonly class TurnRunner
             $runUuid,
             fn(Closure $onStep): AgentRunResult => $this->runtime->submitInput($this->backendUser->actor(), $runUuid, $submission, $onStep),
             $emit,
-            TranscriptWriter::resumedCalls($conversation->pendingInput),
+            $conversation->pendingInput,
             fn() => $this->conversations->settle($conversation->uid, $conversation->beUser, ConversationStatus::AwaitingInput, $runUuid, pendingInput: $conversation->pendingInput),
         );
     }
@@ -184,21 +184,22 @@ final readonly class TurnRunner
      *
      * @param Closure(Closure(RunStep): void): AgentRunResult $driver       the runtime call
      * @param Closure(string, array<string, mixed>): void    $emit
-     * @param list<array{id: string, name: string}>          $resumedCalls
-     * @param (Closure(): void)|null                          $restore      puts the conversation back into
-     *                                                                       its pause when the runtime refuses
-     *                                                                       the decision before executing anything
+     * @param array<string, mixed>                           $resumedCard the approval or input card this
+     *                                                                     turn continues, empty for a new turn
+     * @param (Closure(): void)|null                          $restore     puts the conversation back into
+     *                                                                     its pause when the runtime refuses
+     *                                                                     the decision before executing anything
      */
     private function drive(
         Conversation $conversation,
         string $runUuid,
         Closure $driver,
         Closure $emit,
-        array $resumedCalls = [],
+        array $resumedCard = [],
         ?Closure $restore = null,
     ): TurnResult {
         $recorder = new StepRecorder($this->effectLookup, $this->writeLedger);
-        $recorder->seedOpenCalls($resumedCalls);
+        $recorder->seedOpenCalls($resumedCard);
         $onStep = static function (RunStep $step) use ($recorder, $emit): void {
             $recorder->record($step);
             foreach ($recorder->drainEvents() as [$name, $payload]) {
@@ -228,7 +229,7 @@ final readonly class TurnRunner
         // A run driven without a live emitter still has steps to replay.
         $recorder->recordAll($result->steps);
 
-        return $this->settle($conversation, $runUuid, $result, $recorder, $emit, $resumedCalls);
+        return $this->settle($conversation, $runUuid, $result, $recorder, $emit, $resumedCard);
     }
 
     /**
@@ -251,7 +252,7 @@ final readonly class TurnRunner
 
             $card = $this->suspension->approval($result->runUuid, $result->suspendedState);
             $recorder->recordAll($result->steps);
-            $recorder->seedOpenCalls(TranscriptWriter::resumedCalls($card));
+            $recorder->seedOpenCalls($card);
 
             $result = $this->runtime->approve(
                 $this->backendUser->actor(),
@@ -266,14 +267,14 @@ final readonly class TurnRunner
 
     /**
      * @param Closure(string, array<string, mixed>): void $emit
-     * @param list<array{id: string, name: string}>       $resumedCalls
+     * @param array<string, mixed>                        $resumedCard
      */
-    private function settle(Conversation $conversation, string $claimedRunUuid, AgentRunResult $result, StepRecorder $recorder, Closure $emit, array $resumedCalls): TurnResult
+    private function settle(Conversation $conversation, string $claimedRunUuid, AgentRunResult $result, StepRecorder $recorder, Closure $emit, array $resumedCard): TurnResult
     {
         $runUuid = $result->runUuid !== '' ? $result->runUuid : $claimedRunUuid;
         $outcome = $this->outcomes->map($result);
 
-        $persisted = $this->writer->persistSteps($conversation, $recorder->steps(), $runUuid, $resumedCalls);
+        $persisted = $this->writer->persistSteps($conversation, $recorder->steps(), $runUuid, $resumedCard);
         foreach ($persisted as $message) {
             if ($message->role === MessageRole::Assistant && $message->toolCalls === []) {
                 $emit('message.final', ['messageUid' => $message->uid, 'content' => $message->content]);

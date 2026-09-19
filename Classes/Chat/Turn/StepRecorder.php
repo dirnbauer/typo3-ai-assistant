@@ -29,28 +29,25 @@ final class StepRecorder
     /** @var list<array{0: string, 1: array<string, mixed>}> */
     private array $pendingEvents = [];
 
-    /** @var list<array{id: string, name: string}> requested-but-unanswered calls, oldest first */
-    private array $openCalls = [];
+    private OpenCalls $openCalls;
 
     public function __construct(
         private readonly ToolEffectLookup $effectLookup,
         private readonly WriteLedger $writeLedger,
-    ) {}
+    ) {
+        $this->openCalls = new OpenCalls();
+    }
 
     /**
-     * Adopt calls requested in an EARLIER segment of the same run — a run
-     * resumed after an approval or an answer starts a fresh step list, and
-     * without the seed every resumed result would arrive with no call id.
+     * Adopt the calls a stored approval or input card names — a run resumed
+     * after an approval or an answer starts a fresh step list, and without the
+     * seed every resumed result would arrive with no call id.
      *
-     * @param list<array{id: string, name: string}> $calls
+     * @param array<string, mixed> $card
      */
-    public function seedOpenCalls(array $calls): void
+    public function seedOpenCalls(array $card): void
     {
-        foreach ($calls as $call) {
-            if ($call['name'] !== '') {
-                $this->openCalls[] = $call;
-            }
-        }
+        $this->openCalls->pushCard($card);
     }
 
     public function record(RunStep $step): void
@@ -98,23 +95,6 @@ final class StepRecorder
         $this->pendingEvents = [];
 
         return $events;
-    }
-
-    /**
-     * The call id a tool step answers, consuming the correlation.
-     */
-    public function correlate(string $toolName): string
-    {
-        foreach ($this->openCalls as $index => $call) {
-            if ($call['name'] === $toolName) {
-                unset($this->openCalls[$index]);
-                $this->openCalls = array_values($this->openCalls);
-
-                return $call['id'];
-            }
-        }
-
-        return '';
     }
 
     /**
@@ -168,7 +148,7 @@ final class StepRecorder
         $this->pendingEvents[] = ['step.llm', $payload];
 
         foreach (self::requestedCalls($step) as $call) {
-            $this->openCalls[] = ['id' => $call['id'], 'name' => $call['name']];
+            $this->openCalls->push($call['id'], $call['name']);
             $this->pendingEvents[] = ['step.tool.call', [
                 'round' => $step->round,
                 'callId' => $call['id'],
@@ -183,7 +163,7 @@ final class StepRecorder
     {
         $name = $step->toolName ?? '';
         $payload = [
-            'callId' => $this->correlate($name),
+            'callId' => $this->openCalls->take($name),
             'name' => $name,
             'isError' => $step->toolIsError ?? false,
             'preview' => self::preview($step->toolResult ?? ''),

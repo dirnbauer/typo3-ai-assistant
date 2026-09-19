@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Webconsulting\ShadcnUi\Chat\Domain;
 
+use RuntimeException;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
@@ -85,7 +86,7 @@ final readonly class ConversationRepository
 
         $created = $this->findByUid((int)$connection->lastInsertId());
         if (!$created instanceof Conversation) {
-            throw new \RuntimeException('The conversation row could not be read back after insert.', 1795000001);
+            throw new RuntimeException('The conversation row could not be read back after insert.', 1795000001);
         }
 
         return $created;

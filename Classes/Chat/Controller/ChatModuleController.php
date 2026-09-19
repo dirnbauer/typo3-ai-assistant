@@ -33,14 +33,14 @@ final readonly class ChatModuleController
         // A uid in a URL is a request, not an entitlement: it only survives if it
         // resolves to a conversation this user owns.
         $requested = $request->getQueryParams()['conversation'] ?? null;
-        $conversation = is_numeric($requested)
-            ? $this->conversations->findOneByUidAndBeUser((int)$requested, $this->backendUser->uid())?->uid ?? 0
-            : 0;
+        $owned = is_numeric($requested)
+            ? $this->conversations->findOneByUidAndBeUser((int)$requested, $this->backendUser->uid())
+            : null;
 
         return $this->renderer->render($request, new ShadcnApp(
             name: self::APP,
             jsModule: ShadcnModuleRenderer::RUNTIME_MODULE,
-            props: ['conversation' => $conversation],
+            props: ['conversation' => $owned === null ? 0 : $owned->uid],
             layout: ShellLayout::ChatLeft,
             title: 'AI Chat',
         ));
