@@ -1,0 +1,8 @@
+"tx_shadcnui_instruction",,,,,,,
+,"uid","pid","sorting","hidden","deleted","title","body","be_groups"
+,1,0,10,0,0,"House style","  Write in the second person.  ",""
+,2,0,20,0,0,"Never delete","Never delete a record without asking.",""
+,3,0,30,0,0,"Editors only","Editors work in the draft workspace.","1"
+,4,0,40,1,0,"Hidden","This one is switched off.",""
+,5,0,50,0,1,"Deleted","This one is gone.",""
+,6,0,60,0,0,"Blank body","   ",""

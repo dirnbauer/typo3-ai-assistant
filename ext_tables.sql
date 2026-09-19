@@ -50,5 +50,6 @@ CREATE TABLE tx_shadcnui_message (
 CREATE TABLE tx_shadcnui_instruction (
   title varchar(255) DEFAULT '' NOT NULL,
   body text,
-  be_groups varchar(255) DEFAULT '' NOT NULL
+  be_groups varchar(255) DEFAULT '' NOT NULL,
+  description text
 );

@@ -21,7 +21,6 @@ return [
         'typeicon_classes' => [
             'default' => 'shadcn-ui-record-instruction',
         ],
-        'searchFields' => 'title,body',
     ],
     'types' => [
         '0' => [
@@ -62,6 +61,9 @@ return [
             'config' => [
                 'type' => 'text',
                 'rows' => 3,
+                // An editor's note to other editors, not part of the prompt:
+                // finding an instruction by it would be finding the wrong thing.
+                'searchable' => false,
             ],
         ],
     ],

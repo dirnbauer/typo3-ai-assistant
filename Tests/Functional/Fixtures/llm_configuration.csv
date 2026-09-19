@@ -1,0 +1,9 @@
+"tx_nrllm_provider",,,,,,,,,,
+,"uid","pid","identifier","name","adapter_type","trust_zone","endpoint_url","api_key","is_active","hidden"
+,1,0,"scripted","Scripted","scripted","local","https://scripted.invalid","",1,0
+"tx_nrllm_model",,,,,,,,,,
+,"uid","pid","identifier","name","provider_uid","model_id","capabilities","context_length","max_output_tokens","is_active","hidden"
+,1,0,"scripted-1","Scripted 1",1,"scripted-1","chat,tools",128000,4096,1,0
+"tx_nrllm_configuration",,,,,,,,,,
+,"uid","pid","identifier","name","model_uid","system_prompt","temperature","max_tokens","is_active","hidden"
+,1,0,"backend-assistant","Backend assistant",1,"You help in the TYPO3 backend.",0.70,1000,1,0
