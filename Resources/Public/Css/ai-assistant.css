@@ -1,0 +1,629 @@
+/*
+ * AI Assistant — layout only.
+ *
+ * Buttons, badges, callouts, forms, lists and dropdowns are the core's own
+ * classes; this file places them. Every colour is a core token, and the tokens
+ * resolve through light-dark(), so both colour schemes follow the backend.
+ */
+
+.webcon-ai-assistant-module {
+  --webcon-ai-assistant-pane-height: max(28rem, calc(100dvh - var(--module-docheader-height, 6rem) - var(--module-body-padding-y, 1.5rem) * 2 - 4.5rem));
+  --webcon-ai-assistant-border: var(--typo3-component-border-width, 1px) solid var(--typo3-component-border-color);
+}
+
+.webcon-ai-assistant-workspace {
+  display: grid;
+  gap: calc(var(--typo3-spacing) * 1.25);
+  grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr) minmax(15rem, 20rem);
+  grid-template-rows: var(--webcon-ai-assistant-pane-height);
+}
+
+.webcon-ai-assistant-column {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+  min-inline-size: 0;
+}
+
+.webcon-ai-assistant-column-list,
+.webcon-ai-assistant-column-details {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 1199.98px) {
+  .webcon-ai-assistant-workspace {
+    grid-template-columns: minmax(13rem, 16rem) minmax(0, 1fr);
+    grid-template-rows: var(--webcon-ai-assistant-pane-height) auto;
+  }
+
+  .webcon-ai-assistant-column-details {
+    grid-column: 1 / -1;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .webcon-ai-assistant-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto var(--webcon-ai-assistant-pane-height) auto;
+  }
+
+  .webcon-ai-assistant-column-list {
+    max-block-size: 16rem;
+  }
+}
+
+/* ---------------------------------------------------------------- the chat */
+
+.webcon-ai-assistant-chat {
+  background-color: var(--typo3-surface-container-lowest);
+  block-size: 100%;
+  border: var(--webcon-ai-assistant-border, 1px solid var(--typo3-component-border-color));
+  border-radius: var(--typo3-component-border-radius);
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+.webcon-ai-assistant-chat-header {
+  align-items: center;
+  border-block-end: var(--webcon-ai-assistant-border, 1px solid var(--typo3-component-border-color));
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--typo3-spacing) * 0.5);
+  padding: calc(var(--typo3-spacing) * 0.75) var(--typo3-spacing);
+}
+
+.webcon-ai-assistant-chat-title {
+  flex: 1 1 auto;
+  font-size: 1.125rem;
+  margin: 0;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.webcon-ai-assistant-picker {
+  flex: 1 1 auto;
+  inline-size: auto;
+  min-inline-size: 0;
+}
+
+.webcon-ai-assistant-chat > .webcon-ai-assistant-callout {
+  margin: calc(var(--typo3-spacing) * 0.75) var(--typo3-spacing) 0;
+}
+
+.webcon-ai-assistant-callout {
+  align-items: flex-start;
+}
+
+.webcon-ai-assistant-callout .callout-content {
+  flex: 1 1 auto;
+}
+
+.webcon-ai-assistant-thread {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: calc(var(--typo3-spacing) * 0.75);
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--typo3-spacing);
+}
+
+/* The few focusable things that are not core controls get the core's ring. */
+.webcon-ai-assistant-thread:focus-visible,
+.webcon-ai-assistant-conversation-select:focus-visible,
+.webcon-ai-assistant-tool > summary:focus-visible,
+.webcon-ai-assistant-reasoning > summary:focus-visible,
+.webcon-ai-assistant-approval-calls summary:focus-visible {
+  outline: var(--typo3-outline-width) var(--typo3-outline-style) color-mix(in srgb, var(--typo3-state-primary-bg), transparent var(--typo3-outline-transparent-mix));
+  outline-offset: calc(var(--typo3-outline-width) * -1);
+}
+
+.webcon-ai-assistant-empty {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--typo3-spacing) * 0.5);
+  margin: auto;
+  max-inline-size: 28rem;
+  padding: calc(var(--typo3-spacing) * 2) var(--typo3-spacing);
+  text-align: center;
+}
+
+.webcon-ai-assistant-empty-title {
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Messages */
+
+.webcon-ai-assistant-message {
+  border-radius: var(--typo3-component-border-radius);
+  max-inline-size: min(48rem, 92%);
+  overflow-wrap: anywhere;
+  padding: calc(var(--typo3-spacing) * 0.5) calc(var(--typo3-spacing) * 0.75);
+}
+
+.webcon-ai-assistant-message-user {
+  align-self: flex-end;
+  background-color: var(--typo3-surface-container-primary);
+  color: var(--typo3-surface-container-primary-text);
+}
+
+.webcon-ai-assistant-message-assistant {
+  align-self: flex-start;
+  background-color: var(--typo3-surface-container-low);
+  border: var(--webcon-ai-assistant-border, 1px solid var(--typo3-component-border-color));
+}
+
+.webcon-ai-assistant-message-meta {
+  display: flex;
+  font-size: var(--typo3-font-size-small);
+  font-weight: 600;
+  gap: calc(var(--typo3-spacing) * 0.5);
+  margin-block-end: calc(var(--typo3-spacing) * 0.25);
+}
+
+.webcon-ai-assistant-message-meta time {
+  font-weight: 400;
+}
+
+.webcon-ai-assistant-plain {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.webcon-ai-assistant-message-body webcon-ai-assistant-markdown {
+  display: block;
+}
+
+.webcon-ai-assistant-message-body webcon-ai-assistant-markdown > :first-child {
+  margin-block-start: 0;
+}
+
+.webcon-ai-assistant-message-body webcon-ai-assistant-markdown > :last-child {
+  margin-block-end: 0;
+}
+
+.webcon-ai-assistant-message-body p,
+.webcon-ai-assistant-message-body ul,
+.webcon-ai-assistant-message-body ol,
+.webcon-ai-assistant-message-body blockquote,
+.webcon-ai-assistant-message-body pre,
+.webcon-ai-assistant-message-body .table-fit {
+  margin-block: 0 calc(var(--typo3-spacing) * 0.5);
+}
+
+.webcon-ai-assistant-message-body blockquote {
+  border-inline-start: 0.25rem solid var(--typo3-component-border-color);
+  padding-inline-start: calc(var(--typo3-spacing) * 0.75);
+}
+
+.webcon-ai-assistant-chat pre,
+.webcon-ai-assistant-details pre {
+  background-color: var(--typo3-surface-container-high);
+  border-radius: var(--typo3-component-border-radius);
+  font-family: var(--typo3-font-family-monospace);
+  font-size: var(--typo3-font-size-small);
+  max-block-size: 18rem;
+  overflow: auto;
+  padding: calc(var(--typo3-spacing) * 0.5) calc(var(--typo3-spacing) * 0.75);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.webcon-ai-assistant-message-body :not(pre) > code {
+  background-color: var(--typo3-surface-container-high);
+  border-radius: calc(var(--typo3-component-border-radius) / 2);
+  font-family: var(--typo3-font-family-monospace);
+  padding: 0.05em 0.3em;
+}
+
+.webcon-ai-assistant-md-heading {
+  margin-block-start: calc(var(--typo3-spacing) * 0.75);
+}
+
+.webcon-ai-assistant-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--typo3-spacing) * 0.5);
+  list-style: none;
+  margin: calc(var(--typo3-spacing) * 0.5) 0 0;
+  padding: 0;
+}
+
+.webcon-ai-assistant-files li {
+  align-items: center;
+  border: var(--webcon-ai-assistant-border, 1px solid var(--typo3-component-border-color));
+  border-radius: var(--typo3-component-border-radius);
+  display: inline-flex;
+  gap: calc(var(--typo3-spacing) * 0.375);
+  padding: 0.125rem calc(var(--typo3-spacing) * 0.5);
+}
+
+/* Tool calls, reasoning, notices */
+
+.webcon-ai-assistant-tool,
+.webcon-ai-assistant-reasoning {
+  align-self: stretch;
+  border: var(--webcon-ai-assistant-border, 1px solid var(--typo3-component-border-color));
+  border-inline-start-width: 0.25rem;
+  border-radius: var(--typo3-component-border-radius);
+}
+
+.webcon-ai-assistant-tool-running {
+  border-inline-start-color: var(--typo3-state-info-bg);
+}
+
+.webcon-ai-assistant-tool-done {
+  border-inline-start-color: var(--typo3-state-success-bg);
+}
+
+.webcon-ai-assistant-tool-error {
+  border-inline-start-color: var(--typo3-state-danger-bg);
+}
+
+.webcon-ai-assistant-tool > summary,
+.webcon-ai-assistant-reasoning > summary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--typo3-spacing) * 0.5);
+  padding: calc(var(--typo3-spacing) * 0.375) calc(var(--typo3-spacing) * 0.75);
+}
+
+.webcon-ai-assistant-tool > summary::before,
+.webcon-ai-assistant-reasoning > summary::before {
+  content: "\25B8";
+  transition: transform 0.15s ease;
+}
+
+.webcon-ai-assistant-tool[open] > summary::before,
+.webcon-ai-assistant-reasoning[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.webcon-ai-assistant-tool > summary::-webkit-details-marker,
+.webcon-ai-assistant-reasoning > summary::-webkit-details-marker {
+  display: none;
+}
+
+.webcon-ai-assistant-tool > summary,
+.webcon-ai-assistant-reasoning > summary {
+  list-style: none;
+}
+
+.webcon-ai-assistant-tool-name {
+  font-family: var(--typo3-font-family-monospace);
+  font-weight: 600;
+}
+
+.webcon-ai-assistant-tool-body,
+.webcon-ai-assistant-reasoning > p {
+  border-block-start: var(--webcon-ai-assistant-border, 1px solid var(--typo3-component-border-color));
+  margin: 0;
+  padding: calc(var(--typo3-spacing) * 0.5) calc(var(--typo3-spacing) * 0.75);
+}
+
+.webcon-ai-assistant-reasoning > p {
+  white-space: pre-wrap;
+}
+
+.webcon-ai-assistant-tool-label {
+  font-size: var(--typo3-font-size-small);
+  font-weight: 600;
+  margin: 0 0 calc(var(--typo3-spacing) * 0.25);
+}
+
+.webcon-ai-assistant-notice,
+.webcon-ai-assistant-running {
+  align-items: center;
+  align-self: center;
+  display: inline-flex;
+  gap: calc(var(--typo3-spacing) * 0.375);
+  margin: 0;
+}
+
+.webcon-ai-assistant-running {
+  align-self: flex-start;
+  color: var(--typo3-text-color-variant);
+}
+
+.webcon-ai-assistant-badge {
+  font-weight: 400;
+}
+
+/* Approval and question cards */
+
+.webcon-ai-assistant-card {
+  align-self: stretch;
+  margin: 0;
+}
+
+.webcon-ai-assistant-card .callout-title {
+  font-size: 1rem;
+  margin: 0 0 calc(var(--typo3-spacing) * 0.25);
+}
+
+.webcon-ai-assistant-approval-calls {
+  display: grid;
+  gap: calc(var(--typo3-spacing) * 0.25);
+  list-style: none;
+  margin: calc(var(--typo3-spacing) * 0.5) 0;
+  padding: 0;
+}
+
+.webcon-ai-assistant-approval-calls summary {
+  cursor: pointer;
+}
+
+.webcon-ai-assistant-approval-calls code {
+  font-weight: 600;
+}
+
+.webcon-ai-assistant-question {
+  border: 0;
+  margin: 0 0 calc(var(--typo3-spacing) * 0.75);
+  min-inline-size: 0;
+  padding: 0;
+}
+
+.webcon-ai-assistant-question legend {
+  float: none;
+  font-size: inherit;
+  font-weight: 600;
+  margin-block-end: calc(var(--typo3-spacing) * 0.5);
+  white-space: pre-wrap;
+}
+
+.webcon-ai-assistant-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--typo3-spacing) * 0.5);
+  justify-content: flex-end;
+  margin-block-start: calc(var(--typo3-spacing) * 0.75);
+}
+
+/* Composer */
+
+.webcon-ai-assistant-composer {
+  border-block-start: var(--webcon-ai-assistant-border, 1px solid var(--typo3-component-border-color));
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--typo3-spacing) * 0.5);
+  margin: 0;
+  padding: calc(var(--typo3-spacing) * 0.75) var(--typo3-spacing);
+}
+
+.webcon-ai-assistant-composer-input {
+  field-sizing: content;
+  max-block-size: 12rem;
+  min-block-size: 3.5rem;
+  resize: vertical;
+}
+
+.webcon-ai-assistant-composer-bar,
+.webcon-ai-assistant-suggestions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--typo3-spacing) * 0.5);
+}
+
+.webcon-ai-assistant-composer-spacer {
+  flex: 1 1 auto;
+}
+
+.webcon-ai-assistant-context {
+  font-weight: 400;
+  max-inline-size: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.webcon-ai-assistant-composer .form-text {
+  margin: 0;
+}
+
+/* Changes */
+
+.webcon-ai-assistant-changes {
+  display: grid;
+  gap: calc(var(--typo3-spacing) * 0.25);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.webcon-ai-assistant-changes li {
+  align-items: center;
+  display: flex;
+  gap: calc(var(--typo3-spacing) * 0.5);
+}
+
+.webcon-ai-assistant-changes-record {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+.webcon-ai-assistant-changes-menu {
+  padding: calc(var(--typo3-spacing) * 0.5) var(--typo3-spacing);
+}
+
+/* ---------------------------------------------------------------- the list */
+
+.webcon-ai-assistant-conversations {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--typo3-spacing) * 0.75);
+}
+
+.webcon-ai-assistant-conversations-header h2,
+.webcon-ai-assistant-details h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.webcon-ai-assistant-conversation-list {
+  margin: 0;
+}
+
+.webcon-ai-assistant-conversation {
+  align-items: flex-start;
+  display: flex;
+  gap: calc(var(--typo3-spacing) * 0.25);
+}
+
+.webcon-ai-assistant-conversation-select {
+  background: none;
+  border: 0;
+  color: inherit;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-inline-size: 0;
+  padding: 0;
+  text-align: start;
+}
+
+.webcon-ai-assistant-conversation-title {
+  align-items: center;
+  display: flex;
+  font-weight: 600;
+  gap: 0.25rem;
+  max-inline-size: 100%;
+}
+
+.webcon-ai-assistant-conversation-title > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.webcon-ai-assistant-conversation-meta {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--typo3-font-size-small);
+  gap: 0.375rem;
+}
+
+.webcon-ai-assistant-conversations-footer {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------- details */
+
+.webcon-ai-assistant-details {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--typo3-spacing) * 0.5);
+}
+
+.webcon-ai-assistant-details h3:not(:first-of-type) {
+  margin-block-start: calc(var(--typo3-spacing) * 0.75);
+}
+
+.webcon-ai-assistant-details h4 {
+  font-size: var(--typo3-font-size);
+  font-weight: 600;
+  margin: calc(var(--typo3-spacing) * 0.5) 0 0;
+}
+
+.webcon-ai-assistant-details p {
+  margin: 0;
+}
+
+.webcon-ai-assistant-facts {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+}
+
+.webcon-ai-assistant-facts > div {
+  display: flex;
+  gap: calc(var(--typo3-spacing) * 0.5);
+  justify-content: space-between;
+}
+
+.webcon-ai-assistant-facts dt {
+  font-weight: 400;
+}
+
+.webcon-ai-assistant-facts dd {
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+  text-align: end;
+}
+
+.webcon-ai-assistant-call-list,
+.webcon-ai-assistant-tool-list,
+.webcon-ai-assistant-plain-list {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
+
+.webcon-ai-assistant-tool-list {
+  list-style: none;
+  padding: 0;
+}
+
+.webcon-ai-assistant-tool-list li {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.webcon-ai-assistant-tool-list code,
+.webcon-ai-assistant-call-list code {
+  font-family: var(--typo3-font-family-monospace);
+}
+
+/* ---------------------------------------------------------------- instructions */
+
+.webcon-ai-assistant-empty-state {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--typo3-spacing) * 0.75);
+  padding: calc(var(--typo3-spacing) * 3) var(--typo3-spacing);
+  text-align: center;
+}
+
+.webcon-ai-assistant-empty-state p {
+  margin: 0;
+  max-inline-size: 36rem;
+}
+
+/* ---------------------------------------------------------------- toolbar panel */
+
+.toolbar-item.webcon-ai-assistant-toolbar-item .dropdown-menu {
+  padding-block-end: 0;
+}
+
+@media (min-width: 992px) {
+  .toolbar-item.webcon-ai-assistant-toolbar-item .dropdown-menu {
+    inline-size: min(30rem, calc(100vw - 2rem));
+  }
+}
+
+.webcon-ai-assistant-panel webcon-ai-assistant-chat {
+  block-size: min(38rem, calc(100dvh - 8rem));
+  display: block;
+}
+
+.webcon-ai-assistant-panel .webcon-ai-assistant-chat {
+  border: 0;
+  border-block-start: var(--typo3-component-border-width, 1px) solid var(--typo3-component-border-color);
+  border-radius: 0;
+}

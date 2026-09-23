@@ -1,0 +1,37 @@
+<html
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+    data-namespace-typo3-fluid="true"
+>
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+    <div class="webcon-ai-assistant-module">
+        <h1>{title}</h1>
+        <div
+            class="webcon-ai-assistant-workspace"
+            data-webcon-ai-assistant-workspace
+            data-conversation="{conversation}"
+        >
+            <webcon-ai-assistant-conversations class="webcon-ai-assistant-column webcon-ai-assistant-column-list"></webcon-ai-assistant-conversations>
+            <webcon-ai-assistant-chat
+                class="webcon-ai-assistant-column webcon-ai-assistant-column-chat"
+                variant="module"
+                record-edit-url="{recordEditUrl}"
+            ></webcon-ai-assistant-chat>
+            <webcon-ai-assistant-details
+                class="webcon-ai-assistant-column webcon-ai-assistant-column-details"
+                record-edit-url="{recordEditUrl}"
+                instructions-url="{instructionsUrl}"
+            ></webcon-ai-assistant-details>
+        </div>
+        <noscript>
+            <f:be.infobox state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::WARNING')}" title="{f:translate(key: 'module.noscript.title', domain: 'webcon_ai_assistant.chat')}">
+                <p><f:translate key="module.noscript.body" domain="webcon_ai_assistant.chat" /></p>
+            </f:be.infobox>
+        </noscript>
+    </div>
+</f:section>
+
+</html>

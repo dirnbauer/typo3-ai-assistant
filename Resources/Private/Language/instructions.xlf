@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="EXT:webcon_ai_assistant/Resources/Private/Language/instructions.xlf" date="2026-09-23T00:00:00Z" product-name="webcon_ai_assistant">
+    <header/>
+    <body>
+      <trans-unit id="action.create" resname="action.create">
+        <source>Create instruction</source>
+      </trans-unit>
+      <trans-unit id="action.delete" resname="action.delete">
+        <source>Delete {title}</source>
+      </trans-unit>
+      <trans-unit id="action.disable" resname="action.disable">
+        <source>Switch off {title}</source>
+      </trans-unit>
+      <trans-unit id="action.edit" resname="action.edit">
+        <source>Edit {title}</source>
+      </trans-unit>
+      <trans-unit id="action.enable" resname="action.enable">
+        <source>Switch on {title}</source>
+      </trans-unit>
+      <trans-unit id="action.sortInRecords" resname="action.sortInRecords">
+        <source>Sort them in the Records module</source>
+      </trans-unit>
+      <trans-unit id="delete.body" resname="delete.body">
+        <source>"{title}" will no longer be written into any conversation.</source>
+      </trans-unit>
+      <trans-unit id="delete.cancel" resname="delete.cancel">
+        <source>Cancel</source>
+      </trans-unit>
+      <trans-unit id="delete.confirm" resname="delete.confirm">
+        <source>Delete</source>
+      </trans-unit>
+      <trans-unit id="delete.title" resname="delete.title">
+        <source>Delete this instruction?</source>
+      </trans-unit>
+      <trans-unit id="empty" resname="empty">
+        <source>No instructions yet. Instructions tell the assistant how this installation works: house style, what never to touch, which workspace to use.</source>
+      </trans-unit>
+      <trans-unit id="intro" resname="intro">
+        <source>Instructions are written into the system prompt of every conversation they apply to, in the order shown here. Keep each one short and specific.</source>
+      </trans-unit>
+      <trans-unit id="scope.body" resname="scope.body">
+        <source>An instruction without groups applies to everyone. An instruction with groups applies only to members of those groups, administrators included: an administrator outside those groups does not receive it either.</source>
+      </trans-unit>
+      <trans-unit id="scope.everyone" resname="scope.everyone">
+        <source>Everyone</source>
+      </trans-unit>
+      <trans-unit id="scope.title" resname="scope.title">
+        <source>Who receives an instruction</source>
+      </trans-unit>
+      <trans-unit id="status.off" resname="status.off">
+        <source>Switched off</source>
+      </trans-unit>
+      <trans-unit id="status.on" resname="status.on">
+        <source>Active</source>
+      </trans-unit>
+      <trans-unit id="table.actions" resname="table.actions">
+        <source>Actions</source>
+      </trans-unit>
+      <trans-unit id="table.caption" resname="table.caption">
+        <source>Instruction records</source>
+      </trans-unit>
+      <trans-unit id="table.scope" resname="table.scope">
+        <source>Applies to</source>
+      </trans-unit>
+      <trans-unit id="table.status" resname="table.status">
+        <source>Status</source>
+      </trans-unit>
+      <trans-unit id="table.title" resname="table.title">
+        <source>Instruction</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

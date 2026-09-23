@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" target-language="de" datatype="plaintext" original="EXT:webcon_ai_assistant/Resources/Private/Language/Modules/instructions.xlf" date="2026-09-23T00:00:00Z" product-name="webcon_ai_assistant">
+    <header/>
+    <body>
+      <trans-unit id="description" resname="description">
+        <source>Instruction records administrators write into the system prompt of every conversation, optionally scoped to backend groups.</source>
+        <target>Anweisungsdatensätze, die Administratoren in den System-Prompt jeder Unterhaltung schreiben, auf Wunsch auf Backend-Gruppen beschränkt.</target>
+      </trans-unit>
+      <trans-unit id="short_description" resname="short_description">
+        <source>What the assistant is told to follow</source>
+        <target>Was der Assistent befolgen soll</target>
+      </trans-unit>
+      <trans-unit id="title" resname="title">
+        <source>Instructions</source>
+        <target>Anweisungen</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

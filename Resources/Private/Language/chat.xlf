@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="EXT:webcon_ai_assistant/Resources/Private/Language/chat.xlf" date="2026-09-23T00:00:00Z" product-name="webcon_ai_assistant">
+    <header/>
+    <body>
+      <trans-unit id="approval.approve" resname="approval.approve">
+        <source>{count, plural, one {Approve} other {Approve all #}}</source>
+      </trans-unit>
+      <trans-unit id="approval.deny" resname="approval.deny">
+        <source>Deny</source>
+      </trans-unit>
+      <trans-unit id="approval.description" resname="approval.description">
+        <source>The turn is paused until you decide. Nothing has been written yet.</source>
+      </trans-unit>
+      <trans-unit id="approval.remember" resname="approval.remember">
+        <source>Approve these tools automatically for the rest of this conversation</source>
+      </trans-unit>
+      <trans-unit id="approval.title" resname="approval.title">
+        <source>{count, plural, one {A tool call needs your approval} other {# tool calls need your approval}}</source>
+      </trans-unit>
+      <trans-unit id="attachment.size" resname="attachment.size">
+        <source>{name} is larger than {megabytes} MB.</source>
+      </trans-unit>
+      <trans-unit id="attachment.type" resname="attachment.type">
+        <source>{name} is not a file type the assistant can read.</source>
+      </trans-unit>
+      <trans-unit id="attachments.remove" resname="attachments.remove">
+        <source>Remove {name}</source>
+      </trans-unit>
+      <trans-unit id="attachments.sent" resname="attachments.sent">
+        <source>Attached files</source>
+      </trans-unit>
+      <trans-unit id="attachments.staged" resname="attachments.staged">
+        <source>Files to send</source>
+      </trans-unit>
+      <trans-unit id="button.cancel" resname="button.cancel">
+        <source>Cancel</source>
+      </trans-unit>
+      <trans-unit id="changes.count" resname="changes.count">
+        <source>{count, plural, one {# change} other {# changes}}</source>
+      </trans-unit>
+      <trans-unit id="changes.empty" resname="changes.empty">
+        <source>Records the assistant creates or updates in this conversation appear here.</source>
+      </trans-unit>
+      <trans-unit id="changes.kind.created" resname="changes.kind.created">
+        <source>Created</source>
+      </trans-unit>
+      <trans-unit id="changes.kind.other" resname="changes.kind.other">
+        <source>Changed</source>
+      </trans-unit>
+      <trans-unit id="changes.kind.updated" resname="changes.kind.updated">
+        <source>Updated</source>
+      </trans-unit>
+      <trans-unit id="changes.open" resname="changes.open">
+        <source>Open {record}</source>
+      </trans-unit>
+      <trans-unit id="changes.title" resname="changes.title">
+        <source>Changes in this conversation</source>
+      </trans-unit>
+      <trans-unit id="composer.attach" resname="composer.attach">
+        <source>Attach</source>
+      </trans-unit>
+      <trans-unit id="composer.awaitingApproval" resname="composer.awaitingApproval">
+        <source>Decide the pending tool calls before sending another message.</source>
+      </trans-unit>
+      <trans-unit id="composer.awaitingInput" resname="composer.awaitingInput">
+        <source>Answer the question above before sending another message.</source>
+      </trans-unit>
+      <trans-unit id="composer.budget" resname="composer.budget">
+        <source>Your spend budget for this period is used up.</source>
+      </trans-unit>
+      <trans-unit id="composer.label" resname="composer.label">
+        <source>Message</source>
+      </trans-unit>
+      <trans-unit id="composer.placeholder" resname="composer.placeholder">
+        <source>Ask about this installation, or tell it what to change…</source>
+      </trans-unit>
+      <trans-unit id="composer.send" resname="composer.send">
+        <source>Send</source>
+      </trans-unit>
+      <trans-unit id="composer.stop" resname="composer.stop">
+        <source>Stop</source>
+      </trans-unit>
+      <trans-unit id="composer.streaming" resname="composer.streaming">
+        <source>A turn is running. Wait for it to finish, or stop it.</source>
+      </trans-unit>
+      <trans-unit id="composer.suggestions" resname="composer.suggestions">
+        <source>Suggestions</source>
+      </trans-unit>
+      <trans-unit id="composer.unavailable" resname="composer.unavailable">
+        <source>The AI Assistant is not set up on this installation.</source>
+      </trans-unit>
+      <trans-unit id="context.explanation" resname="context.explanation">
+        <source>The page you are on is sent with your message.</source>
+      </trans-unit>
+      <trans-unit id="context.page" resname="context.page">
+        <source>Page {page}</source>
+      </trans-unit>
+      <trans-unit id="conversation.new" resname="conversation.new">
+        <source>New conversation</source>
+      </trans-unit>
+      <trans-unit id="conversation.startNew" resname="conversation.startNew">
+        <source>Start a new conversation</source>
+      </trans-unit>
+      <trans-unit id="conversation.untitled" resname="conversation.untitled">
+        <source>Untitled conversation</source>
+      </trans-unit>
+      <trans-unit id="conversations.actions" resname="conversations.actions">
+        <source>Actions for {title}</source>
+      </trans-unit>
+      <trans-unit id="conversations.archive" resname="conversations.archive">
+        <source>Archive</source>
+      </trans-unit>
+      <trans-unit id="conversations.archived" resname="conversations.archived">
+        <source>Archived</source>
+      </trans-unit>
+      <trans-unit id="conversations.delete" resname="conversations.delete">
+        <source>Delete</source>
+      </trans-unit>
+      <trans-unit id="conversations.empty" resname="conversations.empty">
+        <source>No conversations yet.</source>
+      </trans-unit>
+      <trans-unit id="conversations.filter" resname="conversations.filter">
+        <source>Filter conversations</source>
+      </trans-unit>
+      <trans-unit id="conversations.filterPlaceholder" resname="conversations.filterPlaceholder">
+        <source>Filter…</source>
+      </trans-unit>
+      <trans-unit id="conversations.messages" resname="conversations.messages">
+        <source>{count, plural, one {# message} other {# messages}}</source>
+      </trans-unit>
+      <trans-unit id="conversations.noMatch" resname="conversations.noMatch">
+        <source>No conversation matches.</source>
+      </trans-unit>
+      <trans-unit id="conversations.pin" resname="conversations.pin">
+        <source>Pin</source>
+      </trans-unit>
+      <trans-unit id="conversations.pinned" resname="conversations.pinned">
+        <source>Pinned</source>
+      </trans-unit>
+      <trans-unit id="conversations.rename" resname="conversations.rename">
+        <source>Rename</source>
+      </trans-unit>
+      <trans-unit id="conversations.restore" resname="conversations.restore">
+        <source>Restore</source>
+      </trans-unit>
+      <trans-unit id="conversations.showArchived" resname="conversations.showArchived">
+        <source>Show archived conversations</source>
+      </trans-unit>
+      <trans-unit id="conversations.title" resname="conversations.title">
+        <source>Conversations</source>
+      </trans-unit>
+      <trans-unit id="conversations.unpin" resname="conversations.unpin">
+        <source>Unpin</source>
+      </trans-unit>
+      <trans-unit id="delete.description" resname="delete.description">
+        <source>"{title}" and its messages leave your list now and are purged when the retention period has passed.</source>
+      </trans-unit>
+      <trans-unit id="delete.submit" resname="delete.submit">
+        <source>Delete</source>
+      </trans-unit>
+      <trans-unit id="delete.title" resname="delete.title">
+        <source>Delete this conversation?</source>
+      </trans-unit>
+      <trans-unit id="details.loading" resname="details.loading">
+        <source>Loading…</source>
+      </trans-unit>
+      <trans-unit id="details.noToolCalls" resname="details.noToolCalls">
+        <source>No tools have run in this conversation.</source>
+      </trans-unit>
+      <trans-unit id="details.setup" resname="details.setup">
+        <source>Model and tools</source>
+      </trans-unit>
+      <trans-unit id="details.title" resname="details.title">
+        <source>Details</source>
+      </trans-unit>
+      <trans-unit id="details.toolCalls" resname="details.toolCalls">
+        <source>Tool calls</source>
+      </trans-unit>
+      <trans-unit id="details.usage" resname="details.usage">
+        <source>Usage and limits</source>
+      </trans-unit>
+      <trans-unit id="details.waiting" resname="details.waiting">
+        <source>Waiting for you</source>
+      </trans-unit>
+      <trans-unit id="details.waitingCalls" resname="details.waitingCalls">
+        <source>{count, plural, one {One call is held in the chat until you approve or deny it.} other {# calls are held in the chat until you approve or deny them.}}</source>
+      </trans-unit>
+      <trans-unit id="details.writes" resname="details.writes">
+        <source>{writes} of {calls} calls changed this installation.</source>
+      </trans-unit>
+      <trans-unit id="effect.idempotent_write" resname="effect.idempotent_write">
+        <source>Writes</source>
+      </trans-unit>
+      <trans-unit id="effect.idempotent_write.explanation" resname="effect.idempotent_write.explanation">
+        <source>Changes this installation. Running it again lands on the same result.</source>
+      </trans-unit>
+      <trans-unit id="effect.non_idempotent_write" resname="effect.non_idempotent_write">
+        <source>Writes once</source>
+      </trans-unit>
+      <trans-unit id="effect.non_idempotent_write.explanation" resname="effect.non_idempotent_write.explanation">
+        <source>Changes this installation, and running it again would change it again: a record created twice is two records.</source>
+      </trans-unit>
+      <trans-unit id="effect.read_only" resname="effect.read_only">
+        <source>Reads</source>
+      </trans-unit>
+      <trans-unit id="effect.read_only.explanation" resname="effect.read_only.explanation">
+        <source>Looks at this installation without changing anything.</source>
+      </trans-unit>
+      <trans-unit id="empty.description" resname="empty.description">
+        <source>The assistant reads this TYPO3 installation through its own tools, with your permissions. Every change asks you first.</source>
+      </trans-unit>
+      <trans-unit id="empty.title" resname="empty.title">
+        <source>Ask about this installation</source>
+      </trans-unit>
+      <trans-unit id="error.approvalWithoutDigest" resname="error.approvalWithoutDigest">
+        <source>The turn asked for an approval that cannot be decided here. Reload the conversation.</source>
+      </trans-unit>
+      <trans-unit id="error.failed" resname="error.failed">
+        <source>The turn failed.</source>
+      </trans-unit>
+      <trans-unit id="error.guardrail_blocked" resname="error.guardrail_blocked">
+        <source>A guardrail stopped this turn.</source>
+      </trans-unit>
+      <trans-unit id="error.inputWithoutQuestion" resname="error.inputWithoutQuestion">
+        <source>The turn asked for input without a question. Reload the conversation.</source>
+      </trans-unit>
+      <trans-unit id="error.lease_lost" resname="error.lease_lost">
+        <source>The turn lost its lease before it finished.</source>
+      </trans-unit>
+      <trans-unit id="error.suspend_failed" resname="error.suspend_failed">
+        <source>The turn could not be paused for your approval, so it was stopped.</source>
+      </trans-unit>
+      <trans-unit id="error.transport" resname="error.transport">
+        <source>The request failed.</source>
+      </trans-unit>
+      <trans-unit id="input.answer" resname="input.answer">
+        <source>Your answer</source>
+      </trans-unit>
+      <trans-unit id="input.other" resname="input.other">
+        <source>Something else: type an answer</source>
+      </trans-unit>
+      <trans-unit id="input.placeholder" resname="input.placeholder">
+        <source>Type an answer…</source>
+      </trans-unit>
+      <trans-unit id="input.submit" resname="input.submit">
+        <source>Answer</source>
+      </trans-unit>
+      <trans-unit id="input.title" resname="input.title">
+        <source>The assistant has a question</source>
+      </trans-unit>
+      <trans-unit id="limits.rounds" resname="limits.rounds">
+        <source>Rounds per turn</source>
+      </trans-unit>
+      <trans-unit id="limits.running" resname="limits.running">
+        <source>Running conversations</source>
+      </trans-unit>
+      <trans-unit id="limits.turnsLeft" resname="limits.turnsLeft">
+        <source>Turns left this hour</source>
+      </trans-unit>
+      <trans-unit id="limits.turnsOf" resname="limits.turnsOf">
+        <source>{remaining} of {limit}</source>
+      </trans-unit>
+      <trans-unit id="limits.unlimited" resname="limits.unlimited">
+        <source>No limit</source>
+      </trans-unit>
+      <trans-unit id="limits.writes" resname="limits.writes">
+        <source>Writes</source>
+      </trans-unit>
+      <trans-unit id="limits.writesAllowed" resname="limits.writesAllowed">
+        <source>May be approved in advance per conversation</source>
+      </trans-unit>
+      <trans-unit id="limits.writesAsk" resname="limits.writesAsk">
+        <source>Every write asks first</source>
+      </trans-unit>
+      <trans-unit id="message.assistant" resname="message.assistant">
+        <source>Assistant</source>
+      </trans-unit>
+      <trans-unit id="message.you" resname="message.you">
+        <source>You</source>
+      </trans-unit>
+      <trans-unit id="module.newConversation" resname="module.newConversation">
+        <source>New conversation</source>
+      </trans-unit>
+      <trans-unit id="module.noscript.body" resname="module.noscript.body">
+        <source>The AI Assistant runs in the browser. Enable JavaScript to use it.</source>
+      </trans-unit>
+      <trans-unit id="module.noscript.title" resname="module.noscript.title">
+        <source>JavaScript is required</source>
+      </trans-unit>
+      <trans-unit id="notice.cancelled" resname="notice.cancelled">
+        <source>Stopped.</source>
+      </trans-unit>
+      <trans-unit id="notice.failed" resname="notice.failed">
+        <source>The turn failed.</source>
+      </trans-unit>
+      <trans-unit id="notice.guardrail_approval_required" resname="notice.guardrail_approval_required">
+        <source>A guardrail asked for an approval this chat cannot give.</source>
+      </trans-unit>
+      <trans-unit id="notice.guardrail_blocked" resname="notice.guardrail_blocked">
+        <source>A guardrail stopped this turn.</source>
+      </trans-unit>
+      <trans-unit id="notice.lease_lost" resname="notice.lease_lost">
+        <source>The turn lost its lease before it finished.</source>
+      </trans-unit>
+      <trans-unit id="notice.requeued" resname="notice.requeued">
+        <source>The turn was queued for another attempt.</source>
+      </trans-unit>
+      <trans-unit id="notice.suspend_failed" resname="notice.suspend_failed">
+        <source>The turn could not be paused for your approval.</source>
+      </trans-unit>
+      <trans-unit id="panel.conversation" resname="panel.conversation">
+        <source>Conversation</source>
+      </trans-unit>
+      <trans-unit id="panel.openInModule" resname="panel.openInModule">
+        <source>Open in the AI Assistant module</source>
+      </trans-unit>
+      <trans-unit id="panel.title" resname="panel.title">
+        <source>AI Assistant</source>
+      </trans-unit>
+      <trans-unit id="problem.conflict" resname="problem.conflict">
+        <source>This conversation is busy, or the decision no longer applies to the turn it was made for.</source>
+      </trans-unit>
+      <trans-unit id="problem.dismiss" resname="problem.dismiss">
+        <source>Dismiss</source>
+      </trans-unit>
+      <trans-unit id="problem.forbidden" resname="problem.forbidden">
+        <source>Your account may not use the AI Assistant.</source>
+      </trans-unit>
+      <trans-unit id="problem.generic" resname="problem.generic">
+        <source>Something went wrong.</source>
+      </trans-unit>
+      <trans-unit id="problem.limit" resname="problem.limit">
+        <source>You have reached a limit. Wait a moment, or finish a running conversation first.</source>
+      </trans-unit>
+      <trans-unit id="problem.notFound" resname="problem.notFound">
+        <source>This conversation no longer exists.</source>
+      </trans-unit>
+      <trans-unit id="problem.offline" resname="problem.offline">
+        <source>The backend could not be reached. Check your connection and try again.</source>
+      </trans-unit>
+      <trans-unit id="problem.server" resname="problem.server">
+        <source>The backend failed while handling the request.</source>
+      </trans-unit>
+      <trans-unit id="problem.title" resname="problem.title">
+        <source>AI Assistant</source>
+      </trans-unit>
+      <trans-unit id="problem.tooLarge" resname="problem.tooLarge">
+        <source>The file is too large.</source>
+      </trans-unit>
+      <trans-unit id="problem.unreadable" resname="problem.unreadable">
+        <source>That file cannot be read as text.</source>
+      </trans-unit>
+      <trans-unit id="rename.description" resname="rename.description">
+        <source>The title is how you will find this conversation again.</source>
+      </trans-unit>
+      <trans-unit id="rename.field" resname="rename.field">
+        <source>Title</source>
+      </trans-unit>
+      <trans-unit id="rename.submit" resname="rename.submit">
+        <source>Rename</source>
+      </trans-unit>
+      <trans-unit id="rename.title" resname="rename.title">
+        <source>Rename conversation</source>
+      </trans-unit>
+      <trans-unit id="running.thinking" resname="running.thinking">
+        <source>Thinking…</source>
+      </trans-unit>
+      <trans-unit id="running.tool" resname="running.tool">
+        <source>Running {tool}…</source>
+      </trans-unit>
+      <trans-unit id="running.writing" resname="running.writing">
+        <source>Writing…</source>
+      </trans-unit>
+      <trans-unit id="setup.asksFirst" resname="setup.asksFirst">
+        <source>Asks first</source>
+      </trans-unit>
+      <trans-unit id="setup.instructions" resname="setup.instructions">
+        <source>Instructions ({count})</source>
+      </trans-unit>
+      <trans-unit id="setup.manageInstructions" resname="setup.manageInstructions">
+        <source>Manage instructions</source>
+      </trans-unit>
+      <trans-unit id="setup.model" resname="setup.model">
+        <source>Model</source>
+      </trans-unit>
+      <trans-unit id="setup.noInstructions" resname="setup.noInstructions">
+        <source>No instructions apply to your groups.</source>
+      </trans-unit>
+      <trans-unit id="setup.notConfigured" resname="setup.notConfigured">
+        <source>Not set up</source>
+      </trans-unit>
+      <trans-unit id="setup.tools" resname="setup.tools">
+        <source>Tools ({count})</source>
+      </trans-unit>
+      <trans-unit id="status.awaiting_approval" resname="status.awaiting_approval">
+        <source>Needs approval</source>
+      </trans-unit>
+      <trans-unit id="status.awaiting_input" resname="status.awaiting_input">
+        <source>Has a question</source>
+      </trans-unit>
+      <trans-unit id="status.failed" resname="status.failed">
+        <source>Failed</source>
+      </trans-unit>
+      <trans-unit id="status.processing" resname="status.processing">
+        <source>Running</source>
+      </trans-unit>
+      <trans-unit id="table.be_groups" resname="table.be_groups">
+        <source>Backend group</source>
+      </trans-unit>
+      <trans-unit id="table.be_users" resname="table.be_users">
+        <source>Backend user</source>
+      </trans-unit>
+      <trans-unit id="table.fe_groups" resname="table.fe_groups">
+        <source>Website user group</source>
+      </trans-unit>
+      <trans-unit id="table.fe_users" resname="table.fe_users">
+        <source>Website user</source>
+      </trans-unit>
+      <trans-unit id="table.pages" resname="table.pages">
+        <source>Page</source>
+      </trans-unit>
+      <trans-unit id="table.sys_category" resname="table.sys_category">
+        <source>Category</source>
+      </trans-unit>
+      <trans-unit id="table.sys_file" resname="table.sys_file">
+        <source>File</source>
+      </trans-unit>
+      <trans-unit id="table.sys_file_metadata" resname="table.sys_file_metadata">
+        <source>File metadata</source>
+      </trans-unit>
+      <trans-unit id="table.sys_file_reference" resname="table.sys_file_reference">
+        <source>File reference</source>
+      </trans-unit>
+      <trans-unit id="table.sys_redirect" resname="table.sys_redirect">
+        <source>Redirect</source>
+      </trans-unit>
+      <trans-unit id="table.sys_template" resname="table.sys_template">
+        <source>TypoScript record</source>
+      </trans-unit>
+      <trans-unit id="table.tt_content" resname="table.tt_content">
+        <source>Content element</source>
+      </trans-unit>
+      <trans-unit id="thread.label" resname="thread.label">
+        <source>Conversation</source>
+      </trans-unit>
+      <trans-unit id="thread.reasoning" resname="thread.reasoning">
+        <source>Reasoning · round {round}</source>
+      </trans-unit>
+      <trans-unit id="tool.arguments" resname="tool.arguments">
+        <source>Arguments</source>
+      </trans-unit>
+      <trans-unit id="tool.error" resname="tool.error">
+        <source>Error</source>
+      </trans-unit>
+      <trans-unit id="tool.result" resname="tool.result">
+        <source>Result (preview)</source>
+      </trans-unit>
+      <trans-unit id="tool.round" resname="tool.round">
+        <source>Round {round}</source>
+      </trans-unit>
+      <trans-unit id="tool.state.done" resname="tool.state.done">
+        <source>done</source>
+      </trans-unit>
+      <trans-unit id="tool.state.error" resname="tool.state.error">
+        <source>failed</source>
+      </trans-unit>
+      <trans-unit id="tool.state.running" resname="tool.state.running">
+        <source>running</source>
+      </trans-unit>
+      <trans-unit id="toolbar.running" resname="toolbar.running">
+        <source>The AI Assistant is working</source>
+      </trans-unit>
+      <trans-unit id="toolbar.title" resname="toolbar.title">
+        <source>AI Assistant</source>
+      </trans-unit>
+      <trans-unit id="toolbar.waiting" resname="toolbar.waiting">
+        <source>The AI Assistant is waiting for you</source>
+      </trans-unit>
+      <trans-unit id="usage.completion" resname="usage.completion">
+        <source>Completion tokens</source>
+      </trans-unit>
+      <trans-unit id="usage.prompt" resname="usage.prompt">
+        <source>Prompt tokens</source>
+      </trans-unit>
+      <trans-unit id="usage.total" resname="usage.total">
+        <source>Total tokens</source>
+      </trans-unit>
+      <trans-unit id="usage.withinBudget" resname="usage.withinBudget">
+        <source>Within budget.</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

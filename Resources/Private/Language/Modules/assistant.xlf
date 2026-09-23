@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="EXT:webcon_ai_assistant/Resources/Private/Language/Modules/assistant.xlf" date="2026-09-23T00:00:00Z" product-name="webcon_ai_assistant">
+    <header/>
+    <body>
+      <trans-unit id="description" resname="description">
+        <source>Chat with this TYPO3 installation. The assistant reads and, with your approval, changes records through the installation's own MCP tools, under your backend permissions.</source>
+      </trans-unit>
+      <trans-unit id="short_description" resname="short_description">
+        <source>Chat with this installation</source>
+      </trans-unit>
+      <trans-unit id="title" resname="title">
+        <source>AI Assistant</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -3,20 +3,17 @@
 declare(strict_types=1);
 
 /**
- * The importmap entries other extensions build on.
- *
- * `@webconsulting/shadcn-ui/runtime.js` bundles React 19 ONCE and exports it
- * with every component; an app built on the base imports from there and ships
- * no React of its own. The launcher is the only unbundled file: it puts the
- * floating panel into the top document and loads the runtime on first use.
+ * Plain ES modules, served as they are written: no bundler, no framework of
+ * their own. The widgets are Lit elements rendering into the light DOM, so the
+ * backend's own stylesheet styles them; Lit, marked and DOMPurify come from the
+ * core import map.
  */
 return [
-    'dependencies' => ['backend'],
+    'dependencies' => ['backend', 'core'],
     'tags' => [
         'backend.module',
     ],
     'imports' => [
-        '@webconsulting/shadcn-ui/' => 'EXT:shadcn_ui/Resources/Public/JavaScript/Dist/',
-        '@webconsulting/shadcn-ui/launcher.js' => 'EXT:shadcn_ui/Resources/Public/JavaScript/launcher.js',
+        '@webconsulting/ai-assistant/' => 'EXT:webcon_ai_assistant/Resources/Public/JavaScript/',
     ],
 ];
