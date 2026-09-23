@@ -1,8 +1,8 @@
 .. This file is included by every document of this manual. Put global
    replacements and role definitions here, nothing else.
 
-.. |extension-key| replace:: ``shadcn_ui``
-.. |composer-name| replace:: ``webconsulting/typo3-shadcn-ui``
+.. |extension-key| replace:: ``webcon_ai_assistant``
+.. |composer-name| replace:: ``webconsulting/typo3-ai-assistant``
 
 .. role:: php(code)
    :language: php
@@ -10,5 +10,5 @@
 .. role:: typoscript(code)
    :language: typoscript
 
-.. role:: ts(code)
-   :language: typescript
+.. role:: js(code)
+   :language: javascript

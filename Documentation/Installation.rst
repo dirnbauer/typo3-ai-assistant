@@ -31,18 +31,49 @@ both repositories are declared before the package is required:
 
     composer config repositories.typo3-mcp-server vcs https://github.com/dirnbauer/typo3-mcp-server.git
     composer config repositories.typo3-abilities vcs https://github.com/dirnbauer/typo3-abilities.git
-    composer require webconsulting/typo3-shadcn-ui
-    vendor/bin/typo3 extension:setup
+    composer config repositories.typo3-ai-assistant vcs https://github.com/dirnbauer/typo3-ai-assistant.git
+    composer require webconsulting/typo3-ai-assistant:^2.0
+    vendor/bin/typo3 extension:setup -e webcon_ai_assistant
 
-`extension:setup` creates the three tables the chat uses:
-:sql:`tx_shadcnui_conversation`, :sql:`tx_shadcnui_message` and
-:sql:`tx_shadcnui_instruction`.
+`extension:setup` creates the tables the chat uses:
+:sql:`tx_webconaiassistant_conversation`, :sql:`tx_webconaiassistant_message`
+and :sql:`tx_webconaiassistant_instruction`, plus the cache table of the MCP
+tool catalogue.
 
-Attachments are optional
-========================
+Coming from typo3-shadcn-ui
+===========================
 
-Plain text and PDF work out of the box; Word needs `phpoffice/phpword`, which is
-a hard dependency, and Excel needs `phpoffice/phpspreadsheet`, which is not:
+This extension replaces `webconsulting/typo3-shadcn-ui` (extension key
+`shadcn_ui`). Its chat is the same engine under new names; the shadcn/ui
+runtime for backend modules and the Components module are gone.
+
+1.  Require `webconsulting/typo3-ai-assistant` and run
+    `vendor/bin/typo3 extension:setup -e webcon_ai_assistant`.
+2.  Run the upgrade wizard :guilabel:`AI Assistant: migrate from shadcn/ui`
+    (identifier `webconAiAssistantMigrateFromShadcnUi`), in the Install Tool or
+    with `vendor/bin/typo3 upgrade:run webconAiAssistantMigrateFromShadcnUi`.
+    It copies conversations, messages and instruction records from the
+    `tx_shadcnui_*` tables — or their `zzz_deleted_` remains — keeping their
+    uids; copies the `shadcn_ui` extension configuration while this
+    extension's own is still at its defaults; moves module permissions from
+    `tools_shadcnui_chat` to `tools_webconaiassistant` and
+    `tools_webconaiassistant_chat`; rewrites `tx_shadcnui.` to
+    `tx_webconaiassistant.` in the TSconfig stored on backend users and groups;
+    and points bookmarks of the old chat module at the new one. It copies only
+    what is missing, so it can run again.
+3.  Rename `tx_shadcnui.tools` to `tx_webconaiassistant.tools` in TSconfig kept
+    in **files**, and `shadcn-ui:chat:cleanup` to `ai-assistant:chat:cleanup`
+    wherever the retention command is scheduled.
+4.  Remove `webconsulting/typo3-shadcn-ui` once nothing else requires it. While
+    both are installed, the predecessor's tool registrations are withdrawn from
+    nr-llm — they would collide with this extension's — and its chat keeps
+    working on this extension's tools.
+
+Attachments
+===========
+
+Plain text, Markdown, CSV, PDF and Word work out of the box. Excel needs
+`phpoffice/phpspreadsheet`, which is suggested, not required:
 
 ..  code-block:: bash
 
@@ -54,8 +85,6 @@ what may be attached from the extractors that are actually available.
 Verify
 ======
 
-1.  Open :guilabel:`Admin Tools > shadcn/ui Components`. Every component the
-    runtime ships renders there; if that module works, the runtime works.
-2.  Open :guilabel:`Admin Tools > AI Chat`. The :guilabel:`Setup` tab of the
-    right-hand rail names the nr-llm configuration in use, the tools this user
-    may reach, and anything that is missing.
+Open :guilabel:`Administration > AI Assistant > Chat`. The details column names
+the nr-llm configuration in use and the tools this user may reach; anything
+missing is said above the chat instead of failing on the first message.

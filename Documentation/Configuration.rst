@@ -7,7 +7,7 @@ Configuration
 Extension configuration
 =======================
 
-:guilabel:`Admin Tools > Settings > Extension Configuration > shadcn_ui`.
+:guilabel:`Administration > Settings > Extension Configuration > webcon_ai_assistant`.
 
 ..  confval:: llmConfiguration
     :type: string
@@ -22,10 +22,10 @@ Extension configuration
     :type: boolean
     :Default: 0
 
-    Whether a conversation whose :guilabel:`auto-approve` switch is on may skip
-    the approval card for write tools. Off means **every** write stops and asks,
-    whatever the conversation says. Both have to agree, so turning this on does
-    not silently change any existing conversation.
+    Whether a conversation whose automatic-approval switch is on may skip the
+    approval card for write tools. Off means **every** write stops and asks,
+    whatever the conversation says, and the approval card does not offer the
+    switch at all.
 
 ..  confval:: maxTurnsPerHour
     :type: integer
@@ -36,7 +36,7 @@ Extension configuration
 
 ..  confval:: attachmentStorage
     :type: string
-    :Default: 1:/shadcn_ui/
+    :Default: 1:/webcon_ai_assistant/
 
     The FAL folder attachments are stored below, one subfolder per backend user
     and conversation. The folders are created on first use and removed with the
@@ -46,7 +46,15 @@ Extension configuration
     :type: boolean
     :Default: 1
 
-    Whether the toolbar button and its floating chat panel are offered at all.
+    Whether the AI Assistant is offered in the backend toolbar at all.
+
+Module access
+=============
+
+Grant editors the :guilabel:`AI Assistant > Chat` module
+(`tools_webconaiassistant_chat`, together with its container
+`tools_webconaiassistant`) in their backend group. The
+:guilabel:`Instructions` module is for administrators only.
 
 Which tools the chat may use
 ============================
@@ -59,10 +67,10 @@ group, in user TSconfig:
 ..  code-block:: typoscript
 
     # Everything the installation enables, minus two tools
-    tx_shadcnui.tools.deny = typo3_WriteTable, typo3_SafeCli
+    tx_webconaiassistant.tools.deny = typo3_WriteTable, typo3_SafeCli
 
     # Or: exactly these, and nothing else
-    tx_shadcnui.tools.allow = typo3_GetPage, typo3_GetPageTree, typo3_Search
+    tx_webconaiassistant.tools.allow = typo3_GetPage, typo3_GetPageTree, typo3_Search
 
 `deny` wins over `allow`. An **absent** `allow` and an **empty** one are
 different answers: absent means "do not narrow", empty means "allow nothing".
@@ -72,10 +80,11 @@ the installation.
 Agent instructions
 ==================
 
-:guilabel:`Admin Tools > Records` on the root level holds
-:sql:`tx_shadcnui_instruction` records: a title, a body, and optionally the
-backend groups the instruction applies to. Active instructions are merged into
-the system prompt of every conversation, in sorting order.
+:guilabel:`AI Assistant > Instructions` lists the
+:sql:`tx_webconaiassistant_instruction` records — a title, the instruction, and
+optionally the backend groups it applies to — and opens them in FormEngine.
+Active instructions are written into the system prompt of every conversation,
+in sorting order.
 
 The group restriction is a **scope**, not a permission. An administrator who is
 not in the named group does not receive the instruction either — "editors must
@@ -86,7 +95,7 @@ Retention
 
 ..  code-block:: bash
 
-    vendor/bin/typo3 shadcn-ui:chat:cleanup --archive-after=30 --delete-after=90
+    vendor/bin/typo3 ai-assistant:chat:cleanup --archive-after=30 --delete-after=90
 
 Four passes, in the order they depend on each other: release conversations a
 dead request left claimed, archive idle ones, delete archived and deleted ones
@@ -94,4 +103,4 @@ with their messages and files, and sweep messages whose conversation is gone.
 `--dry-run` reports what each pass would do and changes nothing.
 
 A turn runs inside a request, so a request that died leaves a conversation
-claimed forever and nothing else releases that lock: schedule this command.
+claimed and nothing else releases that lock: schedule this command.

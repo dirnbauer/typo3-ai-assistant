@@ -5,6 +5,97 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-09-23
+
+The successor of `webconsulting/typo3-shadcn-ui` 1.0.1: the same chat engine
+under new names, with a user interface rebuilt from the TYPO3 v14 backend's own
+parts. Versions 1.0.0 and 1.0.1 were released as `typo3-shadcn-ui`.
+
+### Changed — breaking
+
+- **Renamed.** Composer package `webconsulting/typo3-ai-assistant`, extension
+  key `webcon_ai_assistant`, PHP namespace `Webconsulting\WebconAiAssistant`,
+  tables `tx_webconaiassistant_conversation`, `_message` and `_instruction`,
+  AJAX routes `webcon_ai_assistant_*` under `/ai-assistant/`, icons
+  `webcon-ai-assistant-*`, import-map prefix `@webconsulting/ai-assistant/`,
+  user TSconfig `tx_webconaiassistant.tools.allow/deny`, CLI command
+  `ai-assistant:chat:cleanup` (was `shadcn-ui:chat:cleanup`), cache
+  `webcon_ai_assistant_tools`, default attachment folder
+  `1:/webcon_ai_assistant/`, test flags `WEBCON_AI_ASSISTANT_SCRIPTED_PROVIDER`
+  and `WEBCON_AI_ASSISTANT_SCRIPT_FILE`.
+- **Modules.** Administration → AI Assistant is a container with two
+  submodules: *Chat* (`tools_webconaiassistant_chat`, path
+  `/module/tools/ai-assistant/chat`, for every permitted user) and
+  *Instructions* (`tools_webconaiassistant_instructions`, administrators). It
+  replaces `tools_shadcnui_chat`.
+- **Native backend UI.** The chat module is a Fluid template in the core's
+  `Module` layout with a doc header ("New conversation", module menu, reload,
+  bookmark), filled by three Lit elements that render into the light DOM —
+  the conversation list, the chat and the details column — using the core's
+  buttons, callouts, badges, list groups, dropdowns and forms, the core modal
+  for renaming and deleting, and core notifications. Light and dark mode follow
+  the core's tokens. Every label is in XLIFF, in English and German, loaded
+  through the v14 `~labels/` import.
+- **Toolbar.** The floating panel is now a core toolbar item with a dropdown
+  holding the chat, created on first open. A badge on the icon shows a running
+  turn and, louder, a pending approval or question.
+- **Server messages are translated.** Refusals the API returns (empty message,
+  busy conversation, unsupported file, …) are looked up by exception code in
+  `webcon_ai_assistant.messages`, in the backend user's language.
+- Instruction records scope to backend groups through a side-by-side select.
+
+### Removed
+
+- The shadcn/ui runtime for other extensions: `ShadcnModuleRenderer`,
+  `ShadcnApp`, `ShellLayout`, `defineShadcnApp()`, the
+  `@webconsulting/shadcn-ui/*` import-map entries and the committed React
+  bundle.
+- React, Tailwind CSS, the Shadow DOM shell, Vite and every npm runtime
+  dependency; the only npm packages left are ESLint's.
+- The *shadcn/ui Components* module (`tools_shadcnui_components`).
+
+### Added
+
+- **Upgrade wizard** `webconAiAssistantMigrateFromShadcnUi`: copies
+  conversations, messages and instructions from `tx_shadcnui_*` (or their
+  `zzz_deleted_` remains) keeping their uids, copies the `shadcn_ui`
+  extension configuration while this one is still at its defaults, moves
+  `tools_shadcnui_chat` in `groupMods`/`userMods` to the new modules and drops
+  `tools_shadcnui_components`, rewrites `tx_shadcnui.` in database TSconfig,
+  and repoints bookmarks. Repeatable; it copies only what is missing.
+- **Instructions module** listing every instruction with its scope and state,
+  with create and edit through FormEngine and switch-on/off and delete through
+  the DataHandler.
+- Side-by-side installation with `typo3-shadcn-ui`: its `ask_user` tool and MCP
+  catalogue registrations are withdrawn from nr-llm, which would otherwise
+  refuse the duplicate tool name while building its registry.
+- The status route reports each attachment extension's size cap, so the browser
+  refuses an oversized file before uploading it.
+- JavaScript tests under `node --test`, a label-completeness test in both
+  languages, and functional tests for both modules, the toolbar item and the
+  upgrade wizard.
+
+### Fixed
+
+- **MCP tools whose schema has a top-level `oneOf`/`anyOf` broke every turn.**
+  OpenAI and Anthropic refuse such a function schema, and one refused tool
+  fails the whole request (`GetPage` says "uid, pageId or url" that way). The
+  catalogue now reduces the top level to a plain object and states the
+  alternatives in the tool description.
+- **Approving a write showed nothing of the continued run.** Its events are
+  numbered from one again, and the client dropped them as replays of the paused
+  run's, leaving the approval card on screen; a decision now starts a new
+  stream, as an answer already did.
+- The toolbar button did not open the panel: the launcher looked for a class
+  the toolbar item did not render.
+
+### Dependencies
+
+- `phpoffice/phpword` ^1.0 → ^1.4, `smalot/pdfparser` ^2.0 → ^2.12.
+- Development: PHPUnit ^13.3, PHPStan ^2.2, `saschaegerer/phpstan-typo3` ^3.1,
+  `typo3/testing-framework` ^9.7, `friendsofphp/php-cs-fixer` ^3.95,
+  `phpoffice/phpspreadsheet` ^5.10, ESLint ^10.11.
+
 ## [1.0.1] - 2026-09-19
 
 ### Changed
@@ -73,5 +164,6 @@ The first release.
 - `shadcn-ui:chat:cleanup`: releases conversations a dead request left claimed,
   applies retention, and removes orphaned rows and files.
 
+[2.0.0]: https://github.com/dirnbauer/typo3-ai-assistant/releases/tag/v2.0.0
 [1.0.1]: https://github.com/dirnbauer/typo3-shadcn-ui/releases/tag/v1.0.1
 [1.0.0]: https://github.com/dirnbauer/typo3-shadcn-ui/releases/tag/v1.0.0

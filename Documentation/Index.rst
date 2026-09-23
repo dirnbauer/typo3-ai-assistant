@@ -1,23 +1,23 @@
-:navigation-title: shadcn/ui
+:navigation-title: AI Assistant
 
 ..  include:: /Includes.rst.txt
 ..  _start:
 
-================================
-shadcn/ui for the TYPO3 backend
-================================
+==================================
+AI Assistant for the TYPO3 backend
+==================================
 
 :Extension key:
-    shadcn_ui
+    webcon_ai_assistant
 
 :Package name:
-    webconsulting/typo3-shadcn-ui
+    webconsulting/typo3-ai-assistant
 
 :Version:
-    1.0.1
+    2.0.0
 
 :Language:
-    en
+    en, de
 
 :Author:
     webconsulting GmbH
@@ -27,18 +27,15 @@ shadcn/ui for the TYPO3 backend
     `Creative Commons BY 4.0 <https://creativecommons.org/licenses/by/4.0/>`__
     license.
 
-Two things in one extension.
+A chat for the TYPO3 v14 backend that answers questions about *this*
+installation and changes it on request. It runs on nr-llm's agent runtime and
+calls the installation's own MCP tools **in process**, as the signed-in backend
+user. Reads happen; every write stops and asks first.
 
-**The base** is a shadcn/ui runtime for the TYPO3 backend: React 19, Tailwind v4
-and the shadcn component set, bundled once and loaded through TYPO3's import
-map. Any extension can build a backend module on it in one PHP controller and
-one TSX file, and gets the same layout every shadcn module has — an AI chat rail
-on the left, the extension's own app on the right, or full width without the
-chat.
-
-**The chat** is that assistant. It answers questions about *this* installation
-and changes it on request, using the installation's own MCP tools through
-nr-llm's agent runtime. Reads happen; every write stops and asks first.
+It is built from the backend's own parts: a Fluid module in the core's module
+layout, Lit elements rendering the core's buttons, callouts, badges and forms,
+the core's modal, notification and AJAX APIs — light and dark mode included,
+in English and German.
 
 ..  toctree::
     :maxdepth: 1
