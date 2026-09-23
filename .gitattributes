@@ -1,0 +1,13 @@
+# Development files stay out of the dist archive Composer installs.
+/.editorconfig export-ignore
+/.gitattributes export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/.php-cs-fixer.dist.php export-ignore
+/Build export-ignore
+/Documentation export-ignore
+/Tests export-ignore
+/eslint.config.js export-ignore
+/package-lock.json export-ignore
+/package.json export-ignore
+/phpstan.neon export-ignore
