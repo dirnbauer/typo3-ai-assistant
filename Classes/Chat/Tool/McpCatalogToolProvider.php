@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Tool;
+namespace Webconsulting\WebconAiAssistant\Chat\Tool;
 
 use Hn\McpServer\MCP\ToolRegistry;
 use Hn\McpServer\Service\McpToolCatalogService;
@@ -10,10 +10,11 @@ use Netresearch\NrLlm\Domain\Enum\ToolDataClass;
 use Netresearch\NrLlm\Domain\Enum\ToolEffect;
 use Netresearch\NrLlm\Domain\ValueObject\ToolSpec;
 use Netresearch\NrLlm\Service\Tool\ToolProviderInterface;
+use Override;
 use Throwable;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use Webconsulting\ShadcnUi\Chat\Domain\Row;
-use Webconsulting\ShadcnUi\Chat\Security\BackendUserContext;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Row;
+use Webconsulting\WebconAiAssistant\Chat\Security\BackendUserContext;
 
 /**
  * Projects this installation's MCP tool catalogue into the nr-llm agent runtime.
@@ -29,6 +30,9 @@ use Webconsulting\ShadcnUi\Chat\Security\BackendUserContext;
  */
 final readonly class McpCatalogToolProvider implements ToolProviderInterface
 {
+    /** Bumped whenever the shape of a cached definition changes. */
+    private const string CACHE_PREFIX = 'catalog_v2_';
+
     public function __construct(
         private McpToolCatalogService $catalog,
         private ToolRegistry $mcpToolRegistry,
@@ -41,6 +45,7 @@ final readonly class McpCatalogToolProvider implements ToolProviderInterface
     /**
      * @return iterable<McpCatalogTool>
      */
+    #[Override]
     public function tools(): iterable
     {
         foreach ($this->definitions() as $definition) {
@@ -71,7 +76,7 @@ final readonly class McpCatalogToolProvider implements ToolProviderInterface
             return [];
         }
 
-        $cacheIdentifier = 'catalog_' . sha1(implode(',', $names) . '|' . $this->backendUser->uid());
+        $cacheIdentifier = self::CACHE_PREFIX . sha1(implode(',', $names) . '|' . $this->backendUser->uid());
         $cached = $this->cache->get($cacheIdentifier);
         if (is_array($cached)) {
             /** @var list<array{mcpName: string, description: string, parameters: array<string, mixed>, effect: string, dataClass: string, requiresAdmin: bool}> $cached */
@@ -103,33 +108,24 @@ final readonly class McpCatalogToolProvider implements ToolProviderInterface
             return null;
         }
 
+        // MCP nests the parameter schema under `inputSchema`; nr-llm takes the
+        // JSON Schema object directly, in the shape providers accept.
+        $input = $schema['inputSchema'] ?? null;
+        $projection = ToolSchema::forProvider(is_array($input) ? Row::stringKeyed($input) : []);
+
         $description = trim(Row::string($schema, 'description'));
+        $description = $description !== '' ? $description : sprintf('The TYPO3 MCP tool "%s".', $mcpName);
+        if ($projection['hint'] !== '') {
+            $description .= ' ' . $projection['hint'];
+        }
 
         return [
             'mcpName' => $mcpName,
-            'description' => $description !== '' ? $description : sprintf('The TYPO3 MCP tool "%s".', $mcpName),
-            'parameters' => $this->parameters($schema),
+            'description' => $description,
+            'parameters' => $projection['parameters'],
             'effect' => $this->effectClassifier->classify($mcpName, $schema)->value,
             'dataClass' => $this->effectClassifier->dataClass($mcpName)->value,
             'requiresAdmin' => $this->effectClassifier->requiresAdmin($mcpName, $this->mcpToolRegistry->getTool($mcpName)),
         ];
-    }
-
-    /**
-     * MCP nests the parameter schema under `inputSchema`; nr-llm takes the JSON
-     * Schema object directly.
-     *
-     * @param array<string, mixed> $schema
-     *
-     * @return array<string, mixed>
-     */
-    private function parameters(array $schema): array
-    {
-        $input = $schema['inputSchema'] ?? null;
-        if (!is_array($input)) {
-            return ['type' => 'object', 'properties' => []];
-        }
-
-        return ['type' => 'object', ...Row::stringKeyed($input)];
     }
 }
