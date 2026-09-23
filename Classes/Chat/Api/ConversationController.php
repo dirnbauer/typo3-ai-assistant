@@ -2,20 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Api;
+namespace Webconsulting\WebconAiAssistant\Chat\Api;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Webconsulting\ShadcnUi\Chat\Domain\Conversation;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\Message;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRepository;
-use Webconsulting\ShadcnUi\Chat\Security\BackendUserContext;
+use TYPO3\CMS\Backend\Attribute\AsController;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Conversation;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Message;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRepository;
+use Webconsulting\WebconAiAssistant\Chat\Security\BackendUserContext;
 
 /**
  * The conversation list and the row itself: create, read, archive, pin,
  * rename, delete. Nothing here starts a run.
  */
+#[AsController]
 final readonly class ConversationController extends AbstractApiController
 {
     public function __construct(
@@ -86,13 +88,17 @@ final readonly class ConversationController extends AbstractApiController
         });
     }
 
+    /**
+     * The title, and — because they travel together from the same dialog — the
+     * conversation's auto-approve switch.
+     */
     public function rename(ServerRequestInterface $request): ResponseInterface
     {
         return $this->handle($request, function (ApiRequest $api): ResponseInterface {
             $conversation = $this->conversation($api);
             $title = mb_substr(trim($api->string('title')), 0, 255);
             if ($title === '') {
-                throw new ApiException('A title cannot be empty.', 400);
+                throw new ApiException('A title cannot be empty.', 400, 1795000603);
             }
 
             $columns = ['title' => $title];

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Tool;
+namespace Webconsulting\WebconAiAssistant\Chat\Tool;
 
 use Netresearch\NrLlm\Domain\Enum\ToolDataClass;
 use Netresearch\NrLlm\Domain\ValueObject\ToolResult;
@@ -11,6 +11,7 @@ use Netresearch\NrLlm\Service\Tool\RequiresInputInterface;
 use Netresearch\NrLlm\Service\Tool\ToolDataClassInterface;
 use Netresearch\NrLlm\Service\Tool\ToolExecutionContext;
 use Netresearch\NrLlm\Service\Tool\ToolInterface;
+use Override;
 
 /**
  * The clarifying question.
@@ -27,10 +28,11 @@ use Netresearch\NrLlm\Service\Tool\ToolInterface;
  */
 final readonly class AskUserTool implements ToolInterface, RequiresInputInterface, ToolDataClassInterface
 {
-    public const NAME = 'ask_user';
+    public const string NAME = 'ask_user';
 
-    public const GROUP = 'shadcn_ui';
+    public const string GROUP = 'webcon_ai_assistant';
 
+    #[Override]
     public function getSpec(): ToolSpec
     {
         return new ToolSpec(
@@ -62,6 +64,7 @@ final readonly class AskUserTool implements ToolInterface, RequiresInputInterfac
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function getInputSchema(): array
     {
         return [
@@ -74,6 +77,7 @@ final readonly class AskUserTool implements ToolInterface, RequiresInputInterfac
     /**
      * @param array<string, mixed> $arguments
      */
+    #[Override]
     public function execute(array $arguments, ToolExecutionContext $context): ToolResult
     {
         $answer = $arguments['answer'] ?? null;
@@ -84,21 +88,25 @@ final readonly class AskUserTool implements ToolInterface, RequiresInputInterfac
         return ToolResult::text('The user answered: ' . trim($answer));
     }
 
+    #[Override]
     public function getDataClass(): ToolDataClass
     {
         return ToolDataClass::EDITOR_CONTENT;
     }
 
+    #[Override]
     public function getGroup(): string
     {
         return self::GROUP;
     }
 
+    #[Override]
     public function isEnabledByDefault(): bool
     {
         return true;
     }
 
+    #[Override]
     public function requiresAdmin(): bool
     {
         return false;

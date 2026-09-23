@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Domain;
+namespace Webconsulting\WebconAiAssistant\Chat\Domain;
 
 /**
  * A conversation's own state: identity, lifecycle, and whatever decision or

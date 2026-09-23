@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
-use Webconsulting\ShadcnUi\Chat\Domain\Message;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Message;
 
 /**
  * Everything one turn produced, as the API reports it.
@@ -33,7 +33,7 @@ final readonly class TurnResult
     {
         return [
             'runUuid' => $this->runUuid,
-            'outcome' => $this->outcome->outcome,
+            'outcome' => $this->outcome->outcome->value,
             'status' => $this->outcome->status->value,
             'message' => $this->outcome->message,
             'messages' => array_map(static fn(Message $message): array => $message->toArray(), $this->messages),

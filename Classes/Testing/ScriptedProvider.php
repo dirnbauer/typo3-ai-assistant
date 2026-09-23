@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Testing;
+namespace Webconsulting\WebconAiAssistant\Testing;
 
 use Netresearch\NrLlm\Domain\Enum\ModelCapability;
 use Netresearch\NrLlm\Domain\Model\CompletionResponse;
@@ -11,6 +11,7 @@ use Netresearch\NrLlm\Domain\Model\UsageStatistics;
 use Netresearch\NrLlm\Domain\ValueObject\ToolCall;
 use Netresearch\NrLlm\Provider\AbstractProvider;
 use Netresearch\NrLlm\Provider\Contract\ToolCapableInterface;
+use Override;
 use RuntimeException;
 
 /**
@@ -21,43 +22,49 @@ use RuntimeException;
  * rebuilds the container between the test and the turn under test.
  *
  * NOT PRODUCTION CODE. Registered only when the application context is
- * Development or Testing AND `SHADCN_UI_SCRIPTED_PROVIDER=1` is set — see
+ * Development or Testing AND `WEBCON_AI_ASSISTANT_SCRIPTED_PROVIDER=1` is set — see
  * Configuration/Services.php. Two independent conditions, because one alone is
  * the kind of thing that gets turned on by accident.
  */
 final class ScriptedProvider extends AbstractProvider implements ToolCapableInterface
 {
-    public const ADAPTER_TYPE = 'scripted';
+    public const string ADAPTER_TYPE = 'scripted';
 
-    public const ENV_FLAG = 'SHADCN_UI_SCRIPTED_PROVIDER';
+    public const string ENV_FLAG = 'WEBCON_AI_ASSISTANT_SCRIPTED_PROVIDER';
 
-    public const ENV_SCRIPT = 'SHADCN_UI_SCRIPT_FILE';
+    public const string ENV_SCRIPT = 'WEBCON_AI_ASSISTANT_SCRIPT_FILE';
 
+    #[Override]
     public function getName(): string
     {
         return 'Scripted (testing)';
     }
 
+    #[Override]
     public function getIdentifier(): string
     {
         return self::ADAPTER_TYPE;
     }
 
+    #[Override]
     protected function getDefaultBaseUrl(): string
     {
         return 'https://scripted.invalid';
     }
 
+    #[Override]
     public function isAvailable(): bool
     {
         return true;
     }
 
+    #[Override]
     public function supportsTools(): bool
     {
         return true;
     }
 
+    #[Override]
     public function supportsFeature(string|ModelCapability $feature): bool
     {
         return true;
@@ -66,16 +73,19 @@ final class ScriptedProvider extends AbstractProvider implements ToolCapableInte
     /**
      * @return array<string, string>
      */
+    #[Override]
     public function getAvailableModels(): array
     {
         return ['scripted-1' => 'Scripted 1'];
     }
 
+    #[Override]
     public function getDefaultModel(): string
     {
         return 'scripted-1';
     }
 
+    #[Override]
     public function testConnection(): array
     {
         return ['success' => true, 'message' => 'The scripted provider needs no connection.'];
@@ -85,6 +95,7 @@ final class ScriptedProvider extends AbstractProvider implements ToolCapableInte
      * @param list<mixed>          $messages
      * @param array<string, mixed> $options
      */
+    #[Override]
     public function chatCompletion(array $messages, array $options = []): CompletionResponse
     {
         return $this->nextResponse();
@@ -95,6 +106,7 @@ final class ScriptedProvider extends AbstractProvider implements ToolCapableInte
      * @param list<mixed>          $tools
      * @param array<string, mixed> $options
      */
+    #[Override]
     public function chatCompletionWithTools(array $messages, array $tools, array $options = []): CompletionResponse
     {
         return $this->nextResponse();
@@ -104,6 +116,7 @@ final class ScriptedProvider extends AbstractProvider implements ToolCapableInte
      * @param string|array<int, string> $input
      * @param array<string, mixed>      $options
      */
+    #[Override]
     public function embeddings(string|array $input, array $options = []): EmbeddingResponse
     {
         return new EmbeddingResponse([], $this->getDefaultModel(), new UsageStatistics(0, 0, 0));
@@ -132,7 +145,7 @@ final class ScriptedProvider extends AbstractProvider implements ToolCapableInte
     {
         $configured = getenv(self::ENV_SCRIPT);
 
-        return is_string($configured) && $configured !== '' ? $configured : sys_get_temp_dir() . '/shadcn-ui-script.json';
+        return is_string($configured) && $configured !== '' ? $configured : sys_get_temp_dir() . '/webcon-ai-assistant-script.json';
     }
 
     /**

@@ -1,4 +1,4 @@
-CREATE TABLE tx_shadcnui_conversation (
+CREATE TABLE tx_webconaiassistant_conversation (
   uid int(11) unsigned NOT NULL AUTO_INCREMENT,
   pid int(11) unsigned DEFAULT 0 NOT NULL,
   deleted smallint(5) unsigned DEFAULT 0 NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE tx_shadcnui_conversation (
   KEY run_uuid (run_uuid)
 );
 
-CREATE TABLE tx_shadcnui_message (
+CREATE TABLE tx_webconaiassistant_message (
   uid int(11) unsigned NOT NULL AUTO_INCREMENT,
   pid int(11) unsigned DEFAULT 0 NOT NULL,
   conversation int(11) unsigned DEFAULT 0 NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE tx_shadcnui_message (
   KEY run_uuid (run_uuid)
 );
 
-CREATE TABLE tx_shadcnui_instruction (
+CREATE TABLE tx_webconaiassistant_instruction (
   title varchar(255) DEFAULT '' NOT NULL,
   body text,
   be_groups varchar(255) DEFAULT '' NOT NULL,

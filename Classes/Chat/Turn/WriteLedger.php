@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
 use Netresearch\NrLlm\Domain\Enum\WriteKind;
 use Netresearch\NrLlm\Domain\ValueObject\RecordReference;

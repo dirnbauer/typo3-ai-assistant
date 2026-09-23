@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
 /**
  * The tool calls an assistant turn asked for and no tool turn has answered yet.

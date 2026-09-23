@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Functional\Chat\Command;
+namespace Webconsulting\WebconAiAssistant\Tests\Functional\Chat\Command;
 
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Console\Tester\CommandTester;
-use Webconsulting\ShadcnUi\Chat\Command\CleanupCommand;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationStatus;
-use Webconsulting\ShadcnUi\Chat\Domain\Message;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRole;
-use Webconsulting\ShadcnUi\Tests\Functional\AbstractChatTestCase;
+use Webconsulting\WebconAiAssistant\Chat\Command\CleanupCommand;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationStatus;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Message;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRole;
+use Webconsulting\WebconAiAssistant\Tests\Functional\AbstractChatTestCase;
 
 final class CleanupCommandTest extends AbstractChatTestCase
 {

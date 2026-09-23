@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Tool;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Tool;
 
 use Hn\McpServer\MCP\Tool\Attribute\AdminOnly;
 use Hn\McpServer\MCP\Tool\CompatibleToolAdapter;
@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Site\SiteFinder;
-use Webconsulting\ShadcnUi\Chat\Tool\ToolEffectClassifier;
+use Webconsulting\WebconAiAssistant\Chat\Tool\ToolEffectClassifier;
 
 /**
  * The two places the fail-safe direction differs: an EMPTY declaration means
@@ -45,7 +45,7 @@ final class ToolEffectClassifierTest extends TestCase
     #[DataProvider('annotationCases')]
     public function annotationsDecideTheEffect(array $annotations, ToolEffect $expected): void
     {
-        self::assertSame($expected, (new ToolEffectClassifier())->classify('AnyTool', ['annotations' => $annotations]));
+        self::assertSame($expected, new ToolEffectClassifier()->classify('AnyTool', ['annotations' => $annotations]));
     }
 
     /**
@@ -167,7 +167,7 @@ final class ToolEffectClassifierTest extends TestCase
      */
     private function manifestFor(array $tools): CapabilityManifestService
     {
-        $path = tempnam(sys_get_temp_dir(), 'shadcn-manifest-') . '.yaml';
+        $path = tempnam(sys_get_temp_dir(), 'ai-assistant-manifest-') . '.yaml';
         $this->manifestFiles[] = $path;
         file_put_contents($path, Yaml::dump([
             'capabilities' => ['version' => '1.0', 'extension' => 'mcp_server', 'x-mcp' => ['tools' => $tools]],

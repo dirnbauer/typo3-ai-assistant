@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Configuration;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Configuration;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use Webconsulting\ShadcnUi\Configuration\ExtensionSettings;
+use Webconsulting\WebconAiAssistant\Configuration\ExtensionSettings;
 
 /**
  * Every value TYPO3 stores here is a string. The interesting cases are the ones
@@ -42,7 +42,7 @@ final class ExtensionSettingsTest extends TestCase
         self::assertSame('backend-assistant', $settings->llmConfiguration());
         self::assertFalse($settings->allowWrites(), 'Writes stay gated unless somebody said otherwise.');
         self::assertSame(60, $settings->maxTurnsPerHour());
-        self::assertSame('1:/shadcn_ui/', $settings->attachmentStorage());
+        self::assertSame('1:/webcon_ai_assistant/', $settings->attachmentStorage());
         self::assertTrue($settings->panelEnabled());
     }
 
@@ -54,7 +54,7 @@ final class ExtensionSettingsTest extends TestCase
         self::assertSame('backend-assistant', $settings->llmConfiguration());
         self::assertFalse($settings->allowWrites());
         self::assertSame(0, $settings->maxTurnsPerHour(), '0 is the documented "no limit".');
-        self::assertSame('1:/shadcn_ui/', $settings->attachmentStorage());
+        self::assertSame('1:/webcon_ai_assistant/', $settings->attachmentStorage());
     }
 
     #[Test]
@@ -63,7 +63,7 @@ final class ExtensionSettingsTest extends TestCase
         $configuration = self::createStub(ExtensionConfiguration::class);
         $configuration->method('get')->willThrowException(new RuntimeException('not configured'));
 
-        self::assertSame('backend-assistant', (new ExtensionSettings($configuration))->llmConfiguration());
+        self::assertSame('backend-assistant', new ExtensionSettings($configuration)->llmConfiguration());
     }
 
     /**

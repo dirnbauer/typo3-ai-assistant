@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
-use Webconsulting\ShadcnUi\Chat\Domain\Row;
-use Webconsulting\ShadcnUi\Chat\Security\BackendUserContext;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Row;
+use Webconsulting\WebconAiAssistant\Chat\Security\BackendUserContext;
 
 /**
  * Completes a client context with what only the server knows: the page's

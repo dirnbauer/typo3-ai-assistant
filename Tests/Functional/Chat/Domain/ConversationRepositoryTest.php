@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Functional\Chat\Domain;
+namespace Webconsulting\WebconAiAssistant\Tests\Functional\Chat\Domain;
 
 use PHPUnit\Framework\Attributes\Test;
-use Webconsulting\ShadcnUi\Chat\Domain\Conversation;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationStatus;
-use Webconsulting\ShadcnUi\Tests\Functional\AbstractChatTestCase;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Conversation;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationStatus;
+use Webconsulting\WebconAiAssistant\Tests\Functional\AbstractChatTestCase;
 
 final class ConversationRepositoryTest extends AbstractChatTestCase
 {

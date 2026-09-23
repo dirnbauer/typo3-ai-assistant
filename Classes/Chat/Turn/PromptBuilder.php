@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
 use Netresearch\NrLlm\Domain\ValueObject\ChatMessage;
 use Netresearch\NrLlm\Domain\ValueObject\ToolCall;
-use Webconsulting\ShadcnUi\Chat\Domain\Message;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRole;
-use Webconsulting\ShadcnUi\Chat\Domain\Row;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Message;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRole;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Row;
 
 /**
  * Turns persisted rows into the message list one agent run is given.
@@ -31,7 +31,7 @@ final readonly class PromptBuilder
      * A ceiling on rows loaded, not a token budget — nr-llm does that
      * accounting against the model's window.
      */
-    public const WINDOW = 60;
+    public const int WINDOW = 60;
 
     /**
      * @param list<Message>                                    $rows         the conversation's rows, oldest first

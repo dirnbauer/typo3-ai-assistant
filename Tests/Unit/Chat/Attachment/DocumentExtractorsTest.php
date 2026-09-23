@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Attachment;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Attachment;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Webconsulting\ShadcnUi\Chat\Attachment\AttachmentRejectedException;
-use Webconsulting\ShadcnUi\Chat\Attachment\Document\DocumentExtractorInterface;
-use Webconsulting\ShadcnUi\Chat\Attachment\Document\DocumentExtractorRegistry;
-use Webconsulting\ShadcnUi\Chat\Attachment\Document\DocxExtractor;
-use Webconsulting\ShadcnUi\Chat\Attachment\Document\PdfExtractor;
-use Webconsulting\ShadcnUi\Chat\Attachment\Document\PlainTextExtractor;
-use Webconsulting\ShadcnUi\Chat\Attachment\Document\XlsxExtractor;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\AttachmentRejectedException;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\Document\DocumentExtractorInterface;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\Document\DocumentExtractorRegistry;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\Document\DocxExtractor;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\Document\PdfExtractor;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\Document\PlainTextExtractor;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\Document\XlsxExtractor;
 
 /**
  * The extractors against real files, and the registry as the allowlist.
  */
 final class DocumentExtractorsTest extends TestCase
 {
-    private const FIXTURES = __DIR__ . '/../../../Fixtures/Documents';
+    private const string FIXTURES = __DIR__ . '/../../../Fixtures/Documents';
 
     #[Test]
     public function pdfTextIsExtractedAndBrokenOrEncryptedFilesAreRefused(): void
@@ -91,12 +91,40 @@ final class DocumentExtractorsTest extends TestCase
     }
 
     #[Test]
+    public function everyAcceptedExtensionCarriesItsOwnSizeCap(): void
+    {
+        $registry = new DocumentExtractorRegistry([
+            new PlainTextExtractor(),
+            new PdfExtractor(),
+            self::extractor(['application/x-unavailable'], false, 1),
+        ]);
+
+        self::assertSame(
+            ['txt' => 2 * 1024 * 1024, 'md' => 2 * 1024 * 1024, 'csv' => 2 * 1024 * 1024, 'pdf' => 20 * 1024 * 1024],
+            $registry->maxBytesByExtension(),
+            'The client refuses a file before uploading it on exactly these numbers.',
+        );
+    }
+
+    #[Test]
+    public function aRefusalNamesItsLabelArguments(): void
+    {
+        try {
+            new DocumentExtractorRegistry([])->extract('/path', 'application/unknown');
+            self::fail('An unknown type must be refused.');
+        } catch (AttachmentRejectedException $exception) {
+            self::assertSame(1795000401, $exception->getCode());
+            self::assertSame(['mimeType' => 'application/unknown'], $exception->labelArguments());
+        }
+    }
+
+    #[Test]
     public function anUnknownTypeIsRefusedByName(): void
     {
         $this->expectException(AttachmentRejectedException::class);
         $this->expectExceptionMessageMatches('/application\/unknown/');
 
-        (new DocumentExtractorRegistry([]))->extract('/path', 'application/unknown');
+        new DocumentExtractorRegistry([])->extract('/path', 'application/unknown');
     }
 
     /**

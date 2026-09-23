@@ -1,15 +1,14 @@
 {
-    "name": "webconsulting/typo3-shadcn-ui",
-    "description": "shadcn/ui runtime for TYPO3 backend modules (React 19, Tailwind v4, Shadow DOM) with the AI chat that talks to your installation through in-process MCP tools",
+    "name": "webconsulting/typo3-ai-assistant",
+    "description": "Native AI assistant for the TYPO3 v14 backend: chat with your installation through in-process MCP tools, with human approval for every write",
     "license": "GPL-2.0-or-later",
     "type": "typo3-cms-extension",
     "keywords": [
         "TYPO3",
         "extension",
-        "shadcn",
-        "react",
         "backend",
         "AI",
+        "assistant",
         "chat",
         "MCP",
         "LLM"
@@ -21,10 +20,10 @@
             "role": "Maintainer"
         }
     ],
-    "homepage": "https://github.com/dirnbauer/typo3-shadcn-ui",
+    "homepage": "https://github.com/dirnbauer/typo3-ai-assistant",
     "support": {
-        "issues": "https://github.com/dirnbauer/typo3-shadcn-ui/issues",
-        "source": "https://github.com/dirnbauer/typo3-shadcn-ui"
+        "issues": "https://github.com/dirnbauer/typo3-ai-assistant/issues",
+        "source": "https://github.com/dirnbauer/typo3-ai-assistant"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -48,32 +47,32 @@
         "php": "^8.4",
         "hn/typo3-mcp-server": "^0.8",
         "netresearch/nr-llm": "^0.35",
-        "phpoffice/phpword": "^1.0",
-        "smalot/pdfparser": "^2.0",
+        "phpoffice/phpword": "^1.4",
+        "smalot/pdfparser": "^2.12",
         "typo3/cms-backend": "^14.3",
         "typo3/cms-core": "^14.3"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.94",
-        "phpoffice/phpspreadsheet": "^3.0 || ^4.0 || ^5.0",
-        "phpstan/phpstan": "^2.1",
+        "friendsofphp/php-cs-fixer": "^3.95",
+        "phpoffice/phpspreadsheet": "^5.10",
+        "phpstan/phpstan": "^2.2",
         "phpstan/phpstan-phpunit": "^2.0",
-        "phpunit/phpunit": "^12.4 || ^13.0",
-        "saschaegerer/phpstan-typo3": "^3.0",
+        "phpunit/phpunit": "^13.3",
+        "saschaegerer/phpstan-typo3": "^3.1",
         "typo3/coding-standards": "^0.9",
-        "typo3/testing-framework": "^9.5"
+        "typo3/testing-framework": "^9.7"
     },
     "suggest": {
         "phpoffice/phpspreadsheet": "Lets editors attach XLSX spreadsheets to a chat message"
     },
     "autoload": {
         "psr-4": {
-            "Webconsulting\\ShadcnUi\\": "Classes/"
+            "Webconsulting\\WebconAiAssistant\\": "Classes/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Webconsulting\\ShadcnUi\\Tests\\": "Tests/"
+            "Webconsulting\\WebconAiAssistant\\Tests\\": "Tests/"
         }
     },
     "config": {
@@ -86,24 +85,29 @@
         "sort-packages": true,
         "vendor-dir": ".Build/vendor",
         "platform": {
-            "php": "8.4.0"
+            "php": "8.4.1"
         }
     },
     "extra": {
         "typo3/cms": {
-            "extension-key": "shadcn_ui",
+            "extension-key": "webcon_ai_assistant",
             "web-dir": ".Build/Web"
         }
     },
     "scripts": {
         "ci": [
+            "@ci:lint",
             "@ci:phpstan",
             "@ci:cgl",
             "@ci:tests"
         ],
+        "ci:lint": "find Classes Configuration Tests -name '*.php' -print0 | xargs -0 -n1 -P4 php -l > /dev/null",
         "ci:phpstan": ".Build/bin/phpstan analyse -c phpstan.neon --no-progress --memory-limit=1G",
         "ci:cgl": ".Build/bin/php-cs-fixer fix --dry-run --diff",
-        "ci:tests": "php -d memory_limit=1G .Build/bin/phpunit -c Build/phpunit/UnitTests.xml && php -d memory_limit=1G .Build/bin/phpunit -c Build/phpunit/FunctionalTests.xml",
+        "ci:tests": [
+            "@ci:tests:unit",
+            "@ci:tests:functional"
+        ],
         "ci:tests:unit": "php -d memory_limit=1G .Build/bin/phpunit -c Build/phpunit/UnitTests.xml",
         "ci:tests:functional": "php -d memory_limit=1G .Build/bin/phpunit -c Build/phpunit/FunctionalTests.xml",
         "fix:cgl": ".Build/bin/php-cs-fixer fix"

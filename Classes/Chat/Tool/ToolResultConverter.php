@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Tool;
+namespace Webconsulting\WebconAiAssistant\Chat\Tool;
 
 use Mcp\Types\CallToolResult;
 use Mcp\Types\TextContent;
@@ -34,7 +34,7 @@ use Netresearch\NrLlm\Exception\InvalidArgumentException;
 final readonly class ToolResultConverter
 {
     /** Beyond this many rows a table view is not what an operator wants to read anyway. */
-    private const MAX_TABLE_ROWS = 200;
+    private const int MAX_TABLE_ROWS = 200;
 
     public function convert(CallToolResult $result, string $toolName, ToolEffect $effect = ToolEffect::READ_ONLY): ToolResult
     {

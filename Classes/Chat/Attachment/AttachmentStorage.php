@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Attachment;
+namespace Webconsulting\WebconAiAssistant\Chat\Attachment;
 
 use finfo;
 use Psr\Http\Message\UploadedFileInterface;
@@ -13,9 +13,9 @@ use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Resource\StorageRepository;
-use Webconsulting\ShadcnUi\Chat\Attachment\Document\DocumentExtractorRegistry;
-use Webconsulting\ShadcnUi\Chat\Domain\Message;
-use Webconsulting\ShadcnUi\Configuration\ExtensionSettings;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\Document\DocumentExtractorRegistry;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Message;
+use Webconsulting\WebconAiAssistant\Configuration\ExtensionSettings;
 
 /**
  * Chat attachments: `<attachmentStorage>/<be_user>/<conversation>/`.
@@ -27,7 +27,7 @@ use Webconsulting\ShadcnUi\Configuration\ExtensionSettings;
 final readonly class AttachmentStorage
 {
     /** How much of a document's text is stored on the message and shown to the model. */
-    public const MAX_TEXT_CHARS = 40000;
+    public const int MAX_TEXT_CHARS = 40000;
 
     public function __construct(
         private StorageRepository $storageRepository,
@@ -56,18 +56,27 @@ final readonly class AttachmentStorage
             throw new AttachmentRejectedException('The upload could not be read.', 1795000451);
         }
 
-        $mimeType = (new finfo(FILEINFO_MIME_TYPE))->file($path);
+        $mimeType = new finfo(FILEINFO_MIME_TYPE)->file($path);
         if (!is_string($mimeType) || !$this->extractors->canExtract($mimeType)) {
-            throw new AttachmentRejectedException(sprintf(
-                'This file type is not supported. Accepted: %s.',
-                implode(', ', $this->extractors->extensions()),
-            ), 1795000452);
+            $accepted = implode(', ', $this->extractors->extensions());
+
+            throw new AttachmentRejectedException(
+                sprintf('This file type is not supported. Accepted: %s.', $accepted),
+                1795000452,
+                arguments: ['accepted' => $accepted],
+            );
         }
 
         $maxBytes = $this->extractors->maxBytes($mimeType);
         $size = $upload->getSize() ?? (int)filesize($path);
         if ($size > $maxBytes) {
-            throw new AttachmentRejectedException(sprintf('The file is larger than %d MB.', intdiv($maxBytes, 1024 * 1024)), 1795000453);
+            $megabytes = intdiv($maxBytes, 1024 * 1024);
+
+            throw new AttachmentRejectedException(
+                sprintf('The file is larger than %d MB.', $megabytes),
+                1795000453,
+                arguments: ['megabytes' => $megabytes],
+            );
         }
 
         $this->extractors->validate($path, $mimeType);

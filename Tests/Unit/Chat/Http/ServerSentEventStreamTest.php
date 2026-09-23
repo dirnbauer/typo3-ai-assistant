@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Http;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Http;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Webconsulting\ShadcnUi\Chat\Http\ServerSentEventStream;
-use Webconsulting\ShadcnUi\Chat\Http\SseEvent;
-use Webconsulting\ShadcnUi\Chat\Http\TurnEventSink;
+use Webconsulting\WebconAiAssistant\Chat\Http\ServerSentEventStream;
+use Webconsulting\WebconAiAssistant\Chat\Http\SseEvent;
+use Webconsulting\WebconAiAssistant\Chat\Http\TurnEventSink;
 
 /**
  * The wire format, which fails silently: a frame missing its blank line is
@@ -20,13 +20,13 @@ final class ServerSentEventStreamTest extends TestCase
     #[Test]
     public function aFrameNamesItsEventAndEndsWithABlankLine(): void
     {
-        self::assertSame("event: run.started\ndata: {\"runUuid\":\"abc\"}\n\n", (new SseEvent('run.started', ['runUuid' => 'abc']))->encode());
+        self::assertSame("event: run.started\ndata: {\"runUuid\":\"abc\"}\n\n", new SseEvent('run.started', ['runUuid' => 'abc'])->encode());
     }
 
     #[Test]
     public function anIdIsWrittenBeforeTheEventName(): void
     {
-        self::assertStringStartsWith("id: 4\nevent: step.llm\n", (new SseEvent('step.llm', ['round' => 1], 4))->encode());
+        self::assertStringStartsWith("id: 4\nevent: step.llm\n", new SseEvent('step.llm', ['round' => 1], 4)->encode());
     }
 
     #[Test]
@@ -38,7 +38,7 @@ final class ServerSentEventStreamTest extends TestCase
     #[Test]
     public function aNewlineInAPayloadIsEscapedRatherThanSplittingTheFrame(): void
     {
-        $frame = (new SseEvent('message.final', ['content' => "line one\nline two"]))->encode();
+        $frame = new SseEvent('message.final', ['content' => "line one\nline two"])->encode();
 
         self::assertSame(1, substr_count($frame, 'data: '));
         self::assertStringEndsWith("\n\n", $frame);
@@ -47,7 +47,7 @@ final class ServerSentEventStreamTest extends TestCase
     #[Test]
     public function anUnencodablePayloadStillProducesAValidFrame(): void
     {
-        $frame = (new SseEvent('step.tool.result', ['preview' => "\xB1\x31"]))->encode();
+        $frame = new SseEvent('step.tool.result', ['preview' => "\xB1\x31"])->encode();
 
         self::assertStringEndsWith("\n\n", $frame);
         self::assertStringContainsString('event: step.tool.result', $frame);

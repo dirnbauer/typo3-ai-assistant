@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Turn;
 
 use Netresearch\NrLlm\Domain\Enum\AgentRunOutcome;
 use Netresearch\NrLlm\Service\Agent\AgentRunResult;
@@ -11,8 +11,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Throwable;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationStatus;
-use Webconsulting\ShadcnUi\Chat\Turn\RunOutcomeMapper;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationStatus;
+use Webconsulting\WebconAiAssistant\Chat\Turn\Outcome;
+use Webconsulting\WebconAiAssistant\Chat\Turn\RunOutcomeMapper;
 
 /**
  * The mapper is the only place that names an {@see AgentRunOutcome} case, so
@@ -25,11 +26,11 @@ final class RunOutcomeMapperTest extends TestCase
     public function everyOutcomeMapsToAStateAUserCanActOn(
         AgentRunOutcome $outcome,
         ConversationStatus $expectedStatus,
-        string $expectedLabel,
+        Outcome $expectedLabel,
         bool $expectedFinished,
         bool $expectedSettles,
     ): void {
-        $mapped = (new RunOutcomeMapper())->map(self::resultFor($outcome));
+        $mapped = new RunOutcomeMapper()->map(self::resultFor($outcome));
 
         self::assertSame($expectedStatus, $mapped->status);
         self::assertSame($expectedLabel, $mapped->outcome);
@@ -38,21 +39,21 @@ final class RunOutcomeMapperTest extends TestCase
     }
 
     /**
-     * @return iterable<string, array{0: AgentRunOutcome, 1: ConversationStatus, 2: string, 3: bool, 4: bool}>
+     * @return iterable<string, array{0: AgentRunOutcome, 1: ConversationStatus, 2: Outcome, 3: bool, 4: bool}>
      */
     public static function outcomes(): iterable
     {
-        yield 'completed' => [AgentRunOutcome::COMPLETED, ConversationStatus::Idle, 'completed', true, true];
-        yield 'awaiting approval' => [AgentRunOutcome::AWAITING_APPROVAL, ConversationStatus::AwaitingApproval, 'awaiting_approval', false, true];
-        yield 'awaiting input' => [AgentRunOutcome::AWAITING_INPUT, ConversationStatus::AwaitingInput, 'awaiting_input', false, true];
-        yield 'guardrail blocked' => [AgentRunOutcome::GUARDRAIL_BLOCKED, ConversationStatus::Failed, 'guardrail_blocked', true, true];
-        yield 'guardrail approval required' => [AgentRunOutcome::GUARDRAIL_APPROVAL_REQUIRED, ConversationStatus::Failed, 'guardrail_approval_required', true, true];
-        yield 'suspend failed' => [AgentRunOutcome::SUSPEND_FAILED, ConversationStatus::Failed, 'suspend_failed', true, true];
-        yield 'cancelled' => [AgentRunOutcome::CANCELLED, ConversationStatus::Idle, 'cancelled', true, true];
-        yield 'failed' => [AgentRunOutcome::FAILED, ConversationStatus::Failed, 'failed', true, true];
+        yield 'completed' => [AgentRunOutcome::COMPLETED, ConversationStatus::Idle, Outcome::Completed, true, true];
+        yield 'awaiting approval' => [AgentRunOutcome::AWAITING_APPROVAL, ConversationStatus::AwaitingApproval, Outcome::AwaitingApproval, false, true];
+        yield 'awaiting input' => [AgentRunOutcome::AWAITING_INPUT, ConversationStatus::AwaitingInput, Outcome::AwaitingInput, false, true];
+        yield 'guardrail blocked' => [AgentRunOutcome::GUARDRAIL_BLOCKED, ConversationStatus::Failed, Outcome::GuardrailBlocked, true, true];
+        yield 'guardrail approval required' => [AgentRunOutcome::GUARDRAIL_APPROVAL_REQUIRED, ConversationStatus::Failed, Outcome::GuardrailApprovalRequired, true, true];
+        yield 'suspend failed' => [AgentRunOutcome::SUSPEND_FAILED, ConversationStatus::Failed, Outcome::SuspendFailed, true, true];
+        yield 'cancelled' => [AgentRunOutcome::CANCELLED, ConversationStatus::Idle, Outcome::Cancelled, true, true];
+        yield 'failed' => [AgentRunOutcome::FAILED, ConversationStatus::Failed, Outcome::Failed, true, true];
         // Somebody else's executor owns these runs; this request must not settle them.
-        yield 'lease lost' => [AgentRunOutcome::LEASE_LOST, ConversationStatus::Processing, 'lease_lost', false, false];
-        yield 'requeued' => [AgentRunOutcome::REQUEUED, ConversationStatus::Processing, 'requeued', false, false];
+        yield 'lease lost' => [AgentRunOutcome::LEASE_LOST, ConversationStatus::Processing, Outcome::LeaseLost, false, false];
+        yield 'requeued' => [AgentRunOutcome::REQUEUED, ConversationStatus::Processing, Outcome::Requeued, false, false];
     }
 
     #[Test]
@@ -71,7 +72,7 @@ final class RunOutcomeMapperTest extends TestCase
     #[Test]
     public function aFailureCarriesTheSanitizedReason(): void
     {
-        $mapped = (new RunOutcomeMapper())->map(self::resultFor(
+        $mapped = new RunOutcomeMapper()->map(self::resultFor(
             AgentRunOutcome::FAILED,
             new RuntimeException('Provider refused: Bearer sk-abcdefgh12345678 at https://api.example.com/v1'),
         ));
@@ -84,7 +85,7 @@ final class RunOutcomeMapperTest extends TestCase
     #[Test]
     public function aFailureWithoutAnExceptionStillExplainsItself(): void
     {
-        self::assertSame('The turn failed.', (new RunOutcomeMapper())->map(self::resultFor(AgentRunOutcome::FAILED))->message);
+        self::assertSame('The turn failed.', new RunOutcomeMapper()->map(self::resultFor(AgentRunOutcome::FAILED))->message);
     }
 
     private static function resultFor(AgentRunOutcome $outcome, ?Throwable $error = null): AgentRunResult

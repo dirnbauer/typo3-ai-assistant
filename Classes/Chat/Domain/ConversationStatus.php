@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Domain;
+namespace Webconsulting\WebconAiAssistant\Chat\Domain;
 
 /**
  * The lifecycle of one conversation row — only the states a user can act on.

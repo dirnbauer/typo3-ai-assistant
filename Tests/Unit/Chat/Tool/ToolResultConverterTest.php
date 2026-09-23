@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Tool;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Tool;
 
 use Mcp\Types\CallToolResult;
 use Mcp\Types\TextContent;
@@ -11,7 +11,7 @@ use Netresearch\NrLlm\Domain\Enum\ToolEffect;
 use Netresearch\NrLlm\Domain\Enum\WriteKind;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Webconsulting\ShadcnUi\Chat\Tool\ToolResultConverter;
+use Webconsulting\WebconAiAssistant\Chat\Tool\ToolResultConverter;
 
 /**
  * The MCP and nr-llm result shapes differ exactly where egress matters, and
@@ -22,7 +22,7 @@ final class ToolResultConverterTest extends TestCase
     #[Test]
     public function textContentBecomesTheProviderFacingResult(): void
     {
-        $result = (new ToolResultConverter())->convert(new CallToolResult([new TextContent('Page 42 is called "Home".')]), 'typo3_GetPage');
+        $result = new ToolResultConverter()->convert(new CallToolResult([new TextContent('Page 42 is called "Home".')]), 'typo3_GetPage');
 
         self::assertFalse($result->isError);
         self::assertSame('Page 42 is called "Home".', $result->content);
@@ -33,7 +33,7 @@ final class ToolResultConverterTest extends TestCase
     #[Test]
     public function anMcpErrorBecomesAnErrorResultWithoutArtifacts(): void
     {
-        $result = (new ToolResultConverter())->convert(
+        $result = new ToolResultConverter()->convert(
             new CallToolResult([new TextContent('You may not edit page 42.')], true, null, ['table' => 'pages', 'uid' => 42]),
             'typo3_WriteTable',
             ToolEffect::NON_IDEMPOTENT_WRITE,
@@ -47,7 +47,7 @@ final class ToolResultConverterTest extends TestCase
     #[Test]
     public function uniformRowsBecomeATableArtifact(): void
     {
-        $result = (new ToolResultConverter())->convert(new CallToolResult(
+        $result = new ToolResultConverter()->convert(new CallToolResult(
             [new TextContent('two rows')],
             false,
             null,
@@ -64,7 +64,7 @@ final class ToolResultConverterTest extends TestCase
     #[Test]
     public function otherStructureBecomesJson(): void
     {
-        $result = (new ToolResultConverter())->convert(
+        $result = new ToolResultConverter()->convert(
             new CallToolResult([new TextContent('ok')], false, null, ['nested' => ['deep' => true]]),
             'typo3_GetPage',
         );
@@ -76,7 +76,7 @@ final class ToolResultConverterTest extends TestCase
     #[Test]
     public function aWriteThatNamesItsRecordCarriesAWriteTarget(): void
     {
-        $result = (new ToolResultConverter())->convert(
+        $result = new ToolResultConverter()->convert(
             new CallToolResult([new TextContent('created')], false, null, ['action' => 'create', 'table' => 'pages', 'uid' => 77]),
             'typo3_WriteTable',
             ToolEffect::NON_IDEMPOTENT_WRITE,
@@ -104,7 +104,7 @@ final class ToolResultConverterTest extends TestCase
     #[Test]
     public function aTableNameThatIsNotAnIdentifierYieldsNoTarget(): void
     {
-        $result = (new ToolResultConverter())->convert(
+        $result = new ToolResultConverter()->convert(
             new CallToolResult([new TextContent('ok')], false, null, ['table' => "pages\n", 'uid' => 1]),
             'typo3_WriteTable',
             ToolEffect::NON_IDEMPOTENT_WRITE,

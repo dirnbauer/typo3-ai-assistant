@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Api;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Api;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Stream;
-use Webconsulting\ShadcnUi\Chat\Api\ApiRequest;
+use Webconsulting\WebconAiAssistant\Chat\Api\ApiRequest;
 
 final class ApiRequestTest extends TestCase
 {
@@ -17,7 +17,7 @@ final class ApiRequestTest extends TestCase
     {
         $body = new Stream('php://temp', 'rw');
         $body->write('{"conversation":"12","content":"Hi","approved":true,"context":{"pageId":3},"attachments":[{"fileUid":9}]}');
-        $api = new ApiRequest((new ServerRequest('https://example.com/x', 'POST'))->withBody($body));
+        $api = new ApiRequest(new ServerRequest('https://example.com/x', 'POST')->withBody($body));
 
         self::assertSame(12, $api->conversationUid());
         self::assertSame('Hi', $api->string('content'));
@@ -44,7 +44,7 @@ final class ApiRequestTest extends TestCase
     public function streamingIsNegotiatedByTheAcceptHeader(): void
     {
         $plain = new ApiRequest(new ServerRequest('https://example.com/x', 'POST'));
-        $stream = new ApiRequest((new ServerRequest('https://example.com/x', 'POST'))->withHeader('Accept', 'text/event-stream'));
+        $stream = new ApiRequest(new ServerRequest('https://example.com/x', 'POST')->withHeader('Accept', 'text/event-stream'));
 
         self::assertFalse($plain->wantsEventStream());
         self::assertTrue($stream->wantsEventStream());

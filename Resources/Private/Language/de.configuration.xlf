@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" target-language="de" datatype="plaintext" original="EXT:webcon_ai_assistant/Resources/Private/Language/configuration.xlf" date="2026-09-23T00:00:00Z" product-name="webcon_ai_assistant">
+    <header/>
+    <body>
+      <trans-unit id="allowWrites" resname="allowWrites">
+        <source>Allow writes approved in advance: when enabled, a conversation whose "approve automatically" switch is on skips the approval card for permitted write tools. Off means every write stops and asks.</source>
+        <target>Vorab genehmigte Schreibzugriffe erlauben: Ist das aktiv, überspringt eine Unterhaltung mit eingeschalteter automatischer Genehmigung die Genehmigungskarte für erlaubte Schreibwerkzeuge. Aus heißt: Jeder Schreibzugriff hält an und fragt.</target>
+      </trans-unit>
+      <trans-unit id="attachmentStorage" resname="attachmentStorage">
+        <source>Attachment storage: FAL combined identifier of the folder chat attachments are stored below, per backend user and conversation.</source>
+        <target>Speicherort für Anhänge: FAL-Kennung des Ordners, unter dem Chat-Anhänge je Backend-Benutzer und Unterhaltung abgelegt werden.</target>
+      </trans-unit>
+      <trans-unit id="llmConfiguration" resname="llmConfiguration">
+        <source>nr-llm configuration: identifier of the nr-llm LLM configuration the chat runs under (provider, model, system prompt, budget). The chat is unavailable while it cannot be resolved.</source>
+        <target>nr-llm-Konfiguration: Kennung der nr-llm-Konfiguration, unter der der Chat läuft (Anbieter, Modell, System-Prompt, Budget). Solange sie sich nicht auflösen lässt, ist der Chat nicht verfügbar.</target>
+      </trans-unit>
+      <trans-unit id="maxTurnsPerHour" resname="maxTurnsPerHour">
+        <source>Turns per hour and user: how many turns one backend user may start per hour across all conversations. 0 disables the limit.</source>
+        <target>Durchgänge je Stunde und Benutzer: wie viele Durchgänge ein Backend-Benutzer pro Stunde über alle Unterhaltungen starten darf. 0 schaltet die Grenze ab.</target>
+      </trans-unit>
+      <trans-unit id="panelEnabled" resname="panelEnabled">
+        <source>Toolbar item: offer the AI Assistant as a dropdown of the backend toolbar.</source>
+        <target>Werkzeugleiste: den KI-Assistenten als Aufklappmenü in der Backend-Werkzeugleiste anbieten.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

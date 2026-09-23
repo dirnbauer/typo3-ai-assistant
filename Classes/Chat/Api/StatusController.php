@@ -2,39 +2,45 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Api;
+namespace Webconsulting\WebconAiAssistant\Chat\Api;
 
 use Netresearch\NrLlm\Domain\Model\LlmConfiguration;
 use Netresearch\NrLlm\Service\BudgetServiceInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Webconsulting\ShadcnUi\Chat\Attachment\Document\DocumentExtractorRegistry;
-use Webconsulting\ShadcnUi\Chat\ChatException;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\InstructionRepository;
-use Webconsulting\ShadcnUi\Chat\Security\BackendUserContext;
-use Webconsulting\ShadcnUi\Chat\Security\ToolAccess;
-use Webconsulting\ShadcnUi\Chat\Security\TurnRateLimiter;
-use Webconsulting\ShadcnUi\Chat\Tool\McpCatalogTool;
-use Webconsulting\ShadcnUi\Chat\Tool\ToolEffectLookup;
-use Webconsulting\ShadcnUi\Chat\Turn\ChatConfigurationResolver;
-use Webconsulting\ShadcnUi\Chat\Turn\ChatContextFactory;
-use Webconsulting\ShadcnUi\Chat\Turn\TurnRunner;
-use Webconsulting\ShadcnUi\Configuration\ExtensionSettings;
+use TYPO3\CMS\Backend\Attribute\AsController;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\Document\DocumentExtractorRegistry;
+use Webconsulting\WebconAiAssistant\Chat\ChatException;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\InstructionRepository;
+use Webconsulting\WebconAiAssistant\Chat\Security\BackendUserContext;
+use Webconsulting\WebconAiAssistant\Chat\Security\ToolAccess;
+use Webconsulting\WebconAiAssistant\Chat\Security\TurnRateLimiter;
+use Webconsulting\WebconAiAssistant\Chat\Tool\McpCatalogTool;
+use Webconsulting\WebconAiAssistant\Chat\Tool\ToolEffectLookup;
+use Webconsulting\WebconAiAssistant\Chat\Turn\ChatConfigurationResolver;
+use Webconsulting\WebconAiAssistant\Chat\Turn\ChatContextFactory;
+use Webconsulting\WebconAiAssistant\Chat\Turn\TurnRunner;
+use Webconsulting\WebconAiAssistant\Chat\UserMessages;
+use Webconsulting\WebconAiAssistant\Configuration\ExtensionSettings;
 
 /**
  * Everything a client needs before it renders anything: whether the chat works
  * at all, what it runs on, which tools it may reach, what it may spend, and
  * where the user is standing.
  */
+#[AsController]
 final readonly class StatusController extends AbstractApiController
 {
     /**
      * Openers the chat can honestly offer, given the tools this user may reach.
      * Suggesting an action whose tool is disabled teaches the user to distrust
-     * every suggestion after it.
+     * every suggestion after it. Each is labelled `suggestion.<MCP tool name>`;
+     * the English text here is what a request without a language service gets.
+     *
+     * @var array<string, string>
      */
-    private const SUGGESTIONS = [
+    private const array SUGGESTIONS = [
         'GetPageTree' => 'Show me the page tree below the site root.',
         'Search' => 'Find every page that mentions our old product name.',
         'GetPage' => 'Summarise the content elements on this page.',
@@ -66,12 +72,13 @@ final readonly class StatusController extends AbstractApiController
             try {
                 $configuration = $this->configuration->resolve($this->backendUser->actor());
             } catch (ChatException $exception) {
-                $issues[] = $exception->getMessage();
+                $issues[] = UserMessages::of($exception);
             }
 
             $tools = $this->toolAccess->allowedToolNames();
             if ($configuration instanceof LlmConfiguration && $tools === []) {
-                $issues[] = 'No tools are enabled for you. The chat can answer questions but cannot inspect or change this installation.';
+                $issues[] = UserMessages::label('status.noTools')
+                    ?? 'No tools are enabled for you. The chat can answer questions but cannot inspect or change this installation.';
             }
 
             $uid = $this->backendUser->uid();
@@ -101,6 +108,7 @@ final readonly class StatusController extends AbstractApiController
                 'attachments' => [
                     'extensions' => $this->extractors->extensions(),
                     'mimeTypes' => $this->extractors->mimeTypes(),
+                    'maxBytes' => $this->extractors->maxBytesByExtension(),
                 ],
                 'instructions' => array_map(
                     static fn(array $instruction): array => ['uid' => $instruction['uid'], 'title' => $instruction['title']],
@@ -122,8 +130,14 @@ final readonly class StatusController extends AbstractApiController
      */
     private static function suggestions(array $toolNames): array
     {
-        $mcpNames = array_filter(array_map(McpCatalogTool::mcpName(...), $toolNames));
+        $reachable = array_flip(array_filter(array_map(McpCatalogTool::mcpName(...), $toolNames)));
+        $suggestions = [];
+        foreach (self::SUGGESTIONS as $mcpName => $english) {
+            if (isset($reachable[$mcpName])) {
+                $suggestions[] = UserMessages::label('suggestion.' . $mcpName) ?? $english;
+            }
+        }
 
-        return array_values(array_intersect_key(self::SUGGESTIONS, array_flip($mcpNames)));
+        return $suggestions;
     }
 }

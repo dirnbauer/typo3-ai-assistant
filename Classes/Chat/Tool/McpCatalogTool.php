@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Tool;
+namespace Webconsulting\WebconAiAssistant\Chat\Tool;
 
 use Hn\McpServer\Service\McpToolCatalogService;
 use Netresearch\NrLlm\Domain\Enum\ToolDataClass;
@@ -13,9 +13,10 @@ use Netresearch\NrLlm\Service\Tool\ToolDataClassInterface;
 use Netresearch\NrLlm\Service\Tool\ToolEffectInterface;
 use Netresearch\NrLlm\Service\Tool\ToolExecutionContext;
 use Netresearch\NrLlm\Service\Tool\ToolInterface;
+use Override;
 use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use Webconsulting\ShadcnUi\Chat\ErrorMessageSanitizer;
+use Webconsulting\WebconAiAssistant\Chat\ErrorMessageSanitizer;
 
 /**
  * One MCP tool of this installation, offered to the nr-llm agent loop.
@@ -34,10 +35,10 @@ use Webconsulting\ShadcnUi\Chat\ErrorMessageSanitizer;
 final readonly class McpCatalogTool implements ToolInterface, ToolEffectInterface, ToolDataClassInterface
 {
     /** `WriteTable` becomes `typo3_WriteTable`: an installation tool is told apart from an nr-llm builtin at a glance. */
-    public const NAME_PREFIX = 'typo3_';
+    public const string NAME_PREFIX = 'typo3_';
 
     /** One nr-llm tool group for the whole catalogue, so an operator can switch it as one. */
-    public const GROUP = 'typo3_mcp';
+    public const string GROUP = 'typo3_mcp';
 
     public function __construct(
         private string $mcpName,
@@ -67,11 +68,13 @@ final readonly class McpCatalogTool implements ToolInterface, ToolEffectInterfac
         return $mcpName === '' ? null : $mcpName;
     }
 
+    #[Override]
     public function getSpec(): ToolSpec
     {
         return $this->spec;
     }
 
+    #[Override]
     public function getEffect(): ToolEffect
     {
         return $this->effect;
@@ -82,11 +85,13 @@ final readonly class McpCatalogTool implements ToolInterface, ToolEffectInterfac
      * SECRET_ADJACENT, which would withhold the whole catalogue from every
      * provider that is not maximally trusted.
      */
+    #[Override]
     public function getDataClass(): ToolDataClass
     {
         return $this->dataClass;
     }
 
+    #[Override]
     public function getGroup(): string
     {
         return self::GROUP;
@@ -96,11 +101,13 @@ final readonly class McpCatalogTool implements ToolInterface, ToolEffectInterfac
      * Only reads are offered without an operator decision; a write stays dark
      * until an admin switches it on in nr-llm's Tools module.
      */
+    #[Override]
     public function isEnabledByDefault(): bool
     {
         return !$this->effect->isWrite();
     }
 
+    #[Override]
     public function requiresAdmin(): bool
     {
         return $this->requiresAdmin;
@@ -109,6 +116,7 @@ final readonly class McpCatalogTool implements ToolInterface, ToolEffectInterfac
     /**
      * @param array<string, mixed> $arguments
      */
+    #[Override]
     public function execute(array $arguments, ToolExecutionContext $context): ToolResult
     {
         $denial = $this->denyMismatchedIdentity($context);

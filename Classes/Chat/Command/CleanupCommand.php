@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Command;
+namespace Webconsulting\WebconAiAssistant\Chat\Command;
 
 use Closure;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,10 +14,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use Webconsulting\ShadcnUi\Chat\Attachment\AttachmentStorage;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationStatus;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRepository;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\AttachmentStorage;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationStatus;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRepository;
 
 /**
  * Retention and stuck-run recovery, in the order the passes depend on each other.
@@ -30,13 +31,13 @@ use Webconsulting\ShadcnUi\Chat\Domain\MessageRepository;
  * 4. SWEEP message rows whose conversation no longer exists.
  */
 #[AsCommand(
-    name: 'shadcn-ui:chat:cleanup',
+    name: 'ai-assistant:chat:cleanup',
     description: 'Release stuck chat conversations and apply retention',
 )]
 final class CleanupCommand extends Command
 {
     /** Longer than any request PHP allows to finish, so a slow-but-alive turn is never stolen. */
-    private const STUCK_AFTER_SECONDS = 900;
+    private const int STUCK_AFTER_SECONDS = 900;
 
     public function __construct(
         private readonly ConnectionPool $connectionPool,
@@ -46,6 +47,7 @@ final class CleanupCommand extends Command
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this
@@ -54,6 +56,7 @@ final class CleanupCommand extends Command
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Report what would happen without changing anything');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $dryRun = $input->getOption('dry-run') === true;

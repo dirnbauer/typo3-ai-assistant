@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Domain;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Domain;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Webconsulting\ShadcnUi\Chat\Domain\Conversation;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationStatus;
-use Webconsulting\ShadcnUi\Chat\Domain\Message;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRole;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Conversation;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationStatus;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Message;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRole;
 
 /**
  * Rows in, API shapes out — including the two places the shape is deliberately
@@ -44,7 +44,7 @@ final class MessageTest extends TestCase
     #[Test]
     public function optionalFieldsAreOmittedWhenEmpty(): void
     {
-        $array = (new Message(1, 1, 1, MessageRole::Assistant, 'Hi'))->toArray();
+        $array = new Message(1, 1, 1, MessageRole::Assistant, 'Hi')->toArray();
 
         self::assertSame(['uid', 'sequence', 'role', 'content', 'createdAt'], array_keys($array));
     }

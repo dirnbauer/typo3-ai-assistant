@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
 use Netresearch\NrLlm\Domain\Enum\AgentRunOutcome;
 use Netresearch\NrLlm\Service\Agent\AgentRunResult;
 use UnhandledMatchError;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationStatus;
-use Webconsulting\ShadcnUi\Chat\ErrorMessageSanitizer;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationStatus;
+use Webconsulting\WebconAiAssistant\Chat\ErrorMessageSanitizer;
 
 /**
  * The ONE place that names {@see AgentRunOutcome} cases.
@@ -31,7 +31,7 @@ final readonly class RunOutcomeMapper
             return new TurnOutcome(
                 ConversationStatus::Failed,
                 true,
-                'failed',
+                Outcome::Failed,
                 self::reason($result, sprintf('The run ended with an outcome this version does not handle (%s).', $result->outcome->value)),
             );
         }
@@ -40,35 +40,35 @@ final readonly class RunOutcomeMapper
     private static function outcomeOf(AgentRunResult $result): TurnOutcome
     {
         return match ($result->outcome) {
-            AgentRunOutcome::COMPLETED => new TurnOutcome(ConversationStatus::Idle, true, 'completed'),
-            AgentRunOutcome::AWAITING_APPROVAL => new TurnOutcome(ConversationStatus::AwaitingApproval, false, 'awaiting_approval'),
-            AgentRunOutcome::AWAITING_INPUT => new TurnOutcome(ConversationStatus::AwaitingInput, false, 'awaiting_input'),
+            AgentRunOutcome::COMPLETED => new TurnOutcome(ConversationStatus::Idle, true, Outcome::Completed),
+            AgentRunOutcome::AWAITING_APPROVAL => new TurnOutcome(ConversationStatus::AwaitingApproval, false, Outcome::AwaitingApproval),
+            AgentRunOutcome::AWAITING_INPUT => new TurnOutcome(ConversationStatus::AwaitingInput, false, Outcome::AwaitingInput),
             AgentRunOutcome::GUARDRAIL_BLOCKED => new TurnOutcome(
                 ConversationStatus::Failed,
                 true,
-                'guardrail_blocked',
+                Outcome::GuardrailBlocked,
                 self::reason($result, 'A guardrail blocked this request.'),
             ),
             AgentRunOutcome::GUARDRAIL_APPROVAL_REQUIRED => new TurnOutcome(
                 ConversationStatus::Failed,
                 true,
-                'guardrail_approval_required',
+                Outcome::GuardrailApprovalRequired,
                 self::reason($result, 'A guardrail requires this request to be approved before it may run.'),
             ),
-            AgentRunOutcome::CANCELLED => new TurnOutcome(ConversationStatus::Idle, true, 'cancelled', 'The turn was cancelled.'),
+            AgentRunOutcome::CANCELLED => new TurnOutcome(ConversationStatus::Idle, true, Outcome::Cancelled, 'The turn was cancelled.'),
             // The run belongs to another executor now. This request must not
             // settle it — that would overwrite the state its owner maintains.
-            AgentRunOutcome::LEASE_LOST => new TurnOutcome(ConversationStatus::Processing, false, 'lease_lost', 'This run is being executed elsewhere.', false),
-            AgentRunOutcome::REQUEUED => new TurnOutcome(ConversationStatus::Processing, false, 'requeued', 'This run was queued for another attempt.', false),
+            AgentRunOutcome::LEASE_LOST => new TurnOutcome(ConversationStatus::Processing, false, Outcome::LeaseLost, 'This run is being executed elsewhere.', false),
+            AgentRunOutcome::REQUEUED => new TurnOutcome(ConversationStatus::Processing, false, Outcome::Requeued, 'This run was queued for another attempt.', false),
             // An approval was required but could not be stored (nr-llm ADR-092):
             // fail rather than show a card that cannot be answered.
             AgentRunOutcome::SUSPEND_FAILED => new TurnOutcome(
                 ConversationStatus::Failed,
                 true,
-                'suspend_failed',
+                Outcome::SuspendFailed,
                 self::reason($result, 'The approval for this run could not be recorded, so it was stopped.'),
             ),
-            AgentRunOutcome::FAILED => new TurnOutcome(ConversationStatus::Failed, true, 'failed', self::reason($result, 'The turn failed.')),
+            AgentRunOutcome::FAILED => new TurnOutcome(ConversationStatus::Failed, true, Outcome::Failed, self::reason($result, 'The turn failed.')),
         };
     }
 

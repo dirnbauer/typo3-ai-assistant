@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Turn;
 
 use Netresearch\NrLlm\Domain\Enum\ToolEffect;
 use Netresearch\NrLlm\Domain\Enum\WriteKind;
@@ -12,9 +12,9 @@ use Netresearch\NrLlm\Event\AfterAiRecordWrittenEvent;
 use Netresearch\NrLlm\Service\Tool\ToolRegistry;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Webconsulting\ShadcnUi\Chat\Tool\ToolEffectLookup;
-use Webconsulting\ShadcnUi\Chat\Turn\StepRecorder;
-use Webconsulting\ShadcnUi\Chat\Turn\WriteLedger;
+use Webconsulting\WebconAiAssistant\Chat\Tool\ToolEffectLookup;
+use Webconsulting\WebconAiAssistant\Chat\Turn\StepRecorder;
+use Webconsulting\WebconAiAssistant\Chat\Turn\WriteLedger;
 
 /**
  * Deduplication and call correlation — and the write target a tool step now
@@ -80,7 +80,7 @@ final class StepRecorderTest extends TestCase
     #[Test]
     public function anUnknownRecordDefaultsToUpdated(): void
     {
-        self::assertSame(WriteKind::UPDATED, (new WriteLedger())->kindOf(new RecordReference('pages', 1)));
+        self::assertSame(WriteKind::UPDATED, new WriteLedger()->kindOf(new RecordReference('pages', 1)));
     }
 
     #[Test]

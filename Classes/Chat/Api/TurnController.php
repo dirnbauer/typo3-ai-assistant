@@ -2,29 +2,31 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Api;
+namespace Webconsulting\WebconAiAssistant\Chat\Api;
 
 use Closure;
 use Netresearch\NrLlm\Domain\ValueObject\AgentRunEvent;
 use Netresearch\NrLlm\Service\Agent\AgentRuntimeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Webconsulting\ShadcnUi\Chat\Attachment\AttachmentStorage;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationStatus;
-use Webconsulting\ShadcnUi\Chat\Security\BackendUserContext;
-use Webconsulting\ShadcnUi\Chat\Security\TurnRateLimiter;
-use Webconsulting\ShadcnUi\Chat\Turn\ChatContextFactory;
-use Webconsulting\ShadcnUi\Chat\Turn\TurnResult;
-use Webconsulting\ShadcnUi\Chat\Turn\TurnRunner;
+use TYPO3\CMS\Backend\Attribute\AsController;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\AttachmentStorage;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationStatus;
+use Webconsulting\WebconAiAssistant\Chat\Security\BackendUserContext;
+use Webconsulting\WebconAiAssistant\Chat\Security\TurnRateLimiter;
+use Webconsulting\WebconAiAssistant\Chat\Turn\ChatContextFactory;
+use Webconsulting\WebconAiAssistant\Chat\Turn\TurnResult;
+use Webconsulting\WebconAiAssistant\Chat\Turn\TurnRunner;
 
 /**
  * The routes that drive a run: a message, a decision, an answer, a cancel — and
  * the trace read back from nr-llm.
  */
+#[AsController]
 final readonly class TurnController extends AbstractApiController
 {
-    public const MAX_MESSAGE_LENGTH = 10000;
+    public const int MAX_MESSAGE_LENGTH = 10000;
 
     public function __construct(
         BackendUserContext $backendUser,
@@ -45,13 +47,23 @@ final readonly class TurnController extends AbstractApiController
 
             $content = trim($api->string('content'));
             if ($content === '') {
-                throw new ApiException('A message cannot be empty.', 400);
+                throw new ApiException('A message cannot be empty.', 400, 1795000607);
             }
             if (mb_strlen($content) > self::MAX_MESSAGE_LENGTH) {
-                throw new ApiException(sprintf('A message may be at most %d characters long.', self::MAX_MESSAGE_LENGTH), 400);
+                throw new ApiException(
+                    sprintf('A message may be at most %d characters long.', self::MAX_MESSAGE_LENGTH),
+                    400,
+                    1795000608,
+                    ['max' => self::MAX_MESSAGE_LENGTH],
+                );
             }
             if (!$this->rateLimiter->consume($this->backendUser->uid())) {
-                throw new ApiException(sprintf('You have started too many turns. The limit is %d per hour.', $this->rateLimiter->limit()), 429);
+                throw new ApiException(
+                    sprintf('You have started too many turns. The limit is %d per hour.', $this->rateLimiter->limit()),
+                    429,
+                    1795000609,
+                    ['limit' => $this->rateLimiter->limit()],
+                );
             }
 
             $attachments = $this->attachments->resolve($api->list('attachments'));
@@ -86,7 +98,7 @@ final readonly class TurnController extends AbstractApiController
             $conversation = $this->conversation($api);
             $answer = trim($api->string('answer'));
             if ($answer === '') {
-                throw new ApiException('An answer cannot be empty.', 400);
+                throw new ApiException('An answer cannot be empty.', 400, 1795000610);
             }
             $digest = $api->string('turnDigest');
 

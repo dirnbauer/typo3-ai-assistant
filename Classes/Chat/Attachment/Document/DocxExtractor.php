@@ -2,43 +2,50 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Attachment\Document;
+namespace Webconsulting\WebconAiAssistant\Chat\Attachment\Document;
 
+use Override;
 use PhpOffice\PhpWord\Element\AbstractElement;
 use PhpOffice\PhpWord\Element\Text;
 use PhpOffice\PhpWord\Element\TextRun;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use Throwable;
-use Webconsulting\ShadcnUi\Chat\Attachment\AttachmentRejectedException;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\AttachmentRejectedException;
 
 final class DocxExtractor implements DocumentExtractorInterface
 {
+    #[Override]
     public function mimeTypes(): array
     {
         return ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     }
 
+    #[Override]
     public function extensions(): array
     {
         return ['docx'];
     }
 
+    #[Override]
     public function maxBytes(): int
     {
         return 15 * 1024 * 1024;
     }
 
+    #[Override]
     public function isAvailable(): bool
     {
         return class_exists(PhpWord::class);
     }
 
+    #[Override]
     public function validate(string $path): void
     {
         $this->load($path, 1795000420);
     }
 
+    #[Override]
     public function extract(string $path): string
     {
         $paragraphs = [];
@@ -64,7 +71,12 @@ final class DocxExtractor implements DocumentExtractorInterface
         try {
             return IOFactory::load($path);
         } catch (Throwable $exception) {
-            throw new AttachmentRejectedException('DOCX could not be read: ' . $exception->getMessage(), $code, $exception);
+            throw new AttachmentRejectedException(
+                'DOCX could not be read: ' . $exception->getMessage(),
+                $code,
+                $exception,
+                ['reason' => $exception->getMessage()],
+            );
         } finally {
             error_reporting($previous);
         }

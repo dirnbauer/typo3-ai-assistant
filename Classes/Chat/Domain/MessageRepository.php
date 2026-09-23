@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Domain;
+namespace Webconsulting\WebconAiAssistant\Chat\Domain;
 
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -16,7 +16,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
  */
 final readonly class MessageRepository
 {
-    public const TABLE = 'tx_shadcnui_message';
+    public const string TABLE = 'tx_webconaiassistant_message';
 
     public function __construct(
         private ConnectionPool $connectionPool,

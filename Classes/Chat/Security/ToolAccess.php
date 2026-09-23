@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Security;
+namespace Webconsulting\WebconAiAssistant\Chat\Security;
 
 use Netresearch\NrLlm\Service\Tool\ToolAvailabilityServiceInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -13,7 +13,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Two gates, intersected: nr-llm's own tool policy (what an administrator
  * enabled in the Tools module — the runtime enforces it again at call time, so
  * nothing here can widen it), narrowed by user TSconfig
- * `tx_shadcnui.tools.allow` / `.deny`. Deny wins over allow, because a
+ * `tx_webconaiassistant.tools.allow` / `.deny`. Deny wins over allow, because a
  * narrowing rule that a broader one can cancel is not a narrowing rule.
  *
  * An empty result is a legitimate answer: a chat with no tools still answers
@@ -21,7 +21,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 final readonly class ToolAccess
 {
-    private const TSCONFIG_KEY = 'tx_shadcnui.';
+    private const string TSCONFIG_KEY = 'tx_webconaiassistant.';
 
     public function __construct(
         private ToolAvailabilityServiceInterface $toolAvailability,

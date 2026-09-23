@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Attachment\Document;
+namespace Webconsulting\WebconAiAssistant\Chat\Attachment\Document;
 
-use Webconsulting\ShadcnUi\Chat\Attachment\AttachmentRejectedException;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\AttachmentRejectedException;
 
 /**
  * The attachment allowlist: exactly the MIME types an available extractor
@@ -59,6 +59,24 @@ final readonly class DocumentExtractorRegistry
         return $this->find($mimeType)?->maxBytes() ?? 0;
     }
 
+    /**
+     * Each accepted file extension with its size cap, so a client can refuse a
+     * file before uploading it rather than after.
+     *
+     * @return array<string, int>
+     */
+    public function maxBytesByExtension(): array
+    {
+        $caps = [];
+        foreach ($this->extractors as $extractor) {
+            foreach ($extractor->extensions() as $extension) {
+                $caps[$extension] ??= $extractor->maxBytes();
+            }
+        }
+
+        return $caps;
+    }
+
     public function validate(string $path, string $mimeType): void
     {
         $this->require($mimeType)->validate($path);
@@ -71,18 +89,18 @@ final readonly class DocumentExtractorRegistry
 
     private function find(string $mimeType): ?DocumentExtractorInterface
     {
-        foreach ($this->extractors as $extractor) {
-            if (in_array($mimeType, $extractor->mimeTypes(), true)) {
-                return $extractor;
-            }
-        }
-
-        return null;
+        return array_find(
+            $this->extractors,
+            static fn(DocumentExtractorInterface $extractor): bool => in_array($mimeType, $extractor->mimeTypes(), true),
+        );
     }
 
     private function require(string $mimeType): DocumentExtractorInterface
     {
-        return $this->find($mimeType)
-            ?? throw new AttachmentRejectedException('This file type is not supported: ' . $mimeType, 1795000401);
+        return $this->find($mimeType) ?? throw new AttachmentRejectedException(
+            'This file type is not supported: ' . $mimeType,
+            1795000401,
+            arguments: ['mimeType' => $mimeType],
+        );
     }
 }

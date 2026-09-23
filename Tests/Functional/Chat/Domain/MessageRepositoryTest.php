@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Functional\Chat\Domain;
+namespace Webconsulting\WebconAiAssistant\Tests\Functional\Chat\Domain;
 
 use PHPUnit\Framework\Attributes\Test;
-use Webconsulting\ShadcnUi\Chat\Domain\Message;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRole;
-use Webconsulting\ShadcnUi\Tests\Functional\AbstractChatTestCase;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Message;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRole;
+use Webconsulting\WebconAiAssistant\Tests\Functional\AbstractChatTestCase;
 
 final class MessageRepositoryTest extends AbstractChatTestCase
 {

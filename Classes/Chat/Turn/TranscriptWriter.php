@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
 use Netresearch\NrLlm\Domain\ValueObject\RecordReference;
 use Netresearch\NrLlm\Domain\ValueObject\RunStep;
 use Netresearch\NrLlm\Domain\ValueObject\ToolCall;
 use Netresearch\NrLlm\Service\Agent\AgentRunResult;
-use Webconsulting\ShadcnUi\Chat\Domain\Conversation;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\Message;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRole;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Conversation;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Message;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRole;
 
 /**
  * Writes what a run produced back into the transcript.
@@ -30,7 +30,7 @@ final readonly class TranscriptWriter
      * megabyte of JSON would make the conversation unloadable forever, to keep a
      * payload nr-llm already has.
      */
-    private const MAX_TOOL_CONTENT = 20000;
+    private const int MAX_TOOL_CONTENT = 20000;
 
     public function __construct(
         private MessageRepository $messages,

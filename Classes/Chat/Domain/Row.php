@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Domain;
+namespace Webconsulting\WebconAiAssistant\Chat\Domain;
 
 /**
  * Reading a database row without trusting its shape.

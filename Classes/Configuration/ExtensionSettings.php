@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Configuration;
+namespace Webconsulting\WebconAiAssistant\Configuration;
 
 use Throwable;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Row;
 
 /**
  * Typed reader for `ext_conf_template.txt`.
@@ -14,12 +15,24 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
  * ones the template declares, so a fresh install and an installation that never
  * saved the form read the same numbers.
  */
-final class ExtensionSettings
+final readonly class ExtensionSettings
 {
-    public const EXTENSION_KEY = 'shadcn_ui';
+    public const string EXTENSION_KEY = 'webcon_ai_assistant';
+
+    /**
+     * Every key the template declares — what the upgrade wizard carries over
+     * from the predecessor's configuration, which used the same names.
+     *
+     * @var list<string>
+     */
+    public const array KEYS = ['llmConfiguration', 'allowWrites', 'maxTurnsPerHour', 'attachmentStorage', 'panelEnabled'];
+
+    private const string DEFAULT_LLM_CONFIGURATION = 'backend-assistant';
+
+    private const string DEFAULT_ATTACHMENT_STORAGE = '1:/webcon_ai_assistant/';
 
     /** @var array<string, mixed> */
-    private readonly array $values;
+    private array $values;
 
     public function __construct(ExtensionConfiguration $extensionConfiguration)
     {
@@ -29,15 +42,7 @@ final class ExtensionSettings
             $raw = [];
         }
 
-        $values = [];
-        if (is_array($raw)) {
-            foreach ($raw as $key => $value) {
-                if (is_string($key)) {
-                    $values[$key] = $value;
-                }
-            }
-        }
-        $this->values = $values;
+        $this->values = is_array($raw) ? Row::stringKeyed($raw) : [];
     }
 
     /**
@@ -47,7 +52,7 @@ final class ExtensionSettings
     {
         $identifier = trim($this->string('llmConfiguration'));
 
-        return $identifier !== '' ? $identifier : 'backend-assistant';
+        return $identifier !== '' ? $identifier : self::DEFAULT_LLM_CONFIGURATION;
     }
 
     /**
@@ -77,11 +82,11 @@ final class ExtensionSettings
     {
         $folder = trim($this->string('attachmentStorage'));
 
-        return rtrim($folder !== '' ? $folder : '1:/shadcn_ui/', '/') . '/';
+        return rtrim($folder !== '' ? $folder : self::DEFAULT_ATTACHMENT_STORAGE, '/') . '/';
     }
 
     /**
-     * Whether the toolbar button and its floating panel are offered at all.
+     * Whether the toolbar item and its chat panel are offered at all.
      */
     public function panelEnabled(): bool
     {

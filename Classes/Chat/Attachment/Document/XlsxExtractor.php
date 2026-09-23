@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Attachment\Document;
+namespace Webconsulting\WebconAiAssistant\Chat\Attachment\Document;
 
+use Override;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Throwable;
-use Webconsulting\ShadcnUi\Chat\Attachment\AttachmentRejectedException;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\AttachmentRejectedException;
 
 /**
  * Spreadsheets, when phpoffice/phpspreadsheet is installed — a suggested, not
@@ -19,31 +20,37 @@ use Webconsulting\ShadcnUi\Chat\Attachment\AttachmentRejectedException;
  */
 final class XlsxExtractor implements DocumentExtractorInterface
 {
+    #[Override]
     public function mimeTypes(): array
     {
         return ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
     }
 
+    #[Override]
     public function extensions(): array
     {
         return ['xlsx'];
     }
 
+    #[Override]
     public function maxBytes(): int
     {
         return 15 * 1024 * 1024;
     }
 
+    #[Override]
     public function isAvailable(): bool
     {
         return class_exists(IOFactory::class);
     }
 
+    #[Override]
     public function validate(string $path): void
     {
         $this->load($path, 1795000430);
     }
 
+    #[Override]
     public function extract(string $path): string
     {
         $lines = [];
@@ -68,7 +75,12 @@ final class XlsxExtractor implements DocumentExtractorInterface
         try {
             return IOFactory::load($path);
         } catch (Throwable $exception) {
-            throw new AttachmentRejectedException('XLSX could not be read: ' . $exception->getMessage(), $code, $exception);
+            throw new AttachmentRejectedException(
+                'XLSX could not be read: ' . $exception->getMessage(),
+                $code,
+                $exception,
+                ['reason' => $exception->getMessage()],
+            );
         }
     }
 }

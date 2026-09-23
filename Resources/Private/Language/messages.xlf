@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="EXT:webcon_ai_assistant/Resources/Private/Language/messages.xlf" date="2026-09-23T00:00:00Z" product-name="webcon_ai_assistant">
+    <header/>
+    <body>
+      <trans-unit id="error.1795000101" resname="error.1795000101">
+        <source>The chat is not available: the nr-llm configuration "{identifier}" set as "llmConfiguration" in the extension configuration could not be used ({reason}).</source>
+      </trans-unit>
+      <trans-unit id="error.1795000201" resname="error.1795000201">
+        <source>This conversation is busy. Wait for the current turn to finish.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000202" resname="error.1795000202">
+        <source>This conversation is not waiting for an approval.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000203" resname="error.1795000203">
+        <source>This conversation has no run to continue.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000204" resname="error.1795000204">
+        <source>An approval must name the turn it belongs to. Reload the conversation and try again.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000206" resname="error.1795000206">
+        <source>This approval has already been decided.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000207" resname="error.1795000207">
+        <source>This question has already been answered.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000208" resname="error.1795000208">
+        <source>This conversation is not waiting for an answer.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000209" resname="error.1795000209">
+        <source>An answer must name the turn it belongs to. Reload the conversation and try again.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000401" resname="error.1795000401">
+        <source>This file type is not supported: {mimeType}.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000410" resname="error.1795000410">
+        <source>The PDF could not be checked ({reason}).</source>
+      </trans-unit>
+      <trans-unit id="error.1795000411" resname="error.1795000411">
+        <source>The PDF is encrypted and cannot be read.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000412" resname="error.1795000412">
+        <source>No text could be extracted from the PDF ({reason}).</source>
+      </trans-unit>
+      <trans-unit id="error.1795000420" resname="error.1795000420">
+        <source>The Word document could not be read ({reason}).</source>
+      </trans-unit>
+      <trans-unit id="error.1795000421" resname="error.1795000421">
+        <source>The Word document could not be read ({reason}).</source>
+      </trans-unit>
+      <trans-unit id="error.1795000430" resname="error.1795000430">
+        <source>The spreadsheet could not be read ({reason}).</source>
+      </trans-unit>
+      <trans-unit id="error.1795000431" resname="error.1795000431">
+        <source>The spreadsheet could not be read ({reason}).</source>
+      </trans-unit>
+      <trans-unit id="error.1795000440" resname="error.1795000440">
+        <source>The file is not readable.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000441" resname="error.1795000441">
+        <source>The file could not be read.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000450" resname="error.1795000450">
+        <source>No file was uploaded.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000451" resname="error.1795000451">
+        <source>The upload could not be read.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000452" resname="error.1795000452">
+        <source>This file type is not supported. Accepted: {accepted}.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000453" resname="error.1795000453">
+        <source>The file is larger than {megabytes} MB.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000601" resname="error.1795000601">
+        <source>You must be signed in to the backend.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000602" resname="error.1795000602">
+        <source>Conversation not found.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000603" resname="error.1795000603">
+        <source>A title cannot be empty.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000604" resname="error.1795000604">
+        <source>No file was uploaded.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000605" resname="error.1795000605">
+        <source>A file uid is required.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000606" resname="error.1795000606">
+        <source>File not found.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000607" resname="error.1795000607">
+        <source>A message cannot be empty.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000608" resname="error.1795000608">
+        <source>A message may be at most {max, number} characters long.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000609" resname="error.1795000609">
+        <source>You have started too many turns. The limit is {limit, number} per hour.</source>
+      </trans-unit>
+      <trans-unit id="error.1795000610" resname="error.1795000610">
+        <source>An answer cannot be empty.</source>
+      </trans-unit>
+      <trans-unit id="status.noTools" resname="status.noTools">
+        <source>No tools are enabled for you. The chat can answer questions but cannot inspect or change this installation.</source>
+      </trans-unit>
+      <trans-unit id="suggestion.GetPage" resname="suggestion.GetPage">
+        <source>Summarise the content elements on this page.</source>
+      </trans-unit>
+      <trans-unit id="suggestion.GetPageTree" resname="suggestion.GetPageTree">
+        <source>Show me the page tree below the site root.</source>
+      </trans-unit>
+      <trans-unit id="suggestion.GetSystemLog" resname="suggestion.GetSystemLog">
+        <source>What errors has this installation logged today?</source>
+      </trans-unit>
+      <trans-unit id="suggestion.ReadTable" resname="suggestion.ReadTable">
+        <source>List the ten most recently changed news records.</source>
+      </trans-unit>
+      <trans-unit id="suggestion.Search" resname="suggestion.Search">
+        <source>Find every page that mentions our old product name.</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

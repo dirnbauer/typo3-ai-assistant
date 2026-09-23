@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Attachment\Document;
+namespace Webconsulting\WebconAiAssistant\Chat\Attachment\Document;
 
-use Webconsulting\ShadcnUi\Chat\Attachment\AttachmentRejectedException;
+use Webconsulting\WebconAiAssistant\Chat\Attachment\AttachmentRejectedException;
 
 /**
  * Reads the text out of one kind of document.

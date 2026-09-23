@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Functional\Chat;
+namespace Webconsulting\WebconAiAssistant\Tests\Functional\Chat;
 
 use PHPUnit\Framework\Attributes\Test;
-use Webconsulting\ShadcnUi\Chat\Domain\Conversation;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationStatus;
-use Webconsulting\ShadcnUi\Chat\Domain\Message;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRole;
-use Webconsulting\ShadcnUi\Chat\Turn\ChatContext;
-use Webconsulting\ShadcnUi\Chat\Turn\TurnResult;
-use Webconsulting\ShadcnUi\Chat\Turn\TurnRunner;
-use Webconsulting\ShadcnUi\Testing\ScriptedProvider;
-use Webconsulting\ShadcnUi\Tests\Functional\AbstractChatTestCase;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Conversation;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationStatus;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Message;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRole;
+use Webconsulting\WebconAiAssistant\Chat\Turn\ChatContext;
+use Webconsulting\WebconAiAssistant\Chat\Turn\Outcome;
+use Webconsulting\WebconAiAssistant\Chat\Turn\TurnResult;
+use Webconsulting\WebconAiAssistant\Chat\Turn\TurnRunner;
+use Webconsulting\WebconAiAssistant\Testing\ScriptedProvider;
+use Webconsulting\WebconAiAssistant\Tests\Functional\AbstractChatTestCase;
 
 /**
  * One turn, end to end, against an LLM that says what the test told it to.
@@ -61,13 +62,13 @@ final class TurnPipelineTest extends AbstractChatTestCase
             $conversation,
             'Which page is the start page?',
             [],
-            new ChatContext(appName: 'shadcn_ui/chat-home', pageId: 1),
+            new ChatContext(appName: 'web_layout', pageId: 1),
             static function (string $name, array $payload) use (&$events): void {
                 $events[] = [$name, $payload];
             },
         );
 
-        self::assertSame('completed', $result->outcome->outcome);
+        self::assertSame(Outcome::Completed, $result->outcome->outcome);
         self::assertSame(ConversationStatus::Idle, $result->outcome->status);
         self::assertSame(
             ['run.started', 'step.llm', 'message.final', 'run.finished'],
@@ -123,7 +124,7 @@ final class TurnPipelineTest extends AbstractChatTestCase
 
         $asking = $this->startTurn($conversation, 'Rename the team page.');
 
-        self::assertSame('awaiting_input', $asking->outcome->outcome);
+        self::assertSame(Outcome::AwaitingInput, $asking->outcome->outcome);
         self::assertSame(ConversationStatus::AwaitingInput, $asking->outcome->status);
         self::assertSame('Which team page do you mean?', $asking->pendingInput['question'] ?? null);
         self::assertSame(['/about/team', '/team'], $asking->pendingInput['options'] ?? null);
@@ -138,7 +139,7 @@ final class TurnPipelineTest extends AbstractChatTestCase
 
         $answered = $this->turns->answer($waiting, '/about/team', $digest, static function (): void {});
 
-        self::assertSame('completed', $answered->outcome->outcome);
+        self::assertSame(Outcome::Completed, $answered->outcome->outcome);
 
         $roles = array_map(
             static fn(Message $message): string => $message->role->value,

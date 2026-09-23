@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat;
+namespace Webconsulting\WebconAiAssistant\Chat;
 
 /**
  * Strips what a provider error may quote — bearer tokens, key-shaped strings,

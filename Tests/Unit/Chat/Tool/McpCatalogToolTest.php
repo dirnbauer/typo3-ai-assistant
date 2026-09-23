@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Tool;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Tool;
 
 use Hn\McpServer\MCP\Tool\ToolInterface as McpToolInterface;
 use Hn\McpServer\MCP\ToolRegistry;
@@ -23,8 +23,8 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Webconsulting\ShadcnUi\Chat\Tool\McpCatalogTool;
-use Webconsulting\ShadcnUi\Chat\Tool\ToolResultConverter;
+use Webconsulting\WebconAiAssistant\Chat\Tool\McpCatalogTool;
+use Webconsulting\WebconAiAssistant\Chat\Tool\ToolResultConverter;
 
 /**
  * The identity check is what makes the bridge safe at all, and the thing a
@@ -151,7 +151,7 @@ final class McpCatalogToolTest extends TestCase
      */
     private function permitTool(string $name): void
     {
-        $path = tempnam(sys_get_temp_dir(), 'shadcn-manifest-') . '.yaml';
+        $path = tempnam(sys_get_temp_dir(), 'ai-assistant-manifest-') . '.yaml';
         $this->manifestFiles[] = $path;
         file_put_contents($path, Yaml::dump([
             'capabilities' => ['version' => '1.0', 'extension' => 'mcp_server', 'x-mcp' => ['tools' => [$name => []]]],

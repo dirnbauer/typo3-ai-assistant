@@ -5,17 +5,18 @@ services:
     public: false
 
   _instanceof:
-    Webconsulting\ShadcnUi\Chat\Attachment\Document\DocumentExtractorInterface:
-      tags: ['shadcn_ui.document_extractor']
+    Webconsulting\WebconAiAssistant\Chat\Attachment\Document\DocumentExtractorInterface:
+      tags: ['webcon_ai_assistant.document_extractor']
 
-  Webconsulting\ShadcnUi\:
+  Webconsulting\WebconAiAssistant\:
     resource: '../Classes/*'
     exclude:
-      # Value objects, enums and exceptions — constructed, never injected.
-      - '../Classes/Backend/ShadcnApp.php'
-      - '../Classes/Backend/ShellLayout.php'
+      # Value objects, enums, exceptions and static helpers — constructed or
+      # called, never injected.
       - '../Classes/Chat/ChatException.php'
       - '../Classes/Chat/ErrorMessageSanitizer.php'
+      - '../Classes/Chat/LocalizableException.php'
+      - '../Classes/Chat/UserMessages.php'
       - '../Classes/Chat/Api/ApiException.php'
       - '../Classes/Chat/Api/ApiRequest.php'
       - '../Classes/Chat/Api/TurnResponder.php'
@@ -26,47 +27,38 @@ services:
       - '../Classes/Chat/Domain/MessageRole.php'
       - '../Classes/Chat/Domain/Row.php'
       - '../Classes/Chat/Http/*'
+      - '../Classes/Chat/Tool/ToolSchema.php'
       - '../Classes/Chat/Turn/ChatContext.php'
+      - '../Classes/Chat/Turn/OpenCalls.php'
+      - '../Classes/Chat/Turn/Outcome.php'
+      - '../Classes/Chat/Turn/Pause.php'
       - '../Classes/Chat/Turn/StepRecorder.php'
       - '../Classes/Chat/Turn/TurnOutcome.php'
       - '../Classes/Chat/Turn/TurnResult.php'
+      - '../Classes/Localization/*'
       # One instance per catalogue entry, built by McpCatalogToolProvider.
       - '../Classes/Chat/Tool/McpCatalogTool.php'
+      # A compiler pass, added by Configuration/Services.php.
+      - '../Classes/DependencyInjection/*'
       # Registered by Configuration/Services.php, and only where it is safe.
       - '../Classes/Testing/*'
 
-  # Route and module targets are resolved through the container by name.
-  Webconsulting\ShadcnUi\Backend\ShadcnModuleRenderer:
-    public: true
-  Webconsulting\ShadcnUi\Backend\Controller\ComponentsModuleController:
-    public: true
-  Webconsulting\ShadcnUi\Chat\Controller\ChatModuleController:
-    public: true
-  Webconsulting\ShadcnUi\Chat\Api\StatusController:
-    public: true
-  Webconsulting\ShadcnUi\Chat\Api\ConversationController:
-    public: true
-  Webconsulting\ShadcnUi\Chat\Api\TurnController:
-    public: true
-  Webconsulting\ShadcnUi\Chat\Api\AttachmentController:
-    public: true
-
-  cache.shadcn_ui_tools:
+  cache.webcon_ai_assistant_tools:
     class: 'TYPO3\CMS\Core\Cache\Frontend\FrontendInterface'
     factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
     arguments:
-      $identifier: 'shadcn_ui_tools'
+      $identifier: 'webcon_ai_assistant_tools'
 
   # Tagged explicitly rather than by autoconfiguration: ToolProviderInterface
   # carries an #[AutoconfigureTag], and letting both apply would register the
   # provider twice — every tool would collide with itself and be dropped.
-  Webconsulting\ShadcnUi\Chat\Tool\McpCatalogToolProvider:
+  Webconsulting\WebconAiAssistant\Chat\Tool\McpCatalogToolProvider:
     autoconfigure: false
     arguments:
-      $cache: '@cache.shadcn_ui_tools'
+      $cache: '@cache.webcon_ai_assistant_tools'
     tags:
       - name: 'nr_llm.tool_provider'
 
-  Webconsulting\ShadcnUi\Chat\Attachment\Document\DocumentExtractorRegistry:
+  Webconsulting\WebconAiAssistant\Chat\Attachment\Document\DocumentExtractorRegistry:
     arguments:
-      $extractors: !tagged_iterator 'shadcn_ui.document_extractor'
+      $extractors: !tagged_iterator 'webcon_ai_assistant.document_extractor'

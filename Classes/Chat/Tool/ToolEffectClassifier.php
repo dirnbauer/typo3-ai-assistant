@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Tool;
+namespace Webconsulting\WebconAiAssistant\Chat\Tool;
 
 use Hn\McpServer\MCP\Tool\AbstractTool;
 use Hn\McpServer\Service\CapabilityManifestService;
@@ -32,10 +32,10 @@ final readonly class ToolEffectClassifier
      *
      * @var list<string>
      */
-    private const READ_SUBSYSTEMS = ['database:read', 'database:schema', 'file:read', 'log:read', 'workspace:read', 'typoscript:provider', 'site:middleware', 'render:frontend'];
+    private const array READ_SUBSYSTEMS = ['database:read', 'database:schema', 'file:read', 'log:read', 'workspace:read', 'typoscript:provider', 'site:middleware', 'render:frontend'];
 
     /** Subsystems whose reach is the whole installation or the host. */
-    private const ADMIN_SUBSYSTEMS = ['cli:safe', 'extension:install', 'project:write', 'scheduler:task', 'site:write', 'x402:payments'];
+    private const array ADMIN_SUBSYSTEMS = ['cli:safe', 'extension:install', 'project:write', 'scheduler:task', 'site:write', 'x402:payments'];
 
     /**
      * How sensitive a subsystem's OUTPUT is, for nr-llm's egress gate. A
@@ -44,7 +44,7 @@ final readonly class ToolEffectClassifier
      *
      * @var array<string, ToolDataClass>
      */
-    private const SUBSYSTEM_DATA_CLASSES = [
+    private const array SUBSYSTEM_DATA_CLASSES = [
         'render:frontend' => ToolDataClass::PUBLIC_CONTENT,
         'database:read' => ToolDataClass::EDITOR_CONTENT,
         'database:write' => ToolDataClass::EDITOR_CONTENT,

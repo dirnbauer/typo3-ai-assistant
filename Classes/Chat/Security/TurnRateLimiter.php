@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Security;
+namespace Webconsulting\WebconAiAssistant\Chat\Security;
 
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use TYPO3\CMS\Core\RateLimiter\Storage\CachingFrameworkStorage;
-use Webconsulting\ShadcnUi\Configuration\ExtensionSettings;
+use Webconsulting\WebconAiAssistant\Configuration\ExtensionSettings;
 
 /**
  * Caps how many turns one backend user may start per hour.
@@ -59,7 +59,7 @@ final class TurnRateLimiter
         // Sliding rather than fixed: a fixed window lets a user spend the whole
         // allowance at 11:59 and again at 12:00.
         return $this->factory ??= new RateLimiterFactory(
-            ['id' => 'shadcn_ui_turn', 'policy' => 'sliding_window', 'limit' => $limit, 'interval' => '1 hour'],
+            ['id' => 'webcon_ai_assistant_turn', 'policy' => 'sliding_window', 'limit' => $limit, 'interval' => '1 hour'],
             $this->storage,
         );
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Domain;
+namespace Webconsulting\WebconAiAssistant\Chat\Domain;
 
 /**
  * One row of a transcript.
@@ -21,7 +21,7 @@ final readonly class Message
      * model saw, so it is persisted — but never sent to the client, which has
      * the file itself.
      */
-    public const ATTACHMENT_TEXT_KEY = 'text';
+    public const string ATTACHMENT_TEXT_KEY = 'text';
 
     /**
      * @param list<array<string, mixed>>                          $toolCalls    assistant tool-call requests, in the provider wire shape

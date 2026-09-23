@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-  <file source-language="en" datatype="plaintext" original="messages" date="2026-09-18T00:00:00Z" product-name="shadcn_ui">
+  <file source-language="en" datatype="plaintext" original="EXT:webcon_ai_assistant/Resources/Private/Language/locallang_db.xlf" date="2026-09-23T00:00:00Z" product-name="webcon_ai_assistant">
+    <header/>
     <body>
-      <trans-unit id="tx_shadcnui_instruction" resname="tx_shadcnui_instruction">
-        <source>AI Chat instruction</source>
+      <trans-unit id="tx_webconaiassistant_instruction" resname="tx_webconaiassistant_instruction">
+        <source>AI Assistant instruction</source>
       </trans-unit>
-      <trans-unit id="tx_shadcnui_instruction.title" resname="tx_shadcnui_instruction.title">
-        <source>Title</source>
-      </trans-unit>
-      <trans-unit id="tx_shadcnui_instruction.body" resname="tx_shadcnui_instruction.body">
-        <source>Instruction</source>
-      </trans-unit>
-      <trans-unit id="tx_shadcnui_instruction.body.description" resname="tx_shadcnui_instruction.body.description">
-        <source>Written into the system prompt of every conversation it applies to. Plain prose; the model reads it as an instruction from the administrators.</source>
-      </trans-unit>
-      <trans-unit id="tx_shadcnui_instruction.be_groups" resname="tx_shadcnui_instruction.be_groups">
+      <trans-unit id="tx_webconaiassistant_instruction.be_groups" resname="tx_webconaiassistant_instruction.be_groups">
         <source>Applies to backend groups</source>
       </trans-unit>
-      <trans-unit id="tx_shadcnui_instruction.be_groups.description" resname="tx_shadcnui_instruction.be_groups.description">
+      <trans-unit id="tx_webconaiassistant_instruction.be_groups.description" resname="tx_webconaiassistant_instruction.be_groups.description">
         <source>Leave empty to apply to every user. Otherwise only members of the selected groups receive this instruction.</source>
+      </trans-unit>
+      <trans-unit id="tx_webconaiassistant_instruction.body" resname="tx_webconaiassistant_instruction.body">
+        <source>Instruction</source>
+      </trans-unit>
+      <trans-unit id="tx_webconaiassistant_instruction.body.description" resname="tx_webconaiassistant_instruction.body.description">
+        <source>Written into the system prompt of every conversation it applies to. Plain prose; the model reads it as an instruction from the administrators.</source>
+      </trans-unit>
+      <trans-unit id="tx_webconaiassistant_instruction.title" resname="tx_webconaiassistant_instruction.title">
+        <source>Title</source>
       </trans-unit>
     </body>
   </file>

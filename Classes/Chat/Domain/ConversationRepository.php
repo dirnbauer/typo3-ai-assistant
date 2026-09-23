@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Domain;
+namespace Webconsulting\WebconAiAssistant\Chat\Domain;
 
 use RuntimeException;
 use TYPO3\CMS\Core\Database\Connection;
@@ -16,13 +16,13 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
  */
 final readonly class ConversationRepository
 {
-    public const TABLE = 'tx_shadcnui_conversation';
+    public const string TABLE = 'tx_webconaiassistant_conversation';
 
     /**
      * The columns a client may change directly. Anything else goes through a
      * method that knows what the change means.
      */
-    private const PATCHABLE = ['title', 'archived', 'pinned', 'auto_approve_tools', 'deleted', 'app_name', 'page_id'];
+    private const array PATCHABLE = ['title', 'archived', 'pinned', 'auto_approve_tools', 'deleted', 'app_name', 'page_id'];
 
     public function __construct(
         private ConnectionPool $connectionPool,

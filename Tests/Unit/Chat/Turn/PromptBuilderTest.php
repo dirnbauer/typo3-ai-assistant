@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Turn;
 
 use Netresearch\NrLlm\Domain\ValueObject\ToolCall;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Webconsulting\ShadcnUi\Chat\Domain\Message;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRole;
-use Webconsulting\ShadcnUi\Chat\Turn\PromptBuilder;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Message;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRole;
+use Webconsulting\WebconAiAssistant\Chat\Turn\PromptBuilder;
 
 /**
  * The failure the builder exists to prevent is not a wrong answer but a
@@ -21,7 +21,7 @@ final class PromptBuilderTest extends TestCase
     #[Test]
     public function systemLayersGoGeneralBeforeSpecific(): void
     {
-        $transcript = (new PromptBuilder())->build(
+        $transcript = new PromptBuilder()->build(
             [self::user('Hello')],
             [['uid' => 1, 'title' => 'Tone', 'body' => 'Be brief.']],
             'Always answer in German.',
@@ -40,7 +40,7 @@ final class PromptBuilderTest extends TestCase
     #[Test]
     public function emptySystemLayersAreOmitted(): void
     {
-        $transcript = (new PromptBuilder())->build([self::user('Hello')], [], '   ', '');
+        $transcript = new PromptBuilder()->build([self::user('Hello')], [], '   ', '');
 
         self::assertCount(1, $transcript);
         self::assertSame('user', $transcript[0]->role);
@@ -49,7 +49,7 @@ final class PromptBuilderTest extends TestCase
     #[Test]
     public function aToolRoundTripSurvivesAsAPair(): void
     {
-        $transcript = (new PromptBuilder())->build([
+        $transcript = new PromptBuilder()->build([
             self::user('What is on page 42?'),
             self::assistantCalling('call-1', 'typo3_GetPage', ['uid' => 42]),
             self::toolResult('call-1', '{"title":"Home"}'),
@@ -67,7 +67,7 @@ final class PromptBuilderTest extends TestCase
     #[Test]
     public function anOrphanedToolTurnIsDroppedRatherThanSentAlone(): void
     {
-        $transcript = (new PromptBuilder())->build([
+        $transcript = new PromptBuilder()->build([
             self::assistantCalling('call-1', 'typo3_GetPage', ['uid' => 42]),
             self::toolResult('call-1', '{"title":"Home"}'),
             self::user('And page 43?'),
@@ -83,7 +83,7 @@ final class PromptBuilderTest extends TestCase
     #[Test]
     public function aToolTurnWhoseCallIsStillInTheWindowSurvivesTheCut(): void
     {
-        $transcript = (new PromptBuilder())->build([
+        $transcript = new PromptBuilder()->build([
             self::user('old'),
             self::user('older'),
             self::assistantCalling('call-1', 'typo3_GetPage', ['uid' => 42]),
@@ -103,7 +103,7 @@ final class PromptBuilderTest extends TestCase
             ['fileUid' => 10, 'fileName' => 'notes.txt'],
         ]);
 
-        $transcript = (new PromptBuilder())->build([$message]);
+        $transcript = new PromptBuilder()->build([$message]);
 
         self::assertStringContainsString('Summarise this.', $transcript[0]->content);
         self::assertStringContainsString("[Attached: report.pdf]\nQuarterly numbers went up.", $transcript[0]->content);
@@ -113,7 +113,7 @@ final class PromptBuilderTest extends TestCase
     #[Test]
     public function anEmptyAssistantTurnWithoutToolCallsIsNotReplayed(): void
     {
-        self::assertCount(1, (new PromptBuilder())->build([self::user('Hello'), self::assistant('')]));
+        self::assertCount(1, new PromptBuilder()->build([self::user('Hello'), self::assistant('')]));
     }
 
     #[Test]
@@ -124,7 +124,7 @@ final class PromptBuilderTest extends TestCase
             $rows[] = self::user('message ' . $i);
         }
 
-        $transcript = (new PromptBuilder())->build($rows, window: 3);
+        $transcript = new PromptBuilder()->build($rows, window: 3);
 
         self::assertCount(3, $transcript);
         self::assertSame('message 8', $transcript[0]->content);

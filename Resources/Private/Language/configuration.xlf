@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="EXT:webcon_ai_assistant/Resources/Private/Language/configuration.xlf" date="2026-09-23T00:00:00Z" product-name="webcon_ai_assistant">
+    <header/>
+    <body>
+      <trans-unit id="allowWrites" resname="allowWrites">
+        <source>Allow writes approved in advance: when enabled, a conversation whose "approve automatically" switch is on skips the approval card for permitted write tools. Off means every write stops and asks.</source>
+      </trans-unit>
+      <trans-unit id="attachmentStorage" resname="attachmentStorage">
+        <source>Attachment storage: FAL combined identifier of the folder chat attachments are stored below, per backend user and conversation.</source>
+      </trans-unit>
+      <trans-unit id="llmConfiguration" resname="llmConfiguration">
+        <source>nr-llm configuration: identifier of the nr-llm LLM configuration the chat runs under (provider, model, system prompt, budget). The chat is unavailable while it cannot be resolved.</source>
+      </trans-unit>
+      <trans-unit id="maxTurnsPerHour" resname="maxTurnsPerHour">
+        <source>Turns per hour and user: how many turns one backend user may start per hour across all conversations. 0 disables the limit.</source>
+      </trans-unit>
+      <trans-unit id="panelEnabled" resname="panelEnabled">
+        <source>Toolbar item: offer the AI Assistant as a dropdown of the backend toolbar.</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

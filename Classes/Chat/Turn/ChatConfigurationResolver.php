@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
 use Netresearch\NrLlm\Domain\Model\LlmConfiguration;
 use Netresearch\NrLlm\Domain\ValueObject\AiActorContext;
 use Netresearch\NrLlm\Domain\ValueObject\ConfigurationIdentifier;
 use Netresearch\NrLlm\Service\ConfigurationResolver;
 use Throwable;
-use Webconsulting\ShadcnUi\Chat\ChatException;
-use Webconsulting\ShadcnUi\Chat\ErrorMessageSanitizer;
-use Webconsulting\ShadcnUi\Configuration\ExtensionSettings;
+use Webconsulting\WebconAiAssistant\Chat\ChatException;
+use Webconsulting\WebconAiAssistant\Chat\ErrorMessageSanitizer;
+use Webconsulting\WebconAiAssistant\Configuration\ExtensionSettings;
 
 /**
  * The nr-llm configuration the chat runs under, resolved for the acting user.
@@ -40,12 +40,19 @@ final readonly class ChatConfigurationResolver
                 $actor,
             );
         } catch (Throwable $exception) {
-            throw new ChatException(sprintf(
-                'The chat is not available: the nr-llm configuration "%s" set as "llmConfiguration" in the '
-                . 'extension configuration could not be used (%s).',
-                $identifier,
-                ErrorMessageSanitizer::sanitize($exception->getMessage(), 200),
-            ), 1795000101, $exception);
+            $reason = ErrorMessageSanitizer::sanitize($exception->getMessage(), 200);
+
+            throw new ChatException(
+                sprintf(
+                    'The chat is not available: the nr-llm configuration "%s" set as "llmConfiguration" in the '
+                    . 'extension configuration could not be used (%s).',
+                    $identifier,
+                    $reason,
+                ),
+                1795000101,
+                $exception,
+                ['identifier' => $identifier, 'reason' => $reason],
+            );
         }
     }
 

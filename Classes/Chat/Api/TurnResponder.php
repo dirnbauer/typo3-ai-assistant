@@ -2,18 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Api;
+namespace Webconsulting\WebconAiAssistant\Chat\Api;
 
 use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Http\Response;
-use Webconsulting\ShadcnUi\Chat\ChatException;
-use Webconsulting\ShadcnUi\Chat\ErrorMessageSanitizer;
-use Webconsulting\ShadcnUi\Chat\Http\ServerSentEventStream;
-use Webconsulting\ShadcnUi\Chat\Http\TurnEventSink;
-use Webconsulting\ShadcnUi\Chat\Turn\TurnResult;
+use Webconsulting\WebconAiAssistant\Chat\ChatException;
+use Webconsulting\WebconAiAssistant\Chat\ErrorMessageSanitizer;
+use Webconsulting\WebconAiAssistant\Chat\Http\ServerSentEventStream;
+use Webconsulting\WebconAiAssistant\Chat\Http\TurnEventSink;
+use Webconsulting\WebconAiAssistant\Chat\Turn\TurnResult;
+use Webconsulting\WebconAiAssistant\Chat\UserMessages;
 
 /**
  * One producer, two transports.
@@ -23,7 +24,7 @@ use Webconsulting\ShadcnUi\Chat\Turn\TurnResult;
  * negotiation rather than two routes, so the transports cannot drift into
  * disagreeing about what happened.
  */
-final class TurnResponder
+final readonly class TurnResponder
 {
     /**
      * @param Closure(Closure(string, array<string, mixed>): void): TurnResult $producer runs the turn, emitting into the callback
@@ -37,7 +38,7 @@ final class TurnResponder
                     try {
                         $producer($sink->emitter());
                     } catch (ChatException $exception) {
-                        $sink->emit('run.error', ['message' => $exception->getMessage()]);
+                        $sink->emit('run.error', ['message' => UserMessages::of($exception)]);
                     } catch (Throwable $exception) {
                         $sink->emit('run.error', ['message' => ErrorMessageSanitizer::sanitize($exception->getMessage())]);
                     }

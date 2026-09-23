@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
 use Netresearch\NrLlm\Domain\ValueObject\RecordReference;
 use Netresearch\NrLlm\Domain\ValueObject\RunStep;
-use Webconsulting\ShadcnUi\Chat\Tool\ToolEffectLookup;
+use Webconsulting\WebconAiAssistant\Chat\Tool\ToolEffectLookup;
 
 /**
  * Collects the steps of one run and turns them into client events.

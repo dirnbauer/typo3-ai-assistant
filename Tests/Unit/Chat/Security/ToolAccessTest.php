@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Security;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Security;
 
 use Netresearch\NrLlm\Service\Tool\ToolAvailabilityServiceInterface;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use Webconsulting\ShadcnUi\Chat\Security\BackendUserContext;
-use Webconsulting\ShadcnUi\Chat\Security\ToolAccess;
+use Webconsulting\WebconAiAssistant\Chat\Security\BackendUserContext;
+use Webconsulting\WebconAiAssistant\Chat\Security\ToolAccess;
 
 /**
  * Two gates intersect here, and the interesting cases are the ones where they
@@ -114,7 +114,7 @@ final class ToolAccessTest extends TestCase
              */
             public function getTSConfig(): array
             {
-                return $this->toolsTsConfig === [] ? [] : ['tx_shadcnui.' => ['tools.' => $this->toolsTsConfig]];
+                return $this->toolsTsConfig === [] ? [] : ['tx_webconaiassistant.' => ['tools.' => $this->toolsTsConfig]];
             }
         };
         $user->user = ['uid' => 7, 'admin' => 0];

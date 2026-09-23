@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Api;
+namespace Webconsulting\WebconAiAssistant\Chat\Api;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
-use Webconsulting\ShadcnUi\Chat\Domain\Row;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Row;
 
 /**
  * The request as the chat API reads it: one string-keyed body (a parsed form or

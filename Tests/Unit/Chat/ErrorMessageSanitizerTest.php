@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Webconsulting\ShadcnUi\Chat\ErrorMessageSanitizer;
+use Webconsulting\WebconAiAssistant\Chat\ErrorMessageSanitizer;
 
 final class ErrorMessageSanitizerTest extends TestCase
 {

@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Http;
+namespace Webconsulting\WebconAiAssistant\Chat\Http;
 
 use Closure;
+use Override;
 use RuntimeException;
 use TYPO3\CMS\Core\Http\SelfEmittableStreamInterface;
 
@@ -44,6 +45,7 @@ final class ServerSentEventStream implements SelfEmittableStreamInterface
         ];
     }
 
+    #[Override]
     public function emit(): void
     {
         // PHP's own output buffers would hold the frames back just as nginx
@@ -74,73 +76,88 @@ final class ServerSentEventStream implements SelfEmittableStreamInterface
         ($this->producer)($sink);
     }
 
+    #[Override]
     public function __toString(): string
     {
         return '';
     }
 
+    #[Override]
     public function close(): void {}
 
+    #[Override]
     public function detach(): mixed
     {
         return null;
     }
 
+    #[Override]
     public function getSize(): ?int
     {
         return null;
     }
 
+    #[Override]
     public function tell(): int
     {
         return 0;
     }
 
+    #[Override]
     public function eof(): bool
     {
         return true;
     }
 
+    #[Override]
     public function isSeekable(): bool
     {
         return false;
     }
 
+    #[Override]
     public function seek(int $offset, int $whence = SEEK_SET): void
     {
         throw new RuntimeException('A server-sent event stream cannot be seeked.', 1795000301);
     }
 
+    #[Override]
     public function rewind(): void
     {
         throw new RuntimeException('A server-sent event stream cannot be rewound.', 1795000302);
     }
 
+    #[Override]
     public function isWritable(): bool
     {
         return false;
     }
 
+    #[Override]
     public function write(string $string): int
     {
         throw new RuntimeException('A server-sent event stream is written by its producer only.', 1795000303);
     }
 
+    #[Override]
     public function isReadable(): bool
     {
         return false;
     }
 
+    #[Override]
     public function read(int $length): string
     {
         throw new RuntimeException('A server-sent event stream cannot be read.', 1795000304);
     }
 
+    #[Override]
     public function getContents(): string
     {
         throw new RuntimeException('A server-sent event stream has no contents until it has been emitted.', 1795000305);
     }
 
+    #[Override]
     public function getMetadata(?string $key = null): mixed
     {
         return $key === null ? [] : null;

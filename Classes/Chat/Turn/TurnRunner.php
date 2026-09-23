@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
 use Closure;
 use Netresearch\NrLlm\Domain\Enum\AgentRunOutcome;
@@ -15,18 +15,18 @@ use Netresearch\NrLlm\Service\Agent\Exception\AgentRuntimeException;
 use Netresearch\NrLlm\Service\Agent\InputSubmission;
 use Netresearch\NrLlm\Service\Option\ToolOptions;
 use Throwable;
-use Webconsulting\ShadcnUi\Chat\ChatException;
-use Webconsulting\ShadcnUi\Chat\Domain\Conversation;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationStatus;
-use Webconsulting\ShadcnUi\Chat\Domain\InstructionRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\MessageRole;
-use Webconsulting\ShadcnUi\Chat\ErrorMessageSanitizer;
-use Webconsulting\ShadcnUi\Chat\Security\BackendUserContext;
-use Webconsulting\ShadcnUi\Chat\Security\ToolAccess;
-use Webconsulting\ShadcnUi\Chat\Tool\ToolEffectLookup;
-use Webconsulting\ShadcnUi\Configuration\ExtensionSettings;
+use Webconsulting\WebconAiAssistant\Chat\ChatException;
+use Webconsulting\WebconAiAssistant\Chat\Domain\Conversation;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationStatus;
+use Webconsulting\WebconAiAssistant\Chat\Domain\InstructionRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRole;
+use Webconsulting\WebconAiAssistant\Chat\ErrorMessageSanitizer;
+use Webconsulting\WebconAiAssistant\Chat\Security\BackendUserContext;
+use Webconsulting\WebconAiAssistant\Chat\Security\ToolAccess;
+use Webconsulting\WebconAiAssistant\Chat\Tool\ToolEffectLookup;
+use Webconsulting\WebconAiAssistant\Configuration\ExtensionSettings;
 
 /**
  * The one pipeline every turn goes through.
@@ -44,10 +44,10 @@ use Webconsulting\ShadcnUi\Configuration\ExtensionSettings;
 final readonly class TurnRunner
 {
     /** How many LLM rounds one turn may take. Reported by the status route so the rail can say so. */
-    public const MAX_ITERATIONS = 8;
+    public const int MAX_ITERATIONS = 8;
 
     /** Auto-approval is a convenience, not a loop: a turn may skip this many pauses, then it asks. */
-    private const MAX_AUTO_APPROVALS = 5;
+    private const int MAX_AUTO_APPROVALS = 5;
 
     public function __construct(
         private AgentRuntimeInterface $runtime,
@@ -82,7 +82,12 @@ final readonly class TurnRunner
         // The claim IS the per-conversation lock, taken before anything is
         // spent. The runtime's own uuid replaces the token once the run exists.
         $runToken = 'pending-' . bin2hex(random_bytes(16));
-        $this->claim($conversation, [ConversationStatus::Idle, ConversationStatus::Failed], $runToken, 'This conversation is busy. Wait for the current turn to finish.');
+        $this->claim(
+            $conversation,
+            [ConversationStatus::Idle, ConversationStatus::Failed],
+            $runToken,
+            new ChatException('This conversation is busy. Wait for the current turn to finish.', 1795000201),
+        );
 
         if ($context->appName !== '' || $context->pageId > 0) {
             $this->conversations->patch($conversation->uid, $conversation->beUser, ['app_name' => $context->appName, 'page_id' => $context->pageId]);
@@ -101,7 +106,7 @@ final readonly class TurnRunner
             ),
             actor: $actor,
             allowedToolNames: $this->toolAccess->allowedToolNames(),
-            options: (new ToolOptions(beUserUid: $this->backendUser->uid()))->withCallerSource('shadcn_ui', 'turn'),
+            options: new ToolOptions(beUserUid: $this->backendUser->uid())->withCallerSource('webcon_ai_assistant', 'turn'),
             maxIterations: self::MAX_ITERATIONS,
         );
 
@@ -120,8 +125,8 @@ final readonly class TurnRunner
      */
     public function approve(Conversation $conversation, bool $approved, string $turnDigest, Closure $emit): TurnResult
     {
-        $runUuid = $this->suspendedRun($conversation, ConversationStatus::AwaitingApproval, $turnDigest, 'an approval');
-        $this->claim($conversation, [ConversationStatus::AwaitingApproval], $runUuid, 'This approval has already been decided.');
+        $runUuid = $this->suspendedRun($conversation, Pause::Approval, $turnDigest);
+        $this->claim($conversation, [ConversationStatus::AwaitingApproval], $runUuid, Pause::Approval->alreadySettled());
         $emit('run.started', ['runUuid' => $runUuid, 'userMessageUid' => 0]);
 
         $decision = new ApprovalDecision($approved, $this->backendUser->uid(), $turnDigest);
@@ -143,8 +148,8 @@ final readonly class TurnRunner
      */
     public function answer(Conversation $conversation, string $answer, string $turnDigest, Closure $emit): TurnResult
     {
-        $runUuid = $this->suspendedRun($conversation, ConversationStatus::AwaitingInput, $turnDigest, 'an answer');
-        $this->claim($conversation, [ConversationStatus::AwaitingInput], $runUuid, 'This question has already been answered.');
+        $runUuid = $this->suspendedRun($conversation, Pause::Input, $turnDigest);
+        $this->claim($conversation, [ConversationStatus::AwaitingInput], $runUuid, Pause::Input->alreadySettled());
         $emit('run.started', ['runUuid' => $runUuid, 'userMessageUid' => 0]);
 
         $submission = new InputSubmission(['answer' => $answer], $this->backendUser->uid(), $turnDigest);
@@ -306,7 +311,7 @@ final readonly class TurnRunner
         }
 
         $usage = TranscriptWriter::usage($result);
-        $emit('run.finished', ['outcome' => $outcome->outcome, 'usage' => $usage]);
+        $emit('run.finished', ['outcome' => $outcome->outcome->value, 'usage' => $usage]);
 
         return new TurnResult($runUuid, $outcome, $persisted, $pendingApproval, $pendingInput, $usage);
     }
@@ -322,7 +327,7 @@ final readonly class TurnRunner
 
         return new TurnResult(
             $runUuid,
-            new TurnOutcome(ConversationStatus::Failed, true, 'failed', $message),
+            new TurnOutcome(ConversationStatus::Failed, true, Outcome::Failed, $message),
             [],
             [],
             [],
@@ -333,10 +338,10 @@ final readonly class TurnRunner
     /**
      * @param list<ConversationStatus> $from
      */
-    private function claim(Conversation $conversation, array $from, string $runUuid, string $refusal): void
+    private function claim(Conversation $conversation, array $from, string $runUuid, ChatException $refusal): void
     {
         if (!$this->conversations->claimForTurn($conversation->uid, $conversation->beUser, $from, $runUuid)) {
-            throw new ChatException($refusal, 1795000201);
+            throw $refusal;
         }
     }
 
@@ -344,16 +349,16 @@ final readonly class TurnRunner
      * The run a suspended conversation is waiting on, after the checks both
      * decisions share.
      */
-    private function suspendedRun(Conversation $conversation, ConversationStatus $expected, string $turnDigest, string $what): string
+    private function suspendedRun(Conversation $conversation, Pause $pause, string $turnDigest): string
     {
-        if ($conversation->status !== $expected) {
-            throw new ChatException(sprintf('This conversation is not waiting for %s.', $what), 1795000202);
+        if ($conversation->status !== $pause->status()) {
+            throw $pause->notWaiting();
         }
         if ($conversation->runUuid === '') {
             throw new ChatException('This conversation has no run to continue.', 1795000203);
         }
         if (trim($turnDigest) === '') {
-            throw new ChatException(sprintf('%s must name the turn it belongs to. Reload the conversation and try again.', ucfirst($what)), 1795000204);
+            throw $pause->unnamedTurn();
         }
 
         return $conversation->runUuid;

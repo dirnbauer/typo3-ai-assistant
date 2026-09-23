@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Unit\Chat\Tool;
+namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Tool;
 
 use Netresearch\NrLlm\Domain\ValueObject\AiActorContext;
 use Netresearch\NrLlm\Service\Tool\InputSchema;
@@ -10,7 +10,7 @@ use Netresearch\NrLlm\Service\Tool\ToolApprovalRule;
 use Netresearch\NrLlm\Service\Tool\ToolExecutionContext;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Webconsulting\ShadcnUi\Chat\Tool\AskUserTool;
+use Webconsulting\WebconAiAssistant\Chat\Tool\AskUserTool;
 
 final class AskUserToolTest extends TestCase
 {
@@ -29,7 +29,7 @@ final class AskUserToolTest extends TestCase
     #[Test]
     public function theAnswerIsReturnedToTheModel(): void
     {
-        $result = (new AskUserTool())->execute(
+        $result = new AskUserTool()->execute(
             ['question' => 'Which page?', 'answer' => '  The start page  '],
             new ToolExecutionContext(AiActorContext::backendUser(1)),
         );
@@ -41,7 +41,7 @@ final class AskUserToolTest extends TestCase
     #[Test]
     public function aMissingAnswerIsAnError(): void
     {
-        $result = (new AskUserTool())->execute(['question' => 'Which page?'], new ToolExecutionContext(AiActorContext::backendUser(1)));
+        $result = new AskUserTool()->execute(['question' => 'Which page?'], new ToolExecutionContext(AiActorContext::backendUser(1)));
 
         self::assertTrue($result->isError);
     }

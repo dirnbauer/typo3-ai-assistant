@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Turn;
+namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
 use Netresearch\NrLlm\Domain\ValueObject\SuspendedRunState;
 use Netresearch\NrLlm\Service\Agent\PendingTurnDigest;
-use Webconsulting\ShadcnUi\Chat\Tool\AskUserTool;
+use Webconsulting\WebconAiAssistant\Chat\Tool\AskUserTool;
 
 /**
  * The two cards a suspended run turns into.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Http;
+namespace Webconsulting\WebconAiAssistant\Chat\Http;
 
 use Closure;
 
@@ -16,7 +16,7 @@ use Closure;
  */
 final class TurnEventSink
 {
-    public const PING_INTERVAL_SECONDS = 15;
+    public const int PING_INTERVAL_SECONDS = 15;
 
     /** @var list<array{event: string, data: array<string, mixed>}> */
     private array $collected = [];

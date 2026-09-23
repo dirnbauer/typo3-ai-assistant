@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use Webconsulting\ShadcnUi\Chat\Api\AttachmentController;
-use Webconsulting\ShadcnUi\Chat\Api\ConversationController;
-use Webconsulting\ShadcnUi\Chat\Api\StatusController;
-use Webconsulting\ShadcnUi\Chat\Api\TurnController;
+use Webconsulting\WebconAiAssistant\Chat\Api\AttachmentController;
+use Webconsulting\WebconAiAssistant\Chat\Api\ConversationController;
+use Webconsulting\WebconAiAssistant\Chat\Api\StatusController;
+use Webconsulting\WebconAiAssistant\Chat\Api\TurnController;
 
 /**
- * The chat API. The route ids are what the frontend reads from
+ * The chat API. The route ids are what the JavaScript reads from
  * `TYPO3.settings.ajaxUrls`, so they are the contract.
  *
  * Every route that changes something is POST — backend AJAX routes carry CSRF
@@ -18,78 +18,78 @@ use Webconsulting\ShadcnUi\Chat\Api\TurnController;
  * `text/event-stream`, and with one JSON document otherwise.
  */
 return [
-    'shadcn_ui_chat_status' => [
-        'path' => '/shadcn-ui/chat/status',
+    'webcon_ai_assistant_status' => [
+        'path' => '/ai-assistant/status',
         'target' => StatusController::class . '::status',
         'methods' => ['GET'],
     ],
-    'shadcn_ui_chat_conversations' => [
-        'path' => '/shadcn-ui/chat/conversations',
+    'webcon_ai_assistant_conversations' => [
+        'path' => '/ai-assistant/conversations',
         'target' => ConversationController::class . '::list',
         'methods' => ['GET'],
     ],
-    'shadcn_ui_chat_conversation_get' => [
-        'path' => '/shadcn-ui/chat/conversations/get',
+    'webcon_ai_assistant_conversation_get' => [
+        'path' => '/ai-assistant/conversations/get',
         'target' => ConversationController::class . '::get',
         'methods' => ['GET'],
     ],
-    'shadcn_ui_chat_conversation_events' => [
-        'path' => '/shadcn-ui/chat/conversations/events',
+    'webcon_ai_assistant_conversation_events' => [
+        'path' => '/ai-assistant/conversations/events',
         'target' => TurnController::class . '::events',
         'methods' => ['GET'],
     ],
-    'shadcn_ui_chat_file_info' => [
-        'path' => '/shadcn-ui/chat/files/info',
+    'webcon_ai_assistant_file_info' => [
+        'path' => '/ai-assistant/files/info',
         'target' => AttachmentController::class . '::info',
         'methods' => ['GET'],
     ],
-    'shadcn_ui_chat_conversation_create' => [
-        'path' => '/shadcn-ui/chat/conversations/create',
+    'webcon_ai_assistant_conversation_create' => [
+        'path' => '/ai-assistant/conversations/create',
         'target' => ConversationController::class . '::create',
         'methods' => ['POST'],
     ],
-    'shadcn_ui_chat_conversation_turn' => [
-        'path' => '/shadcn-ui/chat/conversations/turn',
+    'webcon_ai_assistant_conversation_turn' => [
+        'path' => '/ai-assistant/conversations/turn',
         'target' => TurnController::class . '::turn',
         'methods' => ['POST'],
     ],
-    'shadcn_ui_chat_conversation_approval' => [
-        'path' => '/shadcn-ui/chat/conversations/approval',
+    'webcon_ai_assistant_conversation_approval' => [
+        'path' => '/ai-assistant/conversations/approval',
         'target' => TurnController::class . '::approval',
         'methods' => ['POST'],
     ],
-    'shadcn_ui_chat_conversation_input' => [
-        'path' => '/shadcn-ui/chat/conversations/input',
+    'webcon_ai_assistant_conversation_input' => [
+        'path' => '/ai-assistant/conversations/input',
         'target' => TurnController::class . '::input',
         'methods' => ['POST'],
     ],
-    'shadcn_ui_chat_conversation_cancel' => [
-        'path' => '/shadcn-ui/chat/conversations/cancel',
+    'webcon_ai_assistant_conversation_cancel' => [
+        'path' => '/ai-assistant/conversations/cancel',
         'target' => TurnController::class . '::cancel',
         'methods' => ['POST'],
     ],
-    'shadcn_ui_chat_conversation_archive' => [
-        'path' => '/shadcn-ui/chat/conversations/archive',
+    'webcon_ai_assistant_conversation_archive' => [
+        'path' => '/ai-assistant/conversations/archive',
         'target' => ConversationController::class . '::archive',
         'methods' => ['POST'],
     ],
-    'shadcn_ui_chat_conversation_pin' => [
-        'path' => '/shadcn-ui/chat/conversations/pin',
+    'webcon_ai_assistant_conversation_pin' => [
+        'path' => '/ai-assistant/conversations/pin',
         'target' => ConversationController::class . '::pin',
         'methods' => ['POST'],
     ],
-    'shadcn_ui_chat_conversation_rename' => [
-        'path' => '/shadcn-ui/chat/conversations/rename',
+    'webcon_ai_assistant_conversation_rename' => [
+        'path' => '/ai-assistant/conversations/rename',
         'target' => ConversationController::class . '::rename',
         'methods' => ['POST'],
     ],
-    'shadcn_ui_chat_conversation_delete' => [
-        'path' => '/shadcn-ui/chat/conversations/delete',
+    'webcon_ai_assistant_conversation_delete' => [
+        'path' => '/ai-assistant/conversations/delete',
         'target' => ConversationController::class . '::delete',
         'methods' => ['POST'],
     ],
-    'shadcn_ui_chat_file_upload' => [
-        'path' => '/shadcn-ui/chat/files/upload',
+    'webcon_ai_assistant_file_upload' => [
+        'path' => '/ai-assistant/files/upload',
         'target' => AttachmentController::class . '::upload',
         'methods' => ['POST'],
     ],

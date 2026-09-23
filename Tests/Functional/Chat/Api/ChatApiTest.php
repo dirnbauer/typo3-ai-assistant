@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Tests\Functional\Chat\Api;
+namespace Webconsulting\WebconAiAssistant\Tests\Functional\Chat\Api;
 
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\ServerRequest;
-use Webconsulting\ShadcnUi\Chat\Api\ConversationController;
-use Webconsulting\ShadcnUi\Chat\Api\StatusController;
-use Webconsulting\ShadcnUi\Chat\Api\TurnController;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationRepository;
-use Webconsulting\ShadcnUi\Chat\Domain\ConversationStatus;
-use Webconsulting\ShadcnUi\Chat\Turn\TurnRunner;
-use Webconsulting\ShadcnUi\Testing\ScriptedProvider;
-use Webconsulting\ShadcnUi\Tests\Functional\AbstractChatTestCase;
+use Webconsulting\WebconAiAssistant\Chat\Api\ConversationController;
+use Webconsulting\WebconAiAssistant\Chat\Api\StatusController;
+use Webconsulting\WebconAiAssistant\Chat\Api\TurnController;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationRepository;
+use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationStatus;
+use Webconsulting\WebconAiAssistant\Chat\Turn\TurnRunner;
+use Webconsulting\WebconAiAssistant\Testing\ScriptedProvider;
+use Webconsulting\WebconAiAssistant\Tests\Functional\AbstractChatTestCase;
 
 /**
  * The JSON contract the frontend is written against, exercised through the
@@ -68,6 +68,21 @@ final class ChatApiTest extends AbstractChatTestCase
         self::assertSame(TurnRunner::MAX_ITERATIONS, $status['limits']['maxIterations']);
         self::assertSame(['sse', 'approvals', 'input', 'attachments', 'writes'], array_keys($status['features']));
         self::assertFalse($status['features']['writes'], 'allowWrites defaults to off.');
+        self::assertSame(['extensions', 'mimeTypes', 'maxBytes'], array_keys($status['attachments']));
+        self::assertSame(20 * 1024 * 1024, $status['attachments']['maxBytes']['pdf'] ?? null, 'The client checks sizes on the same numbers.');
+    }
+
+    #[Test]
+    public function aRefusalReachesTheUserInTheirLanguage(): void
+    {
+        $this->moduleRequest('tools_webconaiassistant_chat', [], 'de');
+        $uid = $this->conversation();
+
+        $response = $this->get(ConversationController::class)->rename($this->request(['conversation' => $uid, 'title' => ' ']));
+        self::assertSame('Ein Titel darf nicht leer sein.', $this->decode($response, 400)['error']);
+
+        $response = $this->get(TurnController::class)->turn($this->request(['conversation' => $uid, 'content' => str_repeat('x', TurnController::MAX_MESSAGE_LENGTH + 1)]));
+        self::assertSame('Eine Nachricht darf höchstens 10.000 Zeichen lang sein.', $this->decode($response, 400)['error']);
     }
 
     #[Test]
@@ -205,7 +220,7 @@ final class ChatApiTest extends AbstractChatTestCase
      */
     private function request(array $body = []): ServerRequest
     {
-        return (new ServerRequest('https://typo3-testing.local/typo3/ajax/shadcn-ui/chat/', 'POST'))
+        return (new ServerRequest('https://typo3-testing.local/typo3/ajax/ai-assistant/', 'POST'))
             ->withQueryParams($body)
             ->withParsedBody($body);
     }

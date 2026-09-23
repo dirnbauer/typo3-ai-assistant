@@ -5,20 +5,16 @@ declare(strict_types=1);
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 
 return [
-    'shadcn-ui-module-chat' => [
+    'webcon-ai-assistant-module' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:shadcn_ui/Resources/Public/Icons/module-chat.svg',
+        'source' => 'EXT:webcon_ai_assistant/Resources/Public/Icons/module-assistant.svg',
     ],
-    'shadcn-ui-module-components' => [
+    'webcon-ai-assistant-toolbar' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:shadcn_ui/Resources/Public/Icons/module-components.svg',
+        'source' => 'EXT:webcon_ai_assistant/Resources/Public/Icons/toolbar-assistant.svg',
     ],
-    'shadcn-ui-toolbar-chat' => [
+    'webcon-ai-assistant-record-instruction' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:shadcn_ui/Resources/Public/Icons/toolbar-chat.svg',
-    ],
-    'shadcn-ui-record-instruction' => [
-        'provider' => SvgIconProvider::class,
-        'source' => 'EXT:shadcn_ui/Resources/Public/Icons/record-instruction.svg',
+        'source' => 'EXT:webcon_ai_assistant/Resources/Public/Icons/record-instruction.svg',
     ],
 ];

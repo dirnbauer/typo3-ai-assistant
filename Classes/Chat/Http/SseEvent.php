@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\ShadcnUi\Chat\Http;
+namespace Webconsulting\WebconAiAssistant\Chat\Http;
 
 /**
  * One server-sent event and the rules for putting it on the wire.
