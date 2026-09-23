@@ -85,6 +85,12 @@ parts. Versions 1.0.0 and 1.0.1 were released as `typo3-shadcn-ui`.
   fails the whole request (`GetPage` says "uid, pageId or url" that way). The
   catalogue now reduces the top level to a plain object and states the
   alternatives in the tool description.
+- **Enabling `WriteTable` or `CreateSite` would have broken every turn on
+  OpenAI**, which refuses a tool description over 1024 characters (theirs are
+  1928 and 1792). A longer description is now cut at the last sentence that
+  fits, and the rest moves into the parameter schema's description, so the
+  model still reads it. Of the lab's 69 MCP tools, the four affected tools now
+  pass both checks.
 - **Approving a write showed nothing of the continued run.** Its events are
   numbered from one again, and the client dropped them as replays of the paused
   run's, leaving the approval card on screen; a decision now starts a new

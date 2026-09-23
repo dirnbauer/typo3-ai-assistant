@@ -21,11 +21,13 @@ ambient user, so a queued turn would fail closed on every call.
 compare-and-swap on it, so two tabs pressing send at the same moment cannot both
 run against one transcript — the loser is told the conversation is busy.
 
-MCP tool schemas are reduced to what function-calling providers accept before
-they are offered: a top-level `oneOf`/`anyOf` of required fields ("uid or url")
-becomes a sentence in the tool description, and other top-level combinators are
-dropped. A single tool whose schema a provider refuses would otherwise fail
-every request.
+MCP tool definitions are reduced to what function-calling providers accept
+before they are offered: a top-level `oneOf`/`anyOf` of required fields ("uid
+or url") becomes a sentence in the tool description, other top-level
+combinators are dropped, and a description longer than OpenAI's 1024
+characters is cut at a sentence, its rest moved into the parameter schema's
+description. A single tool a provider refuses would otherwise fail every
+request.
 
 The browser side
 ================

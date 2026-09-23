@@ -31,7 +31,7 @@ use Webconsulting\WebconAiAssistant\Chat\Security\BackendUserContext;
 final readonly class McpCatalogToolProvider implements ToolProviderInterface
 {
     /** Bumped whenever the shape of a cached definition changes. */
-    private const string CACHE_PREFIX = 'catalog_v2_';
+    private const string CACHE_PREFIX = 'catalog_v3_';
 
     public function __construct(
         private McpToolCatalogService $catalog,
@@ -111,18 +111,16 @@ final readonly class McpCatalogToolProvider implements ToolProviderInterface
         // MCP nests the parameter schema under `inputSchema`; nr-llm takes the
         // JSON Schema object directly, in the shape providers accept.
         $input = $schema['inputSchema'] ?? null;
-        $projection = ToolSchema::forProvider(is_array($input) ? Row::stringKeyed($input) : []);
-
         $description = trim(Row::string($schema, 'description'));
-        $description = $description !== '' ? $description : sprintf('The TYPO3 MCP tool "%s".', $mcpName);
-        if ($projection['hint'] !== '') {
-            $description .= ' ' . $projection['hint'];
-        }
+        $definition = ToolSchema::forProvider(
+            $description !== '' ? $description : sprintf('The TYPO3 MCP tool "%s".', $mcpName),
+            is_array($input) ? Row::stringKeyed($input) : [],
+        );
 
         return [
             'mcpName' => $mcpName,
-            'description' => $description,
-            'parameters' => $projection['parameters'],
+            'description' => $definition['description'],
+            'parameters' => $definition['parameters'],
             'effect' => $this->effectClassifier->classify($mcpName, $schema)->value,
             'dataClass' => $this->effectClassifier->dataClass($mcpName)->value,
             'requiresAdmin' => $this->effectClassifier->requiresAdmin($mcpName, $this->mcpToolRegistry->getTool($mcpName)),
