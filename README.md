@@ -38,7 +38,7 @@ installation over.
 | TYPO3                    | 14.3 LTS                                  |
 | PHP                      | 8.4+                                      |
 | netresearch/nr-llm       | ^0.35, with one working configuration     |
-| hn/typo3-mcp-server      | ^0.8 (the `dirnbauer` fork)               |
+| hn/typo3-mcp-server      | ^0.9 (the `dirnbauer` fork)               |
 | phpoffice/phpspreadsheet | optional — adds XLSX attachments          |
 
 ## Install

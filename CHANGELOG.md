@@ -100,7 +100,9 @@ parts. Versions 1.0.0 and 1.0.1 were released as `typo3-shadcn-ui`.
 
 ### Dependencies
 
-- `phpoffice/phpword` ^1.0 → ^1.4, `smalot/pdfparser` ^2.0 → ^2.12.
+- `hn/typo3-mcp-server` ^0.8 → ^0.9 (0.9.1; its public PHP API is unchanged,
+  the chat's tool tests pass against it), `phpoffice/phpword` ^1.0 → ^1.4,
+  `smalot/pdfparser` ^2.0 → ^2.12.
 - Development: PHPUnit ^13.3, PHPStan ^2.2, `saschaegerer/phpstan-typo3` ^3.1,
   `typo3/testing-framework` ^9.7, `friendsofphp/php-cs-fixer` ^3.95,
   `phpoffice/phpspreadsheet` ^5.10, ESLint ^10.11.
