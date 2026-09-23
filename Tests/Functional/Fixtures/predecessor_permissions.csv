@@ -1,0 +1,11 @@
+"be_groups",,,,,
+,"uid","pid","title","groupMods","TSconfig"
+,1,0,"Editors","web_layout,tools_shadcnui_chat,tools_shadcnui_components","tx_shadcnui.tools.deny = typo3_WriteTable"
+,2,0,"Readers","web_layout",""
+"be_users",,,,,,,,,,
+,"uid","pid","username","password","admin","disable","deleted","usergroup","userMods","TSconfig"
+,3,0,"legacy","$argon2i$v=19$m=65536,t=16,p=1$e0JmSkVvSkVYRlNVOGVZaA$Pt9mI42u+i4l1+eIyGmzhGLtiKA0social",0,0,0,"1","tools_shadcnui_chat","tx_shadcnui.tools.allow = typo3_GetPage"
+"sys_be_shortcuts",,,,,
+,"uid","userid","route","arguments","description"
+,1,3,"tools_shadcnui_chat","{""conversation"":7}","My chat"
+,2,3,"web_layout","{""id"":1}","Page"
