@@ -26,6 +26,7 @@ final class ChatToolbarItemTest extends AbstractChatTestCase
         self::assertSame(['class' => 'webcon-ai-assistant-toolbar-item'], $item->getAdditionalAttributes());
 
         $html = $item->getItem();
+        self::assertStringNotContainsString('<html', $html);
         self::assertStringContainsString('toolbar-item-title', $html);
         self::assertStringContainsString('AI Assistant', $html);
         self::assertStringContainsString('data-webcon-ai-assistant-badge', $html);
@@ -38,6 +39,7 @@ final class ChatToolbarItemTest extends AbstractChatTestCase
 
         self::assertStringContainsString('<webcon-ai-assistant-chat variant="panel"', $html);
         self::assertStringContainsString('record-edit-url="', $html);
+        self::assertStringNotContainsString('<html', $html, 'The dropdown is a fragment of the toolbar, not a document.');
     }
 
     #[Test]

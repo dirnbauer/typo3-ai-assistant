@@ -61,7 +61,8 @@ final readonly class InstructionRepository
     /**
      * Every instruction record, switched off or not, as the Instructions
      * module lists them: in sorting order, with the titles of the groups each
-     * one is scoped to.
+     * one is scoped to. A group that no longer exists is listed by its uid: an
+     * instruction scoped to it reaches nobody, and "everyone" would be a lie.
      *
      * @return list<array{uid: int, title: string, body: string, hidden: bool, description: string, groups: list<string>}>
      */
@@ -80,10 +81,10 @@ final readonly class InstructionRepository
             'body' => trim(Row::string($row, 'body')),
             'hidden' => Row::bool($row, 'hidden'),
             'description' => trim(Row::string($row, 'description')),
-            'groups' => array_values(array_filter(array_map(
-                static fn(int $uid): string => $groupTitles[$uid] ?? '',
+            'groups' => array_map(
+                static fn(int $uid): string => $groupTitles[$uid] ?? '#' . $uid,
                 GeneralUtility::intExplode(',', Row::string($row, 'be_groups'), true),
-            ), static fn(string $title): bool => $title !== '')),
+            ),
         ], $rows);
     }
 

@@ -1,6 +1,7 @@
 import { html, nothing } from 'lit';
 import { contentFrameUrl, recordEditUrl, showInContentFrame } from '../chat/backend.js';
 import { formatDuration, formatNumber, toolDisplayName } from '../chat/format.js';
+import { toolState } from './chat-element.js';
 import { changeList, effectBadge, icon, label, uniqueId } from './parts.js';
 import { StoreElement } from './store-element.js';
 
@@ -33,7 +34,9 @@ export class DetailsElement extends StoreElement {
     }
     const { thread, status } = this.store.state;
     const calls = thread.items.filter((item) => item.kind === 'tool');
-    const writes = calls.filter((item) => item.call.effect !== 'read_only').length;
+    const writes = calls.filter(
+      (item) => item.call.effect !== 'read_only' && item.call.result !== undefined && !item.call.result.isError,
+    ).length;
 
     return html`
       <section class="webcon-ai-assistant-details" aria-labelledby=${this.#heading}>
@@ -68,7 +71,7 @@ export class DetailsElement extends StoreElement {
                     ${label('tool.round', { round: item.call.round })}
                     ·
                     ${item.call.result === undefined
-                      ? label('tool.state.running')
+                      ? label(`tool.state.${toolState(item.call, thread)}`)
                       : html`${formatDuration(item.call.result.durationMs)}${item.call.result.isError ? html` · ${label('tool.state.error')}` : nothing}`}
                   </span>
                 </li>`,
@@ -77,6 +80,7 @@ export class DetailsElement extends StoreElement {
         ${writes > 0 ? html`<p class="text-variant">${label('details.writes', { writes, calls: calls.length })}</p>` : nothing}
 
         <h3>${label('details.usage')}</h3>
+        <h4>${label('usage.lastTurn')}</h4>
         <dl class="webcon-ai-assistant-facts">
           ${this.#fact(label('usage.prompt'), formatNumber(thread.usage.promptTokens))}
           ${this.#fact(label('usage.completion'), formatNumber(thread.usage.completionTokens))}
@@ -104,11 +108,7 @@ export class DetailsElement extends StoreElement {
     const perHour = Number(limits.turnsPerHour ?? 0);
 
     return html`
-      <p class=${status.budget?.allowed === false ? 'text-danger' : 'text-variant'}>
-        ${status.budget?.allowed === false
-          ? status.budget?.reason || label('composer.budget')
-          : label('usage.withinBudget')}
-      </p>
+      <h4>${label('limits.title')}</h4>
       <dl class="webcon-ai-assistant-facts">
         ${this.#fact(
           label('limits.turnsLeft'),
@@ -116,8 +116,11 @@ export class DetailsElement extends StoreElement {
         )}
         ${this.#fact(label('limits.running'), formatNumber(Number(limits.activeConversations ?? 0)))}
         ${this.#fact(label('limits.rounds'), String(limits.maxIterations ?? ''))}
-        ${this.#fact(label('limits.writes'), label(status.features?.writes === true ? 'limits.writesAllowed' : 'limits.writesAsk'))}
       </dl>
+      <p class="text-variant">${label(status.features?.writes === true ? 'limits.writesAllowed' : 'limits.writesAsk')}</p>
+      <p class=${status.budget?.allowed === false ? 'text-danger' : 'text-variant'}>
+        ${status.budget?.allowed === false ? status.budget?.reason || label('composer.budget') : label('usage.withinBudget')}
+      </p>
     `;
   }
 
@@ -131,14 +134,12 @@ export class DetailsElement extends StoreElement {
     const tools = Array.isArray(status.tools) ? status.tools : [];
 
     return html`
-      <dl class="webcon-ai-assistant-facts">
-        ${this.#fact(
-          label('setup.model'),
-          configuration === null
-            ? label('setup.notConfigured')
-            : html`${configuration.name} · ${configuration.provider} · <code>${configuration.model}</code>`,
-        )}
-      </dl>
+      <h4>${label('setup.model')}</h4>
+      <p>
+        ${configuration === null
+          ? html`<span class="text-variant">${label('setup.notConfigured')}</span>`
+          : html`${configuration.name}<br /><span class="text-variant">${configuration.provider} · <code>${configuration.model}</code></span>`}
+      </p>
       <h4>${label('setup.instructions', { count: instructions.length })}</h4>
       ${instructions.length === 0
         ? html`<p class="text-variant">${label('setup.noInstructions')}</p>`

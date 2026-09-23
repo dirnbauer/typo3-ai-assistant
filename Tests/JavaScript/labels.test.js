@@ -37,7 +37,7 @@ const DYNAMIC = [
   ...['processing', 'awaiting_approval', 'awaiting_input', 'failed'].map((status) => `status.${status}`),
   ...['read_only', 'idempotent_write', 'non_idempotent_write'].flatMap((effect) => [`effect.${effect}`, `effect.${effect}.explanation`]),
   ...['created', 'updated', 'other'].map((kind) => `changes.kind.${kind}`),
-  ...['running', 'error', 'done'].map((state) => `tool.state.${state}`),
+  ...['running', 'waiting', 'stopped', 'error', 'done'].map((state) => `tool.state.${state}`),
   ...['offline', 'forbidden', 'notFound', 'conflict', 'tooLarge', 'unreadable', 'limit', 'server', 'generic'].map((code) => `problem.${code}`),
   ...['unavailable', 'budget', 'streaming', 'awaitingApproval', 'awaitingInput'].map((reason) => `composer.${reason}`),
   'attachment.type',

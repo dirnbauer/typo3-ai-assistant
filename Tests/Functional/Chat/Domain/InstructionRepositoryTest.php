@@ -48,6 +48,24 @@ final class InstructionRepositoryTest extends AbstractChatTestCase
     }
 
     #[Test]
+    public function theAdministrationListShowsSwitchedOffRecordsAndNamesEveryScope(): void
+    {
+        $this->getConnectionPool()->getConnectionForTable('be_groups')->insert('be_groups', ['uid' => 1, 'pid' => 0, 'title' => 'Editors']);
+        $this->getConnectionPool()->getConnectionForTable(InstructionRepository::TABLE)
+            ->update(InstructionRepository::TABLE, ['be_groups' => '1,77'], ['uid' => 3]);
+
+        $listed = [];
+        foreach ($this->subject->findAllForAdministration() as $instruction) {
+            $listed[$instruction['title']] = $instruction;
+        }
+
+        self::assertSame(['House style', 'Never delete', 'Editors only', 'Hidden', 'Blank body'], array_keys($listed), 'Deleted records are not listed; switched-off ones are.');
+        self::assertTrue($listed['Hidden']['hidden']);
+        self::assertSame([], $listed['House style']['groups'], 'No groups means everyone.');
+        self::assertSame(['Editors', '#77'], $listed['Editors only']['groups'], 'A group that no longer exists is named by its uid, not dropped.');
+    }
+
+    #[Test]
     public function theBodyIsTrimmedAndCarriedWithItsUid(): void
     {
         $first = $this->subject->findActiveFor([])[0];

@@ -178,7 +178,7 @@
         <source>Tool calls</source>
       </trans-unit>
       <trans-unit id="details.usage" resname="details.usage">
-        <source>Usage and limits</source>
+        <source>Usage</source>
       </trans-unit>
       <trans-unit id="details.waiting" resname="details.waiting">
         <source>Waiting for you</source>
@@ -187,7 +187,7 @@
         <source>{count, plural, one {One call is held in the chat until you approve or deny it.} other {# calls are held in the chat until you approve or deny them.}}</source>
       </trans-unit>
       <trans-unit id="details.writes" resname="details.writes">
-        <source>{writes} of {calls} calls changed this installation.</source>
+        <source>{writes} of {calls} calls wrote to this installation.</source>
       </trans-unit>
       <trans-unit id="effect.idempotent_write" resname="effect.idempotent_write">
         <source>Writes</source>
@@ -255,6 +255,9 @@
       <trans-unit id="limits.running" resname="limits.running">
         <source>Running conversations</source>
       </trans-unit>
+      <trans-unit id="limits.title" resname="limits.title">
+        <source>Limits</source>
+      </trans-unit>
       <trans-unit id="limits.turnsLeft" resname="limits.turnsLeft">
         <source>Turns left this hour</source>
       </trans-unit>
@@ -264,14 +267,11 @@
       <trans-unit id="limits.unlimited" resname="limits.unlimited">
         <source>No limit</source>
       </trans-unit>
-      <trans-unit id="limits.writes" resname="limits.writes">
-        <source>Writes</source>
-      </trans-unit>
       <trans-unit id="limits.writesAllowed" resname="limits.writesAllowed">
-        <source>May be approved in advance per conversation</source>
+        <source>Writes can be approved in advance, per conversation.</source>
       </trans-unit>
       <trans-unit id="limits.writesAsk" resname="limits.writesAsk">
-        <source>Every write asks first</source>
+        <source>Every write asks for your approval first.</source>
       </trans-unit>
       <trans-unit id="message.assistant" resname="message.assistant">
         <source>Assistant</source>
@@ -468,6 +468,12 @@
       <trans-unit id="tool.state.running" resname="tool.state.running">
         <source>running</source>
       </trans-unit>
+      <trans-unit id="tool.state.stopped" resname="tool.state.stopped">
+        <source>not run</source>
+      </trans-unit>
+      <trans-unit id="tool.state.waiting" resname="tool.state.waiting">
+        <source>waiting for your approval</source>
+      </trans-unit>
       <trans-unit id="toolbar.running" resname="toolbar.running">
         <source>The AI Assistant is working</source>
       </trans-unit>
@@ -479,6 +485,9 @@
       </trans-unit>
       <trans-unit id="usage.completion" resname="usage.completion">
         <source>Completion tokens</source>
+      </trans-unit>
+      <trans-unit id="usage.lastTurn" resname="usage.lastTurn">
+        <source>Last turn</source>
       </trans-unit>
       <trans-unit id="usage.prompt" resname="usage.prompt">
         <source>Prompt tokens</source>

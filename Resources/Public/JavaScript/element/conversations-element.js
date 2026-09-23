@@ -114,7 +114,7 @@ export class ConversationsElement extends StoreElement {
             aria-label=${label('conversations.actions', { title })}
             title=${label('conversations.actions', { title })}
           >
-            ${icon('actions-options')}
+            ${icon('actions-menu-alternative')}
           </button>
           <ul class="dropdown-menu" id=${menu} popover>
             ${this.#item(menu, 'actions-rename', label('conversations.rename'), () => this.#rename(conversation))}

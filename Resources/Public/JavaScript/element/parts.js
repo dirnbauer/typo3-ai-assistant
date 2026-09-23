@@ -81,10 +81,11 @@ export function effectBadge(effect) {
   </span>`;
 }
 
+/** The same colours as the cards the states show: warning for an approval, info for a question. */
 const STATUS_BADGES = Object.freeze({
-  processing: 'badge-info',
+  processing: 'badge-primary',
   awaiting_approval: 'badge-warning',
-  awaiting_input: 'badge-notice',
+  awaiting_input: 'badge-info',
   failed: 'badge-danger',
 });
 

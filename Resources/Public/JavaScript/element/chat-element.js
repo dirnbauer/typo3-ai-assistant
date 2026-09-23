@@ -9,6 +9,33 @@ import { composerState } from '../chat/thread-state.js';
 import { changeList, effectBadge, icon, label, problemText, statusBadge, uniqueId } from './parts.js';
 import { StoreElement } from './store-element.js';
 
+const TOOL_STATE_ICONS = Object.freeze({
+  running: 'spinner-circle',
+  waiting: 'actions-exclamation',
+  stopped: 'actions-minus',
+  error: 'actions-close',
+  done: 'actions-check',
+});
+
+/**
+ * Where one tool call stands: finished (done or failed), held for the user's
+ * approval, still running, or — the run ended without it — not run at all.
+ *
+ * @param {import('../chat/thread-state.js').ToolCallEntry} call
+ * @param {import('../chat/thread-state.js').ThreadState} thread
+ * @returns {'running'|'waiting'|'stopped'|'error'|'done'}
+ */
+export function toolState(call, thread) {
+  if (call.result !== undefined) {
+    return call.result.isError ? 'error' : 'done';
+  }
+  if (thread.pendingApproval?.calls.some((pending) => pending.callId === call.callId)) {
+    return 'waiting';
+  }
+
+  return thread.running ? 'running' : 'stopped';
+}
+
 /**
  * `<webcon-ai-assistant-chat>`: the conversation — its header, the thread and
  * the composer — wherever it is placed.
@@ -86,7 +113,12 @@ export class ChatElement extends StoreElement {
         >
           ${this.#isEmpty() ? this.#renderEmpty() : nothing}
           ${repeat(thread.items, (item) => item.key, (item) => this.#renderItem(item))}
-          ${thread.draft === '' ? nothing : this.#renderMessage({ uid: 0, role: 'assistant', content: thread.draft, createdAt: 0 })}
+          ${thread.draft === ''
+            ? nothing
+            : // The draft grows with every frame; announcing each growth would
+              // bury the answer. The status line says the assistant is writing,
+              // and the finished message is announced once, when it lands.
+              this.#renderMessage({ uid: 0, role: 'assistant', content: thread.draft, createdAt: 0 }, false)}
           ${thread.running ? this.#renderRunning() : nothing}
           ${thread.pendingApproval === null ? nothing : this.#renderApproval()}
           ${thread.pendingInput === null ? nothing : this.#renderInput()}
@@ -290,13 +322,19 @@ export class ChatElement extends StoreElement {
     }
   }
 
-  /** @param {{uid: number, role: string, content: string, createdAt: number, attachments?: Array<{fileUid: number, fileName: string, fileSize: number}>}} message */
-  #renderMessage(message) {
+  /**
+   * @param {{uid: number, role: string, content: string, createdAt: number, attachments?: Array<{fileUid: number, fileName: string, fileSize: number}>}} message
+   * @param {boolean} [announced] false keeps a message out of the live region
+   */
+  #renderMessage(message, announced = true) {
     const mine = message.role === 'user';
     const attachments = Array.isArray(message.attachments) ? message.attachments : [];
 
     return html`
-      <article class="webcon-ai-assistant-message webcon-ai-assistant-message-${mine ? 'user' : 'assistant'}">
+      <article
+        class="webcon-ai-assistant-message webcon-ai-assistant-message-${mine ? 'user' : 'assistant'}"
+        aria-hidden=${announced ? nothing : 'true'}
+      >
         <header class="webcon-ai-assistant-message-meta">
           <span>${label(mine ? 'message.you' : 'message.assistant')}</span>
           ${message.createdAt > 0
@@ -322,11 +360,8 @@ export class ChatElement extends StoreElement {
   /** @param {import('../chat/thread-state.js').ToolCallEntry} call */
   #renderTool(call) {
     const result = call.result;
-    let state = 'running';
-    if (result !== undefined) {
-      state = result.isError ? 'error' : 'done';
-    }
-    const stateIcon = { running: 'spinner-circle', error: 'actions-close', done: 'actions-check' }[state];
+    const state = toolState(call, this.store.state.thread);
+    const stateIcon = TOOL_STATE_ICONS[state];
 
     return html`
       <details class="webcon-ai-assistant-tool webcon-ai-assistant-tool-${state}">

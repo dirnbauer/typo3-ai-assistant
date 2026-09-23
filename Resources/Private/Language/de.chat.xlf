@@ -236,8 +236,8 @@
         <target>Werkzeugaufrufe</target>
       </trans-unit>
       <trans-unit id="details.usage" resname="details.usage">
-        <source>Usage and limits</source>
-        <target>Verbrauch und Grenzen</target>
+        <source>Usage</source>
+        <target>Verbrauch</target>
       </trans-unit>
       <trans-unit id="details.waiting" resname="details.waiting">
         <source>Waiting for you</source>
@@ -248,8 +248,8 @@
         <target>{count, plural, one {Ein Aufruf wartet im Chat, bis Sie ihn genehmigen oder ablehnen.} other {# Aufrufe warten im Chat, bis Sie sie genehmigen oder ablehnen.}}</target>
       </trans-unit>
       <trans-unit id="details.writes" resname="details.writes">
-        <source>{writes} of {calls} calls changed this installation.</source>
-        <target>{writes} von {calls} Aufrufen haben diese Installation verändert.</target>
+        <source>{writes} of {calls} calls wrote to this installation.</source>
+        <target>{writes} von {calls} Aufrufen haben in diese Installation geschrieben.</target>
       </trans-unit>
       <trans-unit id="effect.idempotent_write" resname="effect.idempotent_write">
         <source>Writes</source>
@@ -339,6 +339,10 @@
         <source>Running conversations</source>
         <target>Laufende Unterhaltungen</target>
       </trans-unit>
+      <trans-unit id="limits.title" resname="limits.title">
+        <source>Limits</source>
+        <target>Grenzen</target>
+      </trans-unit>
       <trans-unit id="limits.turnsLeft" resname="limits.turnsLeft">
         <source>Turns left this hour</source>
         <target>Verbleibende Durchgänge in dieser Stunde</target>
@@ -351,17 +355,13 @@
         <source>No limit</source>
         <target>Keine Grenze</target>
       </trans-unit>
-      <trans-unit id="limits.writes" resname="limits.writes">
-        <source>Writes</source>
-        <target>Schreibzugriffe</target>
-      </trans-unit>
       <trans-unit id="limits.writesAllowed" resname="limits.writesAllowed">
-        <source>May be approved in advance per conversation</source>
-        <target>Pro Unterhaltung vorab genehmigbar</target>
+        <source>Writes can be approved in advance, per conversation.</source>
+        <target>Schreibzugriffe lassen sich pro Unterhaltung vorab genehmigen.</target>
       </trans-unit>
       <trans-unit id="limits.writesAsk" resname="limits.writesAsk">
-        <source>Every write asks first</source>
-        <target>Jeder Schreibzugriff fragt vorher</target>
+        <source>Every write asks for your approval first.</source>
+        <target>Jeder Schreibzugriff fragt vorher nach Ihrer Genehmigung.</target>
       </trans-unit>
       <trans-unit id="message.assistant" resname="message.assistant">
         <source>Assistant</source>
@@ -623,6 +623,14 @@
         <source>running</source>
         <target>läuft</target>
       </trans-unit>
+      <trans-unit id="tool.state.stopped" resname="tool.state.stopped">
+        <source>not run</source>
+        <target>nicht ausgeführt</target>
+      </trans-unit>
+      <trans-unit id="tool.state.waiting" resname="tool.state.waiting">
+        <source>waiting for your approval</source>
+        <target>wartet auf Ihre Genehmigung</target>
+      </trans-unit>
       <trans-unit id="toolbar.running" resname="toolbar.running">
         <source>The AI Assistant is working</source>
         <target>Der KI-Assistent arbeitet</target>
@@ -638,6 +646,10 @@
       <trans-unit id="usage.completion" resname="usage.completion">
         <source>Completion tokens</source>
         <target>Antwort-Tokens</target>
+      </trans-unit>
+      <trans-unit id="usage.lastTurn" resname="usage.lastTurn">
+        <source>Last turn</source>
+        <target>Letzter Durchgang</target>
       </trans-unit>
       <trans-unit id="usage.prompt" resname="usage.prompt">
         <source>Prompt tokens</source>

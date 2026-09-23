@@ -224,6 +224,11 @@
   padding: 0.05em 0.3em;
 }
 
+.webcon-ai-assistant-message-body a {
+  color: var(--typo3-text-color-link);
+  text-decoration: underline;
+}
+
 .webcon-ai-assistant-md-heading {
   margin-block-start: calc(var(--typo3-spacing) * 0.75);
 }
@@ -561,6 +566,7 @@
   font-variant-numeric: tabular-nums;
   margin: 0;
   text-align: end;
+  white-space: nowrap;
 }
 
 .webcon-ai-assistant-call-list,
