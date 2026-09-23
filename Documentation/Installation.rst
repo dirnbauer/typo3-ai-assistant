@@ -59,8 +59,10 @@ runtime for backend modules and the Components module are gone.
     `tools_shadcnui_chat` to `tools_webconaiassistant` and
     `tools_webconaiassistant_chat`; rewrites `tx_shadcnui.` to
     `tx_webconaiassistant.` in the TSconfig stored on backend users and groups;
-    and points bookmarks of the old chat module at the new one. It copies only
-    what is missing, so it can run again.
+    points bookmarks of the old chat module at the new one; and carries an
+    administrator's switch of the `ask_user` tool group in nr-llm's Tools module
+    (`shadcn_ui`, now `webcon_ai_assistant`). It copies only what is missing,
+    so it can run again.
 3.  Rename `tx_shadcnui.tools` to `tx_webconaiassistant.tools` in TSconfig kept
     in **files**, and `shadcn-ui:chat:cleanup` to `ai-assistant:chat:cleanup`
     wherever the retention command is scheduled.

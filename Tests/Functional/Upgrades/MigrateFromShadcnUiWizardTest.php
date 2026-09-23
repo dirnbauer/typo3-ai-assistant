@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Webconsulting\WebconAiAssistant\Tests\Functional\Upgrades;
 
+use Netresearch\NrLlm\Service\Tool\ToolGroupStateRepository;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationRepository;
 use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationStatus;
 use Webconsulting\WebconAiAssistant\Chat\Domain\InstructionRepository;
 use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRepository;
+use Webconsulting\WebconAiAssistant\Chat\Tool\AskUserTool;
 use Webconsulting\WebconAiAssistant\Tests\Functional\AbstractChatTestCase;
 use Webconsulting\WebconAiAssistant\Upgrades\MigrateFromShadcnUiWizard;
 
@@ -147,6 +149,19 @@ final class MigrateFromShadcnUiWizardTest extends AbstractChatTestCase
         self::assertSame('tx_webconaiassistant.tools.allow = typo3_GetPage', $this->row('be_users', 3)['TSconfig']);
         self::assertSame('tools_webconaiassistant_chat', $this->row('sys_be_shortcuts', 1)['route']);
         self::assertSame('web_layout', $this->row('sys_be_shortcuts', 2)['route']);
+        self::assertFalse($this->wizard->updateNecessary());
+    }
+
+    #[Test]
+    public function anAdministratorsSwitchOfTheAskUserToolGroupCarriesOver(): void
+    {
+        $toolGroups = $this->get(ToolGroupStateRepository::class);
+        $toolGroups->setEnabled('shadcn_ui', false);
+
+        self::assertTrue($this->wizard->updateNecessary());
+        $this->wizard->executeUpdate();
+
+        self::assertFalse($toolGroups->overrides()[AskUserTool::GROUP] ?? true, 'Switched off stays switched off.');
         self::assertFalse($this->wizard->updateNecessary());
     }
 

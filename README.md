@@ -60,7 +60,8 @@ vendor/bin/typo3 upgrade:run webconAiAssistantMigrateFromShadcnUi
 The wizard copies conversations, messages and instructions from the `tx_shadcnui_*` tables (keeping
 their uids), the `shadcn_ui` extension configuration, module permissions (`tools_shadcnui_chat` →
 `tools_webconaiassistant` + `tools_webconaiassistant_chat`), database TSconfig
-(`tx_shadcnui.tools` → `tx_webconaiassistant.tools`) and bookmarks. Rename `tx_shadcnui.tools` in
+(`tx_shadcnui.tools` → `tx_webconaiassistant.tools`), bookmarks and the nr-llm switch of the
+`ask_user` tool group (`shadcn_ui` → `webcon_ai_assistant`). Rename `tx_shadcnui.tools` in
 TSconfig files and `shadcn-ui:chat:cleanup` → `ai-assistant:chat:cleanup` in your scheduler yourself.
 Both packages can be installed side by side during the switch.
 

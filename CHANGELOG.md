@@ -16,7 +16,8 @@ parts. Versions 1.0.0 and 1.0.1 were released as `typo3-shadcn-ui`.
 - **Renamed.** Composer package `webconsulting/typo3-ai-assistant`, extension
   key `webcon_ai_assistant`, PHP namespace `Webconsulting\WebconAiAssistant`,
   tables `tx_webconaiassistant_conversation`, `_message` and `_instruction`,
-  AJAX routes `webcon_ai_assistant_*` under `/ai-assistant/`, icons
+  AJAX routes `webcon_ai_assistant_*` under `/ai-assistant/`, nr-llm tool
+  group of `ask_user` `webcon_ai_assistant` (the tool name is unchanged), icons
   `webcon-ai-assistant-*`, import-map prefix `@webconsulting/ai-assistant/`,
   user TSconfig `tx_webconaiassistant.tools.allow/deny`, CLI command
   `ai-assistant:chat:cleanup` (was `shadcn-ui:chat:cleanup`), cache
@@ -62,7 +63,9 @@ parts. Versions 1.0.0 and 1.0.1 were released as `typo3-shadcn-ui`.
   extension configuration while this one is still at its defaults, moves
   `tools_shadcnui_chat` in `groupMods`/`userMods` to the new modules and drops
   `tools_shadcnui_components`, rewrites `tx_shadcnui.` in database TSconfig,
-  and repoints bookmarks. Repeatable; it copies only what is missing.
+  repoints bookmarks, and carries an administrator's nr-llm switch of the
+  `ask_user` tool group (`shadcn_ui` → `webcon_ai_assistant`). Repeatable; it
+  copies only what is missing.
 - **Instructions module** listing every instruction with its scope and state,
   with create and edit through FormEngine and switch-on/off and delete through
   the DataHandler.

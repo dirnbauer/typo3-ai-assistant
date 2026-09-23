@@ -6,6 +6,7 @@ namespace Webconsulting\WebconAiAssistant\Upgrades;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
+use Netresearch\NrLlm\Service\Tool\ToolGroupStateRepository;
 use Override;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
@@ -21,6 +22,7 @@ use Webconsulting\WebconAiAssistant\Chat\Domain\ConversationRepository;
 use Webconsulting\WebconAiAssistant\Chat\Domain\InstructionRepository;
 use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRepository;
 use Webconsulting\WebconAiAssistant\Chat\Domain\Row;
+use Webconsulting\WebconAiAssistant\Chat\Tool\AskUserTool;
 use Webconsulting\WebconAiAssistant\Configuration\ExtensionSettings;
 
 /**
@@ -42,6 +44,8 @@ use Webconsulting\WebconAiAssistant\Configuration\ExtensionSettings;
  * - User TSconfig stored in the database (`be_users` and `be_groups`) moves from
  *   `tx_shadcnui.` to `tx_webconaiassistant.`, and bookmarks of the old chat
  *   module point to the new one.
+ * - An administrator's switch of the `ask_user` tool group in nr-llm's Tools
+ *   module (`shadcn_ui`) carries over to its new group name.
  *
  * Repeatable: while the predecessor is still installed it may create rows, and
  * each run copies only what is missing.
@@ -96,11 +100,15 @@ final class MigrateFromShadcnUiWizard implements UpgradeWizardInterface, Repeata
 
     private const string NEW_TSCONFIG_KEY = 'tx_webconaiassistant.';
 
+    /** The nr-llm tool group the predecessor's `ask_user` tool belonged to. */
+    private const string OLD_TOOL_GROUP = 'shadcn_ui';
+
     private ?OutputInterface $output = null;
 
     public function __construct(
         private readonly ConnectionPool $connectionPool,
         private readonly ExtensionConfiguration $extensionConfiguration,
+        private readonly ToolGroupStateRepository $toolGroupStates,
     ) {}
 
     #[Override]
@@ -119,8 +127,8 @@ final class MigrateFromShadcnUiWizard implements UpgradeWizardInterface, Repeata
     public function getDescription(): string
     {
         return 'Copies conversations, messages and instruction records from the tx_shadcnui_* tables, the shadcn_ui '
-            . 'extension configuration, module permissions, database TSconfig (tx_shadcnui.tools) and bookmarks of the '
-            . 'old AI Chat module over to the AI Assistant (webcon_ai_assistant).';
+            . 'extension configuration, module permissions, database TSconfig (tx_shadcnui.tools), bookmarks of the '
+            . 'old AI Chat module and the nr-llm switch of its tool group over to the AI Assistant (webcon_ai_assistant).';
     }
 
     /**
@@ -142,6 +150,7 @@ final class MigrateFromShadcnUiWizard implements UpgradeWizardInterface, Repeata
         }
 
         return $this->configurationToCopy() !== null
+            || $this->toolGroupSwitchToCopy() !== null
             || $this->migratePermissions(dryRun: true) > 0
             || $this->migrateTsConfig(dryRun: true) > 0
             || $this->migrateBookmarks(dryRun: true) > 0;
@@ -159,6 +168,12 @@ final class MigrateFromShadcnUiWizard implements UpgradeWizardInterface, Repeata
         if ($configuration !== null) {
             $this->extensionConfiguration->set(ExtensionSettings::EXTENSION_KEY, $configuration);
             $this->say('Extension configuration copied from shadcn_ui.');
+        }
+
+        $toolGroupEnabled = $this->toolGroupSwitchToCopy();
+        if ($toolGroupEnabled !== null) {
+            $this->toolGroupStates->setEnabled(AskUserTool::GROUP, $toolGroupEnabled);
+            $this->say(sprintf('nr-llm tool group "%s" %s, as "%s" was.', AskUserTool::GROUP, $toolGroupEnabled ? 'enabled' : 'disabled', self::OLD_TOOL_GROUP));
         }
 
         $this->say(sprintf('Module permissions updated on %d record(s).', $this->migratePermissions(dryRun: false)));
@@ -357,6 +372,23 @@ final class MigrateFromShadcnUiWizard implements UpgradeWizardInterface, Repeata
             'attachmentStorage' => '1:/webcon_ai_assistant/',
             'panelEnabled' => '1',
         ];
+    }
+
+    // ------------------------------------------------------------- nr-llm tool group
+
+    /**
+     * The predecessor's tool-group switch, when an administrator set one and
+     * none is set for the new group yet. A group nobody toggled is enabled in
+     * nr-llm, so there is nothing to carry over then.
+     */
+    private function toolGroupSwitchToCopy(): ?bool
+    {
+        $overrides = $this->toolGroupStates->overrides();
+        if (!array_key_exists(self::OLD_TOOL_GROUP, $overrides) || array_key_exists(AskUserTool::GROUP, $overrides)) {
+            return null;
+        }
+
+        return $overrides[self::OLD_TOOL_GROUP];
     }
 
     // ------------------------------------------------------------- permissions, TSconfig, bookmarks
