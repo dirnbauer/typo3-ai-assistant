@@ -40,8 +40,8 @@ both repositories are declared before the package is required:
 and :sql:`tx_webconaiassistant_instruction`, plus the cache table of the MCP
 tool catalogue.
 
-Coming from typo3-shadcn-ui
-===========================
+Upgrading an existing installation
+==================================
 
 This extension replaces `webconsulting/typo3-shadcn-ui` (extension key
 `shadcn_ui`). Its chat is the same engine under new names; the shadcn/ui

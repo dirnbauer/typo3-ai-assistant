@@ -18,9 +18,8 @@ Lit elements rendering the core's buttons, callouts, badges and forms into the l
 modal, notification and AJAX APIs, the core's colour tokens for light and dark mode, and labels in
 English and German. No React, no Tailwind, no bundler.
 
-This package succeeds [`webconsulting/typo3-shadcn-ui`](https://github.com/dirnbauer/typo3-shadcn-ui):
-the same chat engine under new names, without the shadcn/ui runtime. An upgrade wizard carries an
-installation over.
+This package replaces the earlier backend chat extension: the same chat engine under new names,
+without the shadcn/ui runtime. An upgrade wizard carries existing installations over.
 
 ## Where it appears
 
@@ -51,7 +50,7 @@ composer require webconsulting/typo3-ai-assistant:^2.0
 vendor/bin/typo3 extension:setup -e webcon_ai_assistant
 ```
 
-### Coming from typo3-shadcn-ui
+### Upgrading an existing installation
 
 ```bash
 vendor/bin/typo3 upgrade:run webconAiAssistantMigrateFromShadcnUi
