@@ -107,7 +107,7 @@ parts. Versions 1.0.0 and 1.0.1 were released as `typo3-shadcn-ui`.
   `typo3/testing-framework` ^9.7, `friendsofphp/php-cs-fixer` ^3.95,
   `phpoffice/phpspreadsheet` ^5.10, ESLint ^10.11.
 
-## [1.0.1] - 2026-09-19
+## 1.0.1 - 2026-09-19
 
 ### Changed
 
@@ -125,7 +125,7 @@ parts. Versions 1.0.0 and 1.0.1 were released as `typo3-shadcn-ui`.
   the adapter answers from the class it wraps. A unit test drives the real
   registry so the wrapping is part of what is proven.
 
-## [1.0.0] - 2026-09-19
+## 1.0.0 - 2026-09-19
 
 The first release.
 
@@ -176,5 +176,3 @@ The first release.
   applies retention, and removes orphaned rows and files.
 
 [2.0.0]: https://github.com/dirnbauer/typo3-ai-assistant/releases/tag/v2.0.0
-[1.0.1]: https://github.com/dirnbauer/typo3-shadcn-ui/releases/tag/v1.0.1
-[1.0.0]: https://github.com/dirnbauer/typo3-shadcn-ui/releases/tag/v1.0.0
