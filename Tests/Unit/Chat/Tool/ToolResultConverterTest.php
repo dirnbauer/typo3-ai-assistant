@@ -102,6 +102,22 @@ final class ToolResultConverterTest extends TestCase
     }
 
     #[Test]
+    public function aWriteThatAnswersWithJsonTextStillCarriesAWriteTarget(): void
+    {
+        $converter = new ToolResultConverter();
+        $write = $converter->convert(new CallToolResult([new TextContent('{"action":"update","table":"pages","uid":1070}')]), 'typo3_WriteTable', ToolEffect::NON_IDEMPOTENT_WRITE);
+        $read = $converter->convert(new CallToolResult([new TextContent('{"table":"pages","uid":1070}')]), 'typo3_GetPage', ToolEffect::READ_ONLY);
+        $prose = $converter->convert(new CallToolResult([new TextContent('Updated pages:1070.')]), 'typo3_WriteTable', ToolEffect::NON_IDEMPOTENT_WRITE);
+
+        self::assertNotNull($write->writeTarget);
+        self::assertSame('pages', $write->writeTarget->table);
+        self::assertSame(1070, $write->writeTarget->uid);
+        self::assertSame(WriteKind::UPDATED, $write->writeKind);
+        self::assertNull($read->writeTarget, 'A read never claims a record.');
+        self::assertNull($prose->writeTarget, 'Text that is no JSON object names no record.');
+    }
+
+    #[Test]
     public function aTableNameThatIsNotAnIdentifierYieldsNoTarget(): void
     {
         $result = new ToolResultConverter()->convert(

@@ -28,8 +28,9 @@ use Netresearch\NrLlm\Exception\InvalidArgumentException;
  * - `isError` gives an error result, which by construction carries nothing else;
  * - `structuredContent` becomes a run-only artifact: a TABLE for uniform rows,
  *   TEXT carrying JSON otherwise;
- * - a writing tool whose structured result names `table` and `uid` gets a write
- *   target, CREATED when the action was a create, UPDATED otherwise.
+ * - a writing tool whose structured result (or, lacking one, its JSON text)
+ *   names `table` and `uid` gets a write target, CREATED when the action was a
+ *   create, UPDATED otherwise.
  */
 final readonly class ToolResultConverter
 {
@@ -48,7 +49,7 @@ final readonly class ToolResultConverter
         $artifact = $this->artifact($structured, $toolName);
         $converted = $artifact === null ? ToolResult::text($text) : ToolResult::text($text, $artifact);
 
-        $target = $effect->isWrite() ? $this->writeTarget($structured) : null;
+        $target = $effect->isWrite() ? $this->writeTarget($structured !== [] ? $structured : $this->jsonObject($text)) : null;
 
         return $target === null ? $converted : $converted->withWriteTarget($target[0], $target[1]);
     }
@@ -110,6 +111,27 @@ final readonly class ToolResultConverter
         $kind = ($structured['action'] ?? null) === 'create' ? WriteKind::CREATED : WriteKind::UPDATED;
 
         return [$reference, $kind];
+    }
+
+    /**
+     * The object a writing tool answered with as text. typo3-mcp-server
+     * reports `{action, table, uid}` in a text content block rather than as
+     * structured content, and its writes belong on the ledger all the same.
+     *
+     * @return array<array-key, mixed>
+     */
+    private function jsonObject(string $text): array
+    {
+        if (!str_starts_with($text, '{')) {
+            return [];
+        }
+        try {
+            $decoded = json_decode($text, true, 8, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            return [];
+        }
+
+        return is_array($decoded) ? $decoded : [];
     }
 
     /**
