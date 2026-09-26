@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] - 2026-09-27
+
+### Fixed
+
+- A reopened conversation no longer labels its read-only tool calls "Writes
+  once" or claims that they wrote to the installation. Calls rebuilt from the
+  transcript take their effect from the tool catalog; an unknown tool is never
+  shown as a write, and the round and duration the transcript does not keep are
+  left out instead of reading "Round 0 · 0 ms".
+- A writing tool that answers with its JSON as text, as typo3-mcp-server does,
+  now names the record it changed, so the write reaches the changes list.
+  (Writes approved in the chat still miss the list: nr-llm's resume path
+  records the approved call without its write target.)
+
 ## [2.0.1] - 2026-09-26
 
 ### Fixed
