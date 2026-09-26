@@ -13,6 +13,7 @@ const TOOL_STATE_ICONS = Object.freeze({
   running: 'spinner-circle',
   waiting: 'actions-exclamation',
   stopped: 'actions-minus',
+  available: 'actions-file',
   error: 'actions-close',
   done: 'actions-check',
 });
@@ -23,10 +24,13 @@ const TOOL_STATE_ICONS = Object.freeze({
  *
  * @param {import('../chat/thread-state.js').ToolCallEntry} call
  * @param {import('../chat/thread-state.js').ThreadState} thread
- * @returns {'running'|'waiting'|'stopped'|'error'|'done'}
+ * @returns {'running'|'waiting'|'stopped'|'available'|'error'|'done'}
  */
 export function toolState(call, thread) {
   if (call.result !== undefined) {
+    if (call.result.isError === null) {
+      return 'available';
+    }
     return call.result.isError ? 'error' : 'done';
   }
   if (thread.pendingApproval?.calls.some((pending) => pending.callId === call.callId)) {
@@ -364,11 +368,11 @@ export class ChatElement extends StoreElement {
     const stateIcon = TOOL_STATE_ICONS[state];
 
     return html`
-      <details class="webcon-ai-assistant-tool webcon-ai-assistant-tool-${state}">
+      <details class="webcon-ai-assistant-tool webcon-ai-assistant-tool-${state}" ?open=${call.name === 'typo3_GetPageTree' && result !== undefined}>
         <summary>
           <span class="webcon-ai-assistant-tool-state">${icon(stateIcon)}</span>
           <code class="webcon-ai-assistant-tool-name">${toolDisplayName(call.name)}</code>
-          ${effectBadge(call.effect)}
+          ${call.effect === null ? nothing : effectBadge(call.effect)}
           <span class="visually-hidden">${label(`tool.state.${state}`)}</span>
         </summary>
         <div class="webcon-ai-assistant-tool-body">
@@ -377,12 +381,14 @@ export class ChatElement extends StoreElement {
           ${result === undefined
             ? nothing
             : html`
-                <p class="webcon-ai-assistant-tool-label">${label(result.isError ? 'tool.error' : 'tool.result')}</p>
-                <pre class=${result.isError ? 'text-danger' : ''}><code>${result.preview}</code></pre>
+                <p class="webcon-ai-assistant-tool-label">${label(result.isError ? 'tool.error' : result.content === null ? 'tool.resultPreview' : 'tool.result')}</p>
+                <pre class=${result.isError ? 'text-danger' : call.name === 'typo3_GetPageTree' ? 'webcon-ai-assistant-tree-result' : ''}><code>${result.content ?? result.preview}</code></pre>
                 ${result.writeTarget === null
                   ? nothing
                   : changeList([result.writeTarget], this.recordEditUrl === '' ? null : (table, uid) => this.#openRecord(table, uid))}
-                <p class="text-variant">${label('tool.round', { round: call.round })} · ${formatDuration(result.durationMs)}</p>
+                ${call.round > 0 || result.durationMs > 0
+                  ? html`<p class="text-variant">${call.round > 0 ? label('tool.round', { round: call.round }) : nothing}${result.durationMs > 0 ? html` · ${formatDuration(result.durationMs)}` : nothing}</p>`
+                  : nothing}
               `}
         </div>
       </details>

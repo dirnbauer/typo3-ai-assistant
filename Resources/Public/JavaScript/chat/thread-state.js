@@ -39,10 +39,10 @@ import {
  * @typedef {import('./decode.js').TokenUsage} TokenUsage
  * @typedef {'idle'|'streaming'|'awaiting_approval'|'awaiting_input'|'error'} TurnPhase
  * @typedef {{fileUid: number, fileName: string, fileMimeType: string, fileSize: number}} AttachmentInfo
- * @typedef {{uid: number, sequence: number, role: string, content: string, createdAt: number, attachments?: AttachmentInfo[], writeTargets?: WriteTarget[], toolCalls?: unknown[]}} MessageRow
+ * @typedef {{uid: number, sequence: number, role: string, content: string, createdAt: number, attachments?: AttachmentInfo[], writeTargets?: WriteTarget[], toolCalls?: unknown[], toolCallId?: string}} MessageRow
  * @typedef {{uid: number, title: string, status: string, pendingApproval: unknown, pendingInput: unknown, runUuid: string, errorMessage: string}} ConversationSummary
- * @typedef {{isError: boolean, preview: string, durationMs: number, writeTarget: WriteTarget|null}} ToolResult
- * @typedef {{callId: string, name: string, effect: ToolEffect, round: number, arguments: Record<string, unknown>, result?: ToolResult}} ToolCallEntry
+ * @typedef {{isError: boolean|null, preview: string, content: string|null, durationMs: number, writeTarget: WriteTarget|null}} ToolResult
+ * @typedef {{callId: string, name: string, effect: ToolEffect|null, round: number, arguments: Record<string, unknown>, result?: ToolResult}} ToolCallEntry
  * @typedef {WriteTarget & {toolName: string}} ChangeEntry
  * @typedef {{code: string, text: string}} Problem  a code the view labels, or text the server wrote
  * @typedef {{kind: 'message', key: string, message: MessageRow}
@@ -125,6 +125,75 @@ export function resetKeyCounter() {
  */
 function messageItem(message) {
   return { kind: 'message', key: `m${message.uid || nextKey('local')}`, message };
+}
+
+/**
+ * Rebuild tool cards from the persisted assistant calls and their tool replies.
+ * Older conversations can contain unmatched rows, which remain hidden.
+ *
+ * @param {MessageRow[]} messages
+ * @returns {ThreadItem[]}
+ */
+function itemsFromMessages(messages) {
+  /** @type {ThreadItem[]} */
+  const items = [];
+  /** @type {Map<string, number>} */
+  const callIndexes = new Map();
+
+  for (const message of messages) {
+    if ((message.role === 'user' || message.role === 'assistant') && message.content !== '') {
+      items.push(messageItem(message));
+    }
+    if (message.role === 'assistant' && Array.isArray(message.toolCalls)) {
+      for (const raw of message.toolCalls) {
+        if (!isRecord(raw) || !isRecord(raw.function)) {
+          continue;
+        }
+        const callId = str(raw.id);
+        const name = str(raw.function.name);
+        if (callId === '' || name === '') {
+          continue;
+        }
+        let args = raw.function.arguments;
+        if (typeof args === 'string') {
+          try {
+            args = JSON.parse(args);
+          } catch {
+            args = {};
+          }
+        }
+        callIndexes.set(callId, items.length);
+        items.push({
+          kind: 'tool',
+          key: `call-${callId}`,
+          call: { callId, name, effect: null, round: 0, arguments: isRecord(args) ? args : {} },
+        });
+      }
+    }
+    if (message.role === 'tool') {
+      const index = callIndexes.get(str(message.toolCallId));
+      const item = index === undefined ? undefined : items[index];
+      if (item?.kind !== 'tool') {
+        continue;
+      }
+      items[index] = {
+        ...item,
+        call: {
+          ...item.call,
+          result: {
+            // The transcript stores the answer, but not the runtime error flag.
+            isError: null,
+            preview: '',
+            content: message.content,
+            durationMs: 0,
+            writeTarget: writeTargetsOf(message.writeTargets)[0] ?? null,
+          },
+        },
+      };
+    }
+  }
+
+  return items;
 }
 
 /**
@@ -248,9 +317,6 @@ export function threadReducer(state, action) {
   switch (action.type) {
     case 'reset': {
       const messages = Array.isArray(action.messages) ? action.messages : [];
-      const visible = messages.filter(
-        (message) => (message.role === 'user' || message.role === 'assistant') && message.content !== '',
-      );
       const changes = messages.reduce(
         (all, message) => writeTargetsOf(message.writeTargets).reduce((acc, target) => withChange(acc, target, ''), all),
         /** @type {ChangeEntry[]} */ ([]),
@@ -261,7 +327,7 @@ export function threadReducer(state, action) {
       return {
         ...initialThreadState,
         conversation,
-        items: visible.map(messageItem),
+        items: itemsFromMessages(messages),
         changes,
         pendingApproval: pendingApprovalOf(conversation?.pendingApproval),
         pendingInput: pendingInputOf(conversation?.pendingInput, str(conversation?.runUuid)),
@@ -397,6 +463,7 @@ function applyEvent(state, incoming) {
       const result = {
         isError: data.isError === true,
         preview: str(data.preview),
+        content: typeof data.content === 'string' ? data.content : null,
         durationMs: num(data.durationMs),
         writeTarget: writeTargetOf(data.writeTarget),
       };

@@ -604,6 +604,10 @@
         <target>Fehler</target>
       </trans-unit>
       <trans-unit id="tool.result" resname="tool.result">
+        <source>Result</source>
+        <target>Ergebnis</target>
+      </trans-unit>
+      <trans-unit id="tool.resultPreview" resname="tool.resultPreview">
         <source>Result (preview)</source>
         <target>Ergebnis (Vorschau)</target>
       </trans-unit>
@@ -614,6 +618,10 @@
       <trans-unit id="tool.state.done" resname="tool.state.done">
         <source>done</source>
         <target>erledigt</target>
+      </trans-unit>
+      <trans-unit id="tool.state.available" resname="tool.state.available">
+        <source>saved result</source>
+        <target>gespeichertes Ergebnis</target>
       </trans-unit>
       <trans-unit id="tool.state.error" resname="tool.state.error">
         <source>failed</source>

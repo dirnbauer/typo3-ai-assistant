@@ -136,6 +136,16 @@ describe('tool calls', () => {
     assert.equal(state.items[0].call.result.preview, 'page 1');
   });
 
+  it('keeps the full multiline result sent by the server', () => {
+    const tree = 'Root\n  - Child 1\n  - Child 2';
+    const state = fold([
+      event('step.tool.call', { callId: 'tree', name: 'typo3_GetPageTree', round: 1 }),
+      event('step.tool.result', { callId: 'tree', name: 'typo3_GetPageTree', preview: 'Root - Child 1', content: tree }),
+    ]);
+
+    assert.equal(state.items[0].call.result.content, tree);
+  });
+
   it('lists a record written twice only once', () => {
     const target = { table: 'pages', uid: 42, kind: 'updated' };
     const state = fold([
@@ -316,6 +326,29 @@ describe('replay and resumption', () => {
 
     assert.equal(state.phase, 'error');
     assert.deepEqual(state.error, { code: '', text: 'Invalid schema.' });
+  });
+
+  it('reopens the complete tree from persisted assistant calls and tool replies', () => {
+    const tree = 'Root\n  - Child 1\n  - Child 2';
+    const state = threadReducer(initialThreadState, {
+      type: 'reset',
+      conversation,
+      messages: [
+        { uid: 1, sequence: 1, role: 'user', content: 'Show the tree.', createdAt: 1 },
+        {
+          uid: 2, sequence: 2, role: 'assistant', content: '', createdAt: 2,
+          toolCalls: [{ id: 'tree-call', type: 'function', function: { name: 'typo3_GetPageTree', arguments: '{"startPage":1}' } }],
+        },
+        { uid: 3, sequence: 3, role: 'tool', toolCallId: 'tree-call', content: tree, createdAt: 3 },
+        { uid: 4, sequence: 4, role: 'assistant', content: 'Here is the tree.', createdAt: 4 },
+      ],
+    });
+
+    assert.deepEqual(contents(state), ['Show the tree.', 'tool', 'Here is the tree.']);
+    assert.equal(state.items[1].call.name, 'typo3_GetPageTree');
+    assert.deepEqual(state.items[1].call.arguments, { startPage: 1 });
+    assert.equal(state.items[1].call.result.content, tree);
+    assert.equal(state.items[1].call.result.isError, null);
   });
 
   it('clears the previous turn when a new one starts', () => {

@@ -25,13 +25,6 @@ use Webconsulting\WebconAiAssistant\Chat\Domain\MessageRole;
  */
 final readonly class TranscriptWriter
 {
-    /**
-     * Tool output is fed back to the model in full but stored bounded: a
-     * megabyte of JSON would make the conversation unloadable forever, to keep a
-     * payload nr-llm already has.
-     */
-    private const int MAX_TOOL_CONTENT = 20000;
-
     public function __construct(
         private MessageRepository $messages,
         private ConversationRepository $conversations,
@@ -174,18 +167,11 @@ final readonly class TranscriptWriter
             conversation: $conversation->uid,
             sequence: 0,
             role: MessageRole::Tool,
-            content: self::bounded($step->toolResult ?? ''),
+            content: ToolResultText::bounded($step->toolResult ?? ''),
             toolCallId: $callId,
             writeTargets: $step->writeTarget instanceof RecordReference ? [$this->writeLedger->describe($step->writeTarget)] : [],
             runUuid: $runUuid,
         );
-    }
-
-    private static function bounded(string $content): string
-    {
-        return mb_strlen($content) > self::MAX_TOOL_CONTENT
-            ? mb_substr($content, 0, self::MAX_TOOL_CONTENT) . "\u{2026} [truncated]"
-            : $content;
     }
 
     private static function titleFrom(string $content): string

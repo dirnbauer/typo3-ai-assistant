@@ -5,6 +5,17 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Fixed
+
+- Cached MCP tool definitions are checked before being offered to a model. A
+  stale definition with a top-level schema combinator is rebuilt, so one bad
+  cache entry cannot reject the whole chat turn.
+- Tool results in the chat show their bounded full text with line breaks instead
+  of only a 280-character preview. Page trees open automatically, and saved
+  tool results remain visible when a conversation is reopened.
+
 ## [2.0.0] - 2026-09-23
 
 The successor of `webconsulting/typo3-shadcn-ui` 1.0.1: the same chat engine

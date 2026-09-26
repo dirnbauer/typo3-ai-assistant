@@ -454,6 +454,9 @@
         <source>Error</source>
       </trans-unit>
       <trans-unit id="tool.result" resname="tool.result">
+        <source>Result</source>
+      </trans-unit>
+      <trans-unit id="tool.resultPreview" resname="tool.resultPreview">
         <source>Result (preview)</source>
       </trans-unit>
       <trans-unit id="tool.round" resname="tool.round">
@@ -461,6 +464,9 @@
       </trans-unit>
       <trans-unit id="tool.state.done" resname="tool.state.done">
         <source>done</source>
+      </trans-unit>
+      <trans-unit id="tool.state.available" resname="tool.state.available">
+        <source>saved result</source>
       </trans-unit>
       <trans-unit id="tool.state.error" resname="tool.state.error">
         <source>failed</source>

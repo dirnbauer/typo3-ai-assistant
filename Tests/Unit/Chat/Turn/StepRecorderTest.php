@@ -55,6 +55,21 @@ final class StepRecorderTest extends TestCase
     }
 
     #[Test]
+    public function aPageTreeResultKeepsItsLinesBeyondThePreviewAndUsesThePersistenceLimit(): void
+    {
+        $recorder = $this->recorder();
+        $tree = "Root\n" . str_repeat("  - Child\n", 50);
+        $recorder->record(new RunStep(RunStep::KIND_TOOL, 1, 1.0, toolName: 'typo3_GetPageTree', toolResult: $tree));
+
+        $payload = $recorder->drainEvents()[0][1];
+        self::assertSame($tree, $payload['content']);
+        self::assertLessThan(mb_strlen($tree), mb_strlen($payload['preview']));
+
+        $recorder->record(new RunStep(RunStep::KIND_TOOL, 1, 1.0, toolName: 'typo3_GetPageTree', toolResult: str_repeat('x', 20001)));
+        self::assertSame(str_repeat('x', 20000) . "\u{2026} [truncated]", $recorder->drainEvents()[0][1]['content']);
+    }
+
+    #[Test]
     public function seededCallsFromAnEarlierSegmentAreAnsweredFirst(): void
     {
         $recorder = $this->recorder();

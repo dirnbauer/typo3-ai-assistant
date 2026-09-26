@@ -217,6 +217,10 @@
   word-break: break-word;
 }
 
+.webcon-ai-assistant-chat pre.webcon-ai-assistant-tree-result {
+  max-block-size: min(60vh, 36rem);
+}
+
 .webcon-ai-assistant-message-body :not(pre) > code {
   background-color: var(--typo3-surface-container-high);
   border-radius: calc(var(--typo3-component-border-radius) / 2);

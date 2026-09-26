@@ -31,7 +31,7 @@ use Webconsulting\WebconAiAssistant\Chat\Security\BackendUserContext;
 final readonly class McpCatalogToolProvider implements ToolProviderInterface
 {
     /** Bumped whenever the shape of a cached definition changes. */
-    private const string CACHE_PREFIX = 'catalog_v3_';
+    private const string CACHE_PREFIX = 'catalog_v4_';
 
     public function __construct(
         private McpToolCatalogService $catalog,
@@ -78,7 +78,7 @@ final readonly class McpCatalogToolProvider implements ToolProviderInterface
 
         $cacheIdentifier = self::CACHE_PREFIX . sha1(implode(',', $names) . '|' . $this->backendUser->uid());
         $cached = $this->cache->get($cacheIdentifier);
-        if (is_array($cached)) {
+        if (is_array($cached) && $this->providerSafe($cached)) {
             /** @var list<array{mcpName: string, description: string, parameters: array<string, mixed>, effect: string, dataClass: string, requiresAdmin: bool}> $cached */
             return $cached;
         }
@@ -93,6 +93,35 @@ final readonly class McpCatalogToolProvider implements ToolProviderInterface
         $this->cache->set($cacheIdentifier, $definitions);
 
         return $definitions;
+    }
+
+    /**
+     * A stale cache entry must never bypass the schema conversion: one bad
+     * tool makes the provider reject the entire chat request.
+     *
+     * @param array<array-key, mixed> $definitions
+     */
+    private function providerSafe(array $definitions): bool
+    {
+        foreach ($definitions as $definition) {
+            if (!is_array($definition)
+                || !is_string($definition['description'] ?? null)
+                || mb_strlen($definition['description']) > ToolSchema::MAX_DESCRIPTION_LENGTH
+                || !is_array($definition['parameters'] ?? null)
+            ) {
+                return false;
+            }
+
+            $parameters = $definition['parameters'];
+            if (($parameters['type'] ?? null) !== 'object'
+                || !is_array($parameters['properties'] ?? null)
+                || array_intersect(['oneOf', 'anyOf', 'allOf', 'enum', 'const', 'not'], array_keys($parameters)) !== []
+            ) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

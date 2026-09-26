@@ -167,6 +167,7 @@ final class StepRecorder
             'name' => $name,
             'isError' => $step->toolIsError ?? false,
             'preview' => self::preview($step->toolResult ?? ''),
+            'content' => ToolResultText::bounded($step->toolResult ?? ''),
             'durationMs' => round($step->durationMs, 2),
         ];
         if ($step->writeTarget instanceof RecordReference) {
@@ -177,8 +178,8 @@ final class StepRecorder
     }
 
     /**
-     * The stream carries a preview, not the payload: the full text is already
-     * in the model's context and in nr-llm's persisted run.
+     * A short summary is retained for older clients. Current clients also
+     * receive the bounded original text, including its line breaks.
      */
     private static function preview(string $result): string
     {
