@@ -98,6 +98,25 @@ const NOTICE_TONES = Object.freeze({
 });
 
 /**
+ * What a call does. A conversation reopened from its transcript knows its
+ * calls only by name, so the tool catalog of the status endpoint fills the
+ * effect in. A tool the catalog does not list stays unknown (null) and is
+ * never shown or counted as a write.
+ *
+ * @param {ToolCallEntry} call
+ * @param {unknown} tools the `tools` list of the status endpoint
+ * @returns {ToolEffect|null}
+ */
+export function effectOfCall(call, tools) {
+  if (call.effect !== null) {
+    return call.effect;
+  }
+  const tool = Array.isArray(tools) ? tools.find((entry) => isRecord(entry) && entry.name === call.name) : undefined;
+
+  return tool === undefined ? null : effectOf(tool.effect);
+}
+
+/**
  * @param {string} outcome
  * @returns {'info'|'error'|null}
  */

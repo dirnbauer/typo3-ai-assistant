@@ -1,6 +1,7 @@
 import { html, nothing } from 'lit';
 import { contentFrameUrl, recordEditUrl, showInContentFrame } from '../chat/backend.js';
 import { formatDuration, formatNumber, toolDisplayName } from '../chat/format.js';
+import { effectOfCall } from '../chat/thread-state.js';
 import { toolState } from './chat-element.js';
 import { changeList, effectBadge, icon, label, uniqueId } from './parts.js';
 import { StoreElement } from './store-element.js';
@@ -34,9 +35,11 @@ export class DetailsElement extends StoreElement {
     }
     const { thread, status } = this.store.state;
     const calls = thread.items.filter((item) => item.kind === 'tool');
-    const writes = calls.filter(
-      (item) => item.call.effect !== 'read_only' && item.call.result !== undefined && !item.call.result.isError,
-    ).length;
+    const effects = new Map(calls.map((item) => [item.call.callId, effectOfCall(item.call, status?.tools)]));
+    const writes = calls.filter((item) => {
+      const effect = effects.get(item.call.callId) ?? null;
+      return effect !== null && effect !== 'read_only' && item.call.result !== undefined && !item.call.result.isError;
+    }).length;
 
     return html`
       <section class="webcon-ai-assistant-details" aria-labelledby=${this.#heading}>
@@ -66,14 +69,17 @@ export class DetailsElement extends StoreElement {
           : html`<ol class="webcon-ai-assistant-call-list">
               ${calls.map(
                 (item) => html`<li>
-                  <code>${toolDisplayName(item.call.name)}</code> ${effectBadge(item.call.effect)}
-                  <span class="text-variant">
-                    ${label('tool.round', { round: item.call.round })}
-                    ·
-                    ${item.call.result === undefined
-                      ? label(`tool.state.${toolState(item.call, thread)}`)
-                      : html`${formatDuration(item.call.result.durationMs)}${item.call.result.isError ? html` · ${label('tool.state.error')}` : nothing}`}
-                  </span>
+                  <code>${toolDisplayName(item.call.name)}</code>
+                  ${(effects.get(item.call.callId) ?? null) === null ? nothing : effectBadge(effects.get(item.call.callId))}
+                  ${item.call.result?.isError === null
+                    ? nothing
+                    : html`<span class="text-variant">
+                        ${label('tool.round', { round: item.call.round })}
+                        ·
+                        ${item.call.result === undefined
+                          ? label(`tool.state.${toolState(item.call, thread)}`)
+                          : html`${formatDuration(item.call.result.durationMs)}${item.call.result.isError ? html` · ${label('tool.state.error')}` : nothing}`}
+                      </span>`}
                 </li>`,
               )}
             </ol>`}

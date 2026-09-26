@@ -5,7 +5,7 @@ import '../chat/markdown.js';
 import { acceptAttribute } from '../chat/attachments.js';
 import { contentFrameUrl, openChatModule, recordEditUrl, showInContentFrame } from '../chat/backend.js';
 import { formatBytes, formatDuration, formatTimestamp, isoTimestamp, toolDisplayName } from '../chat/format.js';
-import { composerState } from '../chat/thread-state.js';
+import { composerState, effectOfCall } from '../chat/thread-state.js';
 import { changeList, effectBadge, icon, label, problemText, statusBadge, uniqueId } from './parts.js';
 import { StoreElement } from './store-element.js';
 
@@ -366,13 +366,14 @@ export class ChatElement extends StoreElement {
     const result = call.result;
     const state = toolState(call, this.store.state.thread);
     const stateIcon = TOOL_STATE_ICONS[state];
+    const effect = effectOfCall(call, this.store.state.status?.tools);
 
     return html`
       <details class="webcon-ai-assistant-tool webcon-ai-assistant-tool-${state}" ?open=${call.name === 'typo3_GetPageTree' && result !== undefined}>
         <summary>
           <span class="webcon-ai-assistant-tool-state">${icon(stateIcon)}</span>
           <code class="webcon-ai-assistant-tool-name">${toolDisplayName(call.name)}</code>
-          ${call.effect === null ? nothing : effectBadge(call.effect)}
+          ${effect === null ? nothing : effectBadge(effect)}
           <span class="visually-hidden">${label(`tool.state.${state}`)}</span>
         </summary>
         <div class="webcon-ai-assistant-tool-body">

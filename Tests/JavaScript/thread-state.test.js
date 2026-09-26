@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { beforeEach, describe, it } from 'node:test';
 import {
   composerState,
+  effectOfCall,
   initialThreadState,
   outcomeTone,
   resetKeyCounter,
@@ -370,5 +371,27 @@ describe('the composer', () => {
     assert.deepEqual(composerState('awaiting_approval', true, true), { disabled: true, reason: 'composer.awaitingApproval' });
     assert.deepEqual(composerState('awaiting_input', true, true), { disabled: true, reason: 'composer.awaitingInput' });
     assert.deepEqual(composerState('error', true, true), { disabled: false, reason: '' });
+  });
+});
+
+describe('the effect of a call', () => {
+  const tools = [
+    { name: 'typo3_GetPageTree', effect: 'read_only' },
+    { name: 'typo3_WriteTable', effect: 'non_idempotent_write' },
+  ];
+  const call = (name, effect = null) => ({ callId: 'c1', name, effect, round: 0, arguments: {} });
+
+  it('keeps the effect a live run reported', () => {
+    assert.equal(effectOfCall(call('typo3_GetPageTree', 'idempotent_write'), tools), 'idempotent_write');
+  });
+
+  it('looks a reopened call up in the tool catalog', () => {
+    assert.equal(effectOfCall(call('typo3_GetPageTree'), tools), 'read_only');
+    assert.equal(effectOfCall(call('typo3_WriteTable'), tools), 'non_idempotent_write');
+  });
+
+  it('leaves a tool the catalog does not know unknown, not a write', () => {
+    assert.equal(effectOfCall(call('typo3_Retired'), tools), null);
+    assert.equal(effectOfCall(call('typo3_GetPageTree'), undefined), null);
   });
 });
