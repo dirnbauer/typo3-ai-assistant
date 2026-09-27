@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Webconsulting\WebconAiAssistant\Chat\Tool;
 
+use JsonException;
 use Mcp\Types\CallToolResult;
 use Mcp\Types\TextContent;
 use Netresearch\NrLlm\Domain\Enum\ArtifactType;
@@ -127,7 +128,7 @@ final readonly class ToolResultConverter
         }
         try {
             $decoded = json_decode($text, true, 8, JSON_THROW_ON_ERROR);
-        } catch (\JsonException) {
+        } catch (JsonException) {
             return [];
         }
 
