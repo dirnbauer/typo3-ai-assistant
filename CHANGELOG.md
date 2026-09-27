@@ -5,6 +5,18 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.3] - 2026-09-27
+
+### Fixed
+
+- A write approved in the chat appears under "Changes in this conversation"
+  as soon as it has run, and a reopened conversation lists it as well. nr-llm
+  names the record a write produced on a trace step of its own, after the
+  tool's step, and the chat only looked at the tool's step. The live result
+  and the stored tool message now take the record from the tool's own answer
+  — only for a tool that declares a write effect and only when the call
+  succeeded, so a read never claims a record.
+
 ## [2.0.2] - 2026-09-27
 
 ### Fixed
@@ -16,8 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   left out instead of reading "Round 0 · 0 ms".
 - A writing tool that answers with its JSON as text, as typo3-mcp-server does,
   now names the record it changed, so the write reaches the changes list.
-  (Writes approved in the chat still miss the list: nr-llm's resume path
-  records the approved call without its write target.)
+  (Every write runs after an approval, and approved writes reach the list
+  from 2.0.3 on.)
 
 ## [2.0.1] - 2026-09-26
 
