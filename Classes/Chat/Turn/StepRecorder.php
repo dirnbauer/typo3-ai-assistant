@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
-use Netresearch\NrLlm\Domain\ValueObject\RecordReference;
 use Netresearch\NrLlm\Domain\ValueObject\RunStep;
 use Webconsulting\WebconAiAssistant\Chat\Tool\ToolEffectLookup;
 
@@ -33,7 +32,7 @@ final class StepRecorder
 
     public function __construct(
         private readonly ToolEffectLookup $effectLookup,
-        private readonly WriteLedger $writeLedger,
+        private readonly WriteTargetResolver $writeTargets,
     ) {
         $this->openCalls = new OpenCalls();
     }
@@ -170,8 +169,9 @@ final class StepRecorder
             'content' => ToolResultText::bounded($step->toolResult ?? ''),
             'durationMs' => round($step->durationMs, 2),
         ];
-        if ($step->writeTarget instanceof RecordReference) {
-            $payload['writeTarget'] = $this->writeLedger->describe($step->writeTarget);
+        $writeTarget = $this->writeTargets->describe($step);
+        if ($writeTarget !== null) {
+            $payload['writeTarget'] = $writeTarget;
         }
 
         $this->pendingEvents[] = ['step.tool.result', $payload];

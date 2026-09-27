@@ -118,6 +118,20 @@ final class ToolResultConverterTest extends TestCase
     }
 
     #[Test]
+    public function theTextOfAWriteNamesTheRecordConvertFindsInIt(): void
+    {
+        $converter = new ToolResultConverter();
+        $answer = '{"action":"update","table":"pages","uid":1070}';
+
+        $converted = $converter->convert(new CallToolResult([new TextContent($answer)]), 'typo3_WriteTable', ToolEffect::NON_IDEMPOTENT_WRITE);
+
+        self::assertNotNull($converted->writeTarget);
+        self::assertEquals($converted->writeTarget, $converter->writeTargetOfText($answer));
+        self::assertNull($converter->writeTargetOfText('Updated pages:1070.'));
+        self::assertNull($converter->writeTargetOfText('[{"table":"pages","uid":1070}]'), 'A list names no record.');
+    }
+
+    #[Test]
     public function aTableNameThatIsNotAnIdentifierYieldsNoTarget(): void
     {
         $result = new ToolResultConverter()->convert(

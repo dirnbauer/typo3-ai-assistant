@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Webconsulting\WebconAiAssistant\Chat\Turn;
 
-use Netresearch\NrLlm\Domain\ValueObject\RecordReference;
 use Netresearch\NrLlm\Domain\ValueObject\RunStep;
 use Netresearch\NrLlm\Domain\ValueObject\ToolCall;
 use Netresearch\NrLlm\Service\Agent\AgentRunResult;
@@ -28,7 +27,7 @@ final readonly class TranscriptWriter
     public function __construct(
         private MessageRepository $messages,
         private ConversationRepository $conversations,
-        private WriteLedger $writeLedger,
+        private WriteTargetResolver $writeTargets,
     ) {}
 
     /**
@@ -162,6 +161,8 @@ final readonly class TranscriptWriter
             return null;
         }
 
+        $writeTarget = $this->writeTargets->describe($step);
+
         return new Message(
             uid: 0,
             conversation: $conversation->uid,
@@ -169,7 +170,7 @@ final readonly class TranscriptWriter
             role: MessageRole::Tool,
             content: ToolResultText::bounded($step->toolResult ?? ''),
             toolCallId: $callId,
-            writeTargets: $step->writeTarget instanceof RecordReference ? [$this->writeLedger->describe($step->writeTarget)] : [],
+            writeTargets: $writeTarget === null ? [] : [$writeTarget],
             runUuid: $runUuid,
         );
     }

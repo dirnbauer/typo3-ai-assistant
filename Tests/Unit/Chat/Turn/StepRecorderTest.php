@@ -4,17 +4,28 @@ declare(strict_types=1);
 
 namespace Webconsulting\WebconAiAssistant\Tests\Unit\Chat\Turn;
 
+use Hn\McpServer\MCP\ToolRegistry as McpToolRegistry;
+use Hn\McpServer\Service\McpToolCatalogService;
+use Hn\McpServer\Service\ToolResultNormalizer;
+use Mcp\Types\CallToolResult;
+use Mcp\Types\TextContent;
+use Netresearch\NrLlm\Domain\Enum\ToolDataClass;
 use Netresearch\NrLlm\Domain\Enum\ToolEffect;
 use Netresearch\NrLlm\Domain\Enum\WriteKind;
 use Netresearch\NrLlm\Domain\ValueObject\RecordReference;
 use Netresearch\NrLlm\Domain\ValueObject\RunStep;
+use Netresearch\NrLlm\Domain\ValueObject\ToolSpec;
 use Netresearch\NrLlm\Event\AfterAiRecordWrittenEvent;
+use Netresearch\NrLlm\Service\Tool\RunTrace;
 use Netresearch\NrLlm\Service\Tool\ToolRegistry;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Webconsulting\WebconAiAssistant\Chat\Tool\McpCatalogTool;
 use Webconsulting\WebconAiAssistant\Chat\Tool\ToolEffectLookup;
+use Webconsulting\WebconAiAssistant\Chat\Tool\ToolResultConverter;
 use Webconsulting\WebconAiAssistant\Chat\Turn\StepRecorder;
 use Webconsulting\WebconAiAssistant\Chat\Turn\WriteLedger;
+use Webconsulting\WebconAiAssistant\Chat\Turn\WriteTargetResolver;
 
 /**
  * Deduplication and call correlation — and the write target a tool step now
@@ -85,11 +96,49 @@ final class StepRecorderTest extends TestCase
     {
         $ledger = new WriteLedger();
         $ledger->record(new AfterAiRecordWrittenEvent('run-1', new RecordReference('pages', 42), WriteKind::CREATED));
-        $recorder = new StepRecorder(new ToolEffectLookup(new ToolRegistry([])), $ledger);
+        $recorder = $this->recorder($ledger);
 
         $recorder->record(new RunStep(RunStep::KIND_TOOL, 1, 1.0, toolName: 'typo3_WriteTable', toolResult: 'ok', writeTarget: new RecordReference('pages', 42)));
 
         self::assertSame(['table' => 'pages', 'uid' => 42, 'kind' => 'created'], $recorder->drainEvents()[0][1]['writeTarget']);
+    }
+
+    /**
+     * The resumed segment of an approval, streamed in as TurnRunner wires it:
+     * nr-llm records the approved call's step and then, separately, the record
+     * it wrote. The one result frame must already name that record, or the
+     * details column stays empty after Approve.
+     */
+    #[Test]
+    public function anApprovedWriteNamesItsRecordOnItsOneResultFrame(): void
+    {
+        $recorder = $this->recorder();
+        $recorder->seedOpenCalls(['calls' => [['callId' => 'call-write', 'name' => 'typo3_WriteTable']]]);
+        $trace = new RunTrace(onRecord: static function (RunStep $step) use ($recorder): void {
+            $recorder->record($step);
+        });
+
+        $trace->recordToolResult(2, 12.5, 'typo3_WriteTable', ['action' => 'update', 'table' => 'pages', 'uid' => 1070], new ToolResultConverter()->convert(
+            new ToolResultNormalizer()->normalize(new CallToolResult([new TextContent('{"action":"update","table":"pages","uid":1070}')])),
+            'typo3_WriteTable',
+            ToolEffect::NON_IDEMPOTENT_WRITE,
+        ));
+
+        $events = $recorder->drainEvents();
+        self::assertSame([RunStep::KIND_TOOL, RunStep::KIND_WRITE], array_map(static fn(RunStep $step): string => $step->kind, $recorder->steps()));
+        self::assertSame(['step.tool.result'], array_column($events, 0), 'The tool_write step adds no frame of its own.');
+        self::assertSame('call-write', $events[0][1]['callId']);
+        self::assertSame(['table' => 'pages', 'uid' => 1070, 'kind' => 'updated'], $events[0][1]['writeTarget']);
+    }
+
+    #[Test]
+    public function aReadResultFrameClaimsNoRecord(): void
+    {
+        $recorder = $this->recorder();
+
+        $recorder->record(new RunStep(RunStep::KIND_TOOL, 1, 1.0, toolName: 'typo3_GetPage', toolResult: '{"table":"pages","uid":1070}', toolIsError: false));
+
+        self::assertArrayNotHasKey('writeTarget', $recorder->drainEvents()[0][1]);
     }
 
     #[Test]
@@ -121,8 +170,29 @@ final class StepRecorderTest extends TestCase
         self::assertSame(ToolEffect::READ_ONLY->value, $events[1][1]['effect'], 'An unregistered name is not offered, so read-only is the honest default.');
     }
 
-    private function recorder(): StepRecorder
+    /**
+     * Over a registry holding the chat's own kind of tools: one MCP write, one read.
+     */
+    private function recorder(?WriteLedger $ledger = null): StepRecorder
     {
-        return new StepRecorder(new ToolEffectLookup(new ToolRegistry([])), new WriteLedger());
+        $effectLookup = new ToolEffectLookup(new ToolRegistry([
+            self::catalogTool('WriteTable', ToolEffect::NON_IDEMPOTENT_WRITE),
+            self::catalogTool('GetPage', ToolEffect::READ_ONLY),
+        ]));
+
+        return new StepRecorder($effectLookup, new WriteTargetResolver($effectLookup, new ToolResultConverter(), $ledger ?? new WriteLedger()));
+    }
+
+    private static function catalogTool(string $mcpName, ToolEffect $effect): McpCatalogTool
+    {
+        return new McpCatalogTool(
+            $mcpName,
+            new ToolSpec(McpCatalogTool::toolName($mcpName), 'A tool of this installation.', ['type' => 'object', 'properties' => []]),
+            $effect,
+            ToolDataClass::EDITOR_CONTENT,
+            false,
+            new McpToolCatalogService(new McpToolRegistry([]), new ToolResultNormalizer()),
+            new ToolResultConverter(),
+        );
     }
 }

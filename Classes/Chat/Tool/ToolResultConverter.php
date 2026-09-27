@@ -55,6 +55,17 @@ final readonly class ToolResultConverter
         return $target === null ? $converted : $converted->withWriteTarget($target[0], $target[1]);
     }
 
+    /**
+     * The record a writing tool's answer names, read from its text exactly as
+     * {@see convert()} reads a text answer — for a caller that holds only the
+     * text, such as a recorded tool step. Whether the tool writes is the
+     * caller's question: a read's text must not be asked.
+     */
+    public function writeTargetOfText(string $text): ?RecordReference
+    {
+        return $this->writeTarget($this->jsonObject($text))[0] ?? null;
+    }
+
     private function flattenContent(CallToolResult $result): string
     {
         $parts = [];

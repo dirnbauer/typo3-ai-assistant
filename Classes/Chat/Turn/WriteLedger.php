@@ -13,8 +13,9 @@ use TYPO3\CMS\Core\Attribute\AsEventListener;
  * Remembers, for the duration of one request, which records a run wrote and
  * whether each was created or updated.
  *
- * A {@see \Netresearch\NrLlm\Domain\ValueObject\RunStep} carries the record a
- * tool wrote but not the kind of write; nr-llm reports the kind through
+ * Which record a tool step wrote is {@see WriteTargetResolver}'s question; no
+ * {@see \Netresearch\NrLlm\Domain\ValueObject\RunStep} says whether the write
+ * created or updated it. nr-llm reports the kind through
  * {@see AfterAiRecordWrittenEvent} instead. A turn runs synchronously inside
  * the request that asked for it, so the events of a run and the steps of the
  * same run always meet in one process — this ledger is where.

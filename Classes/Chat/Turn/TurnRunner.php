@@ -56,7 +56,7 @@ final readonly class TurnRunner
         private InstructionRepository $instructions,
         private PromptBuilder $prompt,
         private ToolEffectLookup $effectLookup,
-        private WriteLedger $writeLedger,
+        private WriteTargetResolver $writeTargets,
         private TranscriptWriter $writer,
         private Suspension $suspension,
         private RunOutcomeMapper $outcomes,
@@ -204,7 +204,7 @@ final readonly class TurnRunner
         array $resumedCard = [],
         ?Closure $restore = null,
     ): TurnResult {
-        $recorder = new StepRecorder($this->effectLookup, $this->writeLedger);
+        $recorder = new StepRecorder($this->effectLookup, $this->writeTargets);
         $recorder->seedOpenCalls($resumedCard);
         $onStep = static function (RunStep $step) use ($recorder, $emit): void {
             $recorder->record($step);
