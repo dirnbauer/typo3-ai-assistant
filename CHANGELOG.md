@@ -5,6 +5,14 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.4] - 2026-10-23
+
+### Changed
+
+- Allow nr-llm 0.41.3 alongside the previously supported releases.
+- Require MCP Server 0.9.6 with current TYPO3 metadata and PHP 8.5 cURL cleanup.
+- Update ESLint and browser globals used by the frontend checks.
+
 ## [2.0.3] - 2026-09-27
 
 ### Fixed
