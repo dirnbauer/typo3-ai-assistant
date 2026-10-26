@@ -21,6 +21,15 @@ English and German. No React, no Tailwind, no bundler.
 This package replaces the earlier backend chat extension: the same chat engine under new names,
 without the shadcn/ui runtime. An upgrade wizard carries existing installations over.
 
+## Origins and thanks
+
+This extension grew out of [nr-mcp-agent](https://github.com/netresearch/t3x-nr-mcp-agent), the
+backend AI chat for TYPO3 that Netresearch DTT GmbH published under GPL-2.0-or-later. The
+conversation model, the toolbar chat, the attachment readers (PDF, DOCX, XLSX, plain text) and the
+error sanitising started there and came over through the earlier backend chat packages. Every turn
+still runs on Netresearch's [nr-llm](https://github.com/netresearch/t3x-nr-llm) agent runtime.
+Thank you very much to everyone at Netresearch for this groundwork and for sharing it.
+
 ## Where it appears
 
 - **Administration → AI Assistant → Chat** — the conversation list, the chat, and what the

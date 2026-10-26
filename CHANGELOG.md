@@ -5,6 +5,11 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.6 — 2026-10-26
+
+- Credit the origin: the README says that this extension grew out of Netresearch's nr-mcp-agent and
+  runs on their nr-llm, and thanks them; composer.json lists Netresearch DTT GmbH as original author.
+
 ## 2.0.5 — 2026-10-24
 
 - Refresh the ESLint dependency lock and run frontend checks on Node 26.12.1 with npm 12.2.1.
