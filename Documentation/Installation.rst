@@ -40,37 +40,6 @@ both repositories are declared before the package is required:
 and :sql:`tx_webconaiassistant_instruction`, plus the cache table of the MCP
 tool catalogue.
 
-Coming from typo3-shadcn-ui
-===========================
-
-This extension replaces `webconsulting/typo3-shadcn-ui` (extension key
-`shadcn_ui`). Its chat is the same engine under new names; the shadcn/ui
-runtime for backend modules and the Components module are gone.
-
-1.  Require `webconsulting/typo3-ai-assistant` and run
-    `vendor/bin/typo3 extension:setup -e webcon_ai_assistant`.
-2.  Run the upgrade wizard :guilabel:`AI Assistant: migrate from shadcn/ui`
-    (identifier `webconAiAssistantMigrateFromShadcnUi`), in the Install Tool or
-    with `vendor/bin/typo3 upgrade:run webconAiAssistantMigrateFromShadcnUi`.
-    It copies conversations, messages and instruction records from the
-    `tx_shadcnui_*` tables — or their `zzz_deleted_` remains — keeping their
-    uids; copies the `shadcn_ui` extension configuration while this
-    extension's own is still at its defaults; moves module permissions from
-    `tools_shadcnui_chat` to `tools_webconaiassistant` and
-    `tools_webconaiassistant_chat`; rewrites `tx_shadcnui.` to
-    `tx_webconaiassistant.` in the TSconfig stored on backend users and groups;
-    points bookmarks of the old chat module at the new one; and carries an
-    administrator's switch of the `ask_user` tool group in nr-llm's Tools module
-    (`shadcn_ui`, now `webcon_ai_assistant`). It copies only what is missing,
-    so it can run again.
-3.  Rename `tx_shadcnui.tools` to `tx_webconaiassistant.tools` in TSconfig kept
-    in **files**, and `shadcn-ui:chat:cleanup` to `ai-assistant:chat:cleanup`
-    wherever the retention command is scheduled.
-4.  Remove `webconsulting/typo3-shadcn-ui` once nothing else requires it. While
-    both are installed, the predecessor's tool registrations are withdrawn from
-    nr-llm — they would collide with this extension's — and its chat keeps
-    working on this extension's tools.
-
 Attachments
 ===========
 

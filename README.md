@@ -18,10 +18,6 @@ Lit elements rendering the core's buttons, callouts, badges and forms into the l
 modal, notification and AJAX APIs, the core's colour tokens for light and dark mode, and labels in
 English and German. No React, no Tailwind, no bundler.
 
-This package succeeds [`webconsulting/typo3-shadcn-ui`](https://github.com/dirnbauer/typo3-shadcn-ui):
-the same chat engine under new names, without the shadcn/ui runtime. An upgrade wizard carries an
-installation over.
-
 ## Where it appears
 
 - **Administration → AI Assistant → Chat** — the conversation list, the chat, and what the
@@ -50,20 +46,6 @@ composer config repositories.typo3-ai-assistant vcs https://github.com/dirnbauer
 composer require webconsulting/typo3-ai-assistant:^2.0
 vendor/bin/typo3 extension:setup -e webcon_ai_assistant
 ```
-
-### Coming from typo3-shadcn-ui
-
-```bash
-vendor/bin/typo3 upgrade:run webconAiAssistantMigrateFromShadcnUi
-```
-
-The wizard copies conversations, messages and instructions from the `tx_shadcnui_*` tables (keeping
-their uids), the `shadcn_ui` extension configuration, module permissions (`tools_shadcnui_chat` →
-`tools_webconaiassistant` + `tools_webconaiassistant_chat`), database TSconfig
-(`tx_shadcnui.tools` → `tx_webconaiassistant.tools`), bookmarks and the nr-llm switch of the
-`ask_user` tool group (`shadcn_ui` → `webcon_ai_assistant`). Rename `tx_shadcnui.tools` in
-TSconfig files and `shadcn-ui:chat:cleanup` → `ai-assistant:chat:cleanup` in your scheduler yourself.
-Both packages can be installed side by side during the switch.
 
 ## Configure
 
